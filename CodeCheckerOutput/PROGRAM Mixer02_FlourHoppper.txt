@@ -1,0 +1,14 @@
+	PROGRAM Mixer02_FlourHoppper (MODE := 0,
+	                              DisableFlag := 0,
+	                              UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer02_FlourHopper;
+				Mixer02Hopper_AddPastryFlour;
+				Mixer02Hopper_AddSpringFlour;
+				Mixer02_FlourHopperReady;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

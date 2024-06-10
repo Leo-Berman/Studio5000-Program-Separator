@@ -1,0 +1,16 @@
+	PROGRAM Mixer02_Line (MODE := 0,
+	                      DisableFlag := 0,
+	                      UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer02_Mixer;
+				Mixer02_FlourHoppper;
+				Mixer02_MinorsHoppper;
+				Mixer02_Train;
+				Mixer02_BatchA;
+				Mixer02_BatchB;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

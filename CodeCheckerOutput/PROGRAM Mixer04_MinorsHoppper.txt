@@ -1,0 +1,13 @@
+	PROGRAM Mixer04_MinorsHoppper (MODE := 0,
+	                               DisableFlag := 0,
+	                               UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer04_MinorsHopper;
+				Mixer04Hopper_AddGEMConcentrate;
+				Mixer04_ConcentrateHopperReadyToDump;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

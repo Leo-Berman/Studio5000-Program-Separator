@@ -1,0 +1,20 @@
+	PROGRAM Mixer11_Mixer (MODE := 0,
+	                       DisableFlag := 0,
+	                       UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer11;
+				Mixer11_AddPalmKernalOil;
+				Mixer11_ConfirmStart;
+				Mixer11_HandAdd;
+				Mixer11_Heat;
+				Mixer11_RunHighSheer;
+				Mixer11_RunSweep;
+				Mixer11_SugarHopperDump;
+				Mixer11_TimeDelay;
+				Mixer11_Transfer;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

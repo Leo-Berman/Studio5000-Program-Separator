@@ -1,0 +1,18 @@
+	PROGRAM Silos (MODE := 0,
+	               DisableFlag := 0,
+	               UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Silo01_SpringFlour;
+				Silo02_SpringFlour;
+				Silo03_PastryFlour;
+				Silo04_PastryFlour;
+				Silo05_HardWheatFlour;
+				Silo06_Sugar;
+				Silo07_Sugar;
+				Silo08_Sugar;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

@@ -1,0 +1,14 @@
+	PROGRAM Mixer09_SugarHoppper (MODE := 0,
+	                              DisableFlag := 0,
+	                              UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer09_SugarHopper;
+				Mixer09Hopper_AddSugar;
+				Mixer09Hopper_AddPowderedSugar;
+				Mixer09_SugarHopperReadyToDump;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

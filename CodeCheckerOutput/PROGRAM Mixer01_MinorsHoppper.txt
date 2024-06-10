@@ -1,0 +1,14 @@
+	PROGRAM Mixer01_MinorsHoppper (MODE := 0,
+	                               DisableFlag := 0,
+	                               UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer01_MinorsHopper;
+				Mixer01Hopper_AddSugar;
+				Mixer01Hopper_AddHBConcentrate;
+				Mixer01_MinorsHopperReadyToDump;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

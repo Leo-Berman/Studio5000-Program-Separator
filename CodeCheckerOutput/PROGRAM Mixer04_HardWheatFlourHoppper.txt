@@ -1,0 +1,13 @@
+	PROGRAM Mixer04_HardWheatFlourHoppper (MODE := 0,
+	                                       DisableFlag := 0,
+	                                       UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer04_HardWheatFlourHopper;
+				Mixer04Hopper_AddWheatFlour;
+				Mixer04_WheatHopperReadyToDump;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

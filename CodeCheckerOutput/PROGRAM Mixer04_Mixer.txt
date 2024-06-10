@@ -1,0 +1,26 @@
+	PROGRAM Mixer04_Mixer (MODE := 0,
+	                       DisableFlag := 0,
+	                       UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer04;
+				Mixer04_LoadBowl;
+				Mixer04_TimeDelay;
+				Mixer04_ConcentrateHopperDump;
+				Mixer04_SugarHopperDump;
+				Mixer04_PastryHopperDump;
+				Mixer04_WheatHopperDump;
+				Mixer04_AddWater;
+				Mixer04_AddHFCS;
+				Mixer04_AddCornSyrup;
+				Mixer04_AddGlycerin;
+				Mixer04_AddSoyOil;
+				Mixer04_HandAdd;
+				Mixer04_LowSpeed;
+				Mixer04_HighSpeed;
+				Mixer04_Discharge;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

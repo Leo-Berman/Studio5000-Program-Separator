@@ -1,0 +1,14 @@
+	PROGRAM BulkBags (MODE := 0,
+	                  DisableFlag := 0,
+	                  UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				BulkBag01_HBConcentrate;
+				BulkBag01_RefillScaleHopper;
+				BulkBag02_GENConcentrate;
+				BulkBag02_RefillScaleHopper;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

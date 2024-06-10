@@ -1,0 +1,21 @@
+	PROGRAM Mixer09_Mixer (MODE := 0,
+	                       DisableFlag := 0,
+	                       UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer09;
+				Mixer09_SugarHopperDump;
+				Mixer09_TimeDelay;
+				Mixer09_AddCityWater;
+				Mixer09_AddShortening;
+				Mixer09_Transfer;
+				Mixer09_HandAdd;
+				Mixer09_RunSweep;
+				Mixer09_RunHighSheer;
+				Mixer09_Heat;
+				Mixer09_ConfirmStart;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

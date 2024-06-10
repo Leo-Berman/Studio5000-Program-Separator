@@ -1,0 +1,23 @@
+	PROGRAM Fryers (MODE := 0,
+	                DisableFlag := 0,
+	                UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Fryer01;
+				Fryer01StorageTank;
+				Fryer01_AddFreshOil;
+				Fryer01_AddUsedOil;
+				Interface_Moline;
+				Fryer02;
+				Fryer02StorageTank;
+				Fryer02_AddFreshOil;
+				Fryer02_AddUsedOil;
+				Fryer03;
+				Fryer03StorageTank;
+				Fryer03_AddFreshOil;
+				Fryer03_AddUsedOil;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

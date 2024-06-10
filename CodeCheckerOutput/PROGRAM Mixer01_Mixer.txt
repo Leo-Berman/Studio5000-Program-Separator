@@ -1,0 +1,25 @@
+	PROGRAM Mixer01_Mixer (MODE := 0,
+	                       DisableFlag := 0,
+	                       UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer01;
+				Mixer01_TimeDelay;
+				Mixer01_AddRemix;
+				Mixer01_FlourHopperDump;
+				Mixer01_MinorsHopperDump;
+				Mixer01_Stagger;
+				Mixer01_AddChillWater;
+				Mixer01_AddEmulsifier;
+				Mixer01_AddHFCS;
+				Mixer01_AddLiquidBrew;
+				Mixer01_AddShortening;
+				Mixer01_LowSpeed;
+				Mixer01_Refrigerate;
+				Mixer01_HighSpeed;
+				Mixer01_Discharge;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

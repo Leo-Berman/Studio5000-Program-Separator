@@ -1,0 +1,20 @@
+	PROGRAM SafetyCabinets (MODE := 0,
+	                        DisableFlag := 0,
+	                        UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				SafetyCabinetA;
+				SafetyCabinetB;
+				SafetyCabinetC;
+				SafetyCabinetD;
+				SafetyCabinetE;
+				SafetyCabinetF;
+				SafetySystem;
+				RemotePanel1A;
+				RemotePanel2A;
+				RemotePanel3A;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

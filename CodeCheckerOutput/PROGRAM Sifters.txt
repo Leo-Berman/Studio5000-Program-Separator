@@ -1,0 +1,14 @@
+	PROGRAM Sifters (MODE := 0,
+	                 DisableFlag := 0,
+	                 UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Sifter01_SpringFlour;
+				Sifter02_PastryFlour;
+				Sifter03_HardWheatFlour;
+				Sifter04_Sugar;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

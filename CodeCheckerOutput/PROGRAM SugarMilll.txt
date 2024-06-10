@@ -1,0 +1,19 @@
+	PROGRAM SugarMilll (MODE := 0,
+	                    DisableFlag := 0,
+	                    UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				SugarMill_BulkBagStarch;
+				SugarMill_AddStarch;
+				SugarMill_StarchHopper;
+				SugarMill_RefillStarchDispensingHopper;
+				SugarMill_AddSugar;
+				SugarMill;
+				SugarMill_PowderHopper;
+				SugarMill_PowderHopperRefill;
+				SugarMill_PowderDispenseBlower;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

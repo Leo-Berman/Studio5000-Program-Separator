@@ -1,0 +1,10 @@
+	PROGRAM zz_Remove_Unnecessry_Phases (MODE := 0,
+	                                     DisableFlag := 0,
+	                                     UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

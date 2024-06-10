@@ -1,0 +1,16 @@
+	PROGRAM Loading (MODE := 0,
+	                 DisableFlag := 0,
+	                 UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Loading_FryOil;
+				Loading_HFCS;
+				Loading_PastryWheatFlour;
+				Loading_ShorteningPalm;
+				Loading_SpringFlour;
+				Loading_Sugar;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

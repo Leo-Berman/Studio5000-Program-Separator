@@ -1,0 +1,11 @@
+	PROGRAM BlankPhase (MODE := 0,
+	                    DisableFlag := 0,
+	                    UseAsFolder := 0)
+		TAG
+			Phase OF cPHZ[0] ;
+		END_TAG
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

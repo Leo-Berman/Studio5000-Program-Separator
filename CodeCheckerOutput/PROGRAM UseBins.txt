@@ -1,0 +1,25 @@
+	PROGRAM UseBins (MODE := 0,
+	                 DisableFlag := 0,
+	                 UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				UseBin01_PastryFlour;
+				UseBin01_AddPastryFlour;
+				UseBin01_RefillScaleHopper;
+				UseBin02_GranulatedSugar;
+				UseBin02_AddSugar;
+				UseBin02_RefillScaleHopper;
+				UseBin03_HardWheatFlour;
+				UseBin03_AddHardWheatFlour;
+				UseBin03_RefillScaleHopper;
+				UseBin04_SpringFlour;
+				UseBin04_AddSpringFlour;
+				UseBin05_PowderSugar;
+				UseBin05_AddPowderedSugar;
+				UseBin06_GranulatedSugar;
+				UseBin06_AddSugar;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

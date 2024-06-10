@@ -1,0 +1,15 @@
+	PROGRAM Mixer11_Line (MODE := 0,
+	                      DisableFlag := 0,
+	                      UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer11_Mixer;
+				Mixer11_SugarHoppper;
+				Mixer11_BatchA;
+				Mixer11_BatchB;
+				Mixer11_Train;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

@@ -1,0 +1,13 @@
+	PROGRAM Mixer04_PastryHopper (MODE := 0,
+	                              DisableFlag := 0,
+	                              UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Mixer04_PastryFlourHopper;
+				Mixer04Hopper_AddPastryFlour;
+				Mixer04_PastryHopperReadyToDump;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

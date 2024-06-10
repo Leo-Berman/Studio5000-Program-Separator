@@ -1,0 +1,12 @@
+	PROGRAM VacuumBlowers (MODE := 0,
+	                       DisableFlag := 0,
+	                       UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				BlowerMinorsDonutMixer;
+				BlowerMinorsHoneyBunMixer;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

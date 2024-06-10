@@ -1,0 +1,20 @@
+	PROGRAM Brew (MODE := 0,
+	              DisableFlag := 0,
+	              UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				LiquidBrewSystem01;
+				LiquidBrewSystem01_AddWater;
+				LiquidBrewSystem01_AddHFCS;
+				LiquidBrewSystem01_HandAdd;
+				LiquidBrewSystem01_Mix;
+				LiquidBrewSystem01_TimeDelay;
+				LiquidBrewSystem01_Transfer;
+				LiquidBrewSystem01_Train;
+				LiquidBrewSystem01_BatchA;
+				LiquidBrewSystem01_BatchB;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

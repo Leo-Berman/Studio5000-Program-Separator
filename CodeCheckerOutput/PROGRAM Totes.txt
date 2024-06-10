@@ -1,0 +1,16 @@
+	PROGRAM Totes (MODE := 0,
+	               DisableFlag := 0,
+	               UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Tote01_Glycerin;
+				Tote01_Glycerin_Refill;
+				Tote02_SoyOil;
+				Tote02_SoyOil_Refill;
+				Tote03_CornSyrup;
+				Tote03_CornSyrup_Refill;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

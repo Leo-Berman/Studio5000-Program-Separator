@@ -1,0 +1,16 @@
+	PROGRAM Tanks (MODE := 0,
+	               DisableFlag := 0,
+	               UseAsFolder := 1)
+		TAG
+		END_TAG
+
+		CHILD_PROGRAMS
+				Tank01_HFCS;
+				Tank02_Shortening;
+				Tank03_PalmKernelOil;
+				Tank04_FryPalmOil;
+				Tank05_FryPalmOil;
+				MixTank01_Emulsifier;
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM
