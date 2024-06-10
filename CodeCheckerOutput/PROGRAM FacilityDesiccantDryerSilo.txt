@@ -1,0 +1,521 @@
+	PROGRAM FacilityDesiccantDryerSilo (Description := "$NProgram=$'EM$'$NClass=$'DESICCANTDRYER.01$'$N",
+	                                    MAIN := "_Main",
+	                                    MODE := 0,
+	                                    DisableFlag := 0,
+	                                    UseAsFolder := 0)
+		TAG
+			Dehumidifier OF cDO[437] ;
+			DewPoint OF cAI[109] ;
+			DewPoint_AOI : DewPoint4  := [3,1.33016678e+002,6.00201797e+000,6.92997837e+000,2.83748060e-002,6.00201797e+000,6.92997837e+000
+					,5.61203800e+001];
+			DewPoint_Celsius : REAL (RADIX := Float) := 6.92752123e+000;
+			DewPoint_IO_RelativeHumidity : REAL (RADIX := Float) := 0.00000000e+000;
+			DewPoint_IO_Temperature : REAL (RADIX := Float) := 0.00000000e+000;
+			DewPoint_IO_TemperatureF : REAL (RADIX := Float) := 0.00000000e+000;
+			EnableShutdownFaults OF cDO[436] ;
+			EStop OF cDI[5] ;
+			FaultReactivationHighLimit OF cDI[305] ;
+			FaultReactivationHighLimit_IO_Input OF iRack3A:2:I.Pt12.Data (RADIX := Decimal);
+			FaultReactivationLowLimit OF cDI[306] ;
+			FaultReactivationLowLimit_IO_Input OF iRack3A:2:I.Pt14.Data (RADIX := Decimal);
+			GeneralAlarm OF cDI[307] ;
+			GeneralAlarm_IO_Input OF iRack3A:2:I.Pt13.Data (RADIX := Decimal);
+			Null : CB_NULL  := [[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0
+					],[0,0,0,0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1],[1],[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1],[1,0,0,0],[[1],[1],[1]],[1,0,0,[0,0
+					,0]]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[0],[[0,0,0],[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[[[0,0,0],[0,0,0]],[[0,0,0,0],[0,0
+					,0,0]],[[0,0,0,0],[0,0,0,0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000
+					,[0,0,0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0
+					,0,0,0],[0,0,0,0,0,0],0.00000000e+000,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0
+					],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1
+					],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000
+					,0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0
+					,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0,0],[0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,[[0,0.00000000e+000,0.00000000e+000,0,[0,0,0],[0,0,0]],[0,0.00000000e+000,0.00000000e+000
+					,0,[0,0,0],[0,0,0]],[0,[0,0,0]]],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0],[[1],[1]]],[0,0,0,0,0,0,0,0,[[0,0,0,0
+					,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0]],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[0,[0,0],0],[0],0,0,0,0,0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0]],0,0,0,0,[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000],[0,0,0,0,0],0,0,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,0,0,0,0,0,0,0,0
+					,[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					]],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0],[0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0],[[1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0]]]];
+			OIT OF dOIT[1] ;
+			PowerInput OF cDI[458] ;
+			PowerInput_Old_Delete OF cDI[27] ;
+			PowerOutput OF cDI[460] ;
+			PowerOutput_Old_Delete OF cDI[28] ;
+			PowerSafety OF cDI[459] ;
+			PowerSafety_Old_Delete OF cDI[29] ;
+			ReactivationFanFault OF cDI[310] ;
+			ReactivationFanFault_IO_Input OF iRack3A:3:I.Pt01.Data (RADIX := Decimal);
+			RelativeHumidity OF cAI[190] ;
+			RelativeHumidity_IO_Fault OF iRack1A:1:I.Ch04.Fault (RADIX := Decimal);
+			RelativeHumidity_IO_Value OF iRack1A:1:I.Ch04.Data (RADIX := Float);
+			RotationFault OF cDI[308] ;
+			RotationFault_IO_Input OF iRack3A:2:I.Pt15.Data (RADIX := Decimal);
+			Running OF cDI[311] ;
+			Running_Intervals : TimeElapsedRemainingACC  := [[1.00019999e+001,1.66700006e-001,2.77833338e-003,1.15763891e-004,10002],[-2.00000000e-003
+					,-3.33333337e-005,-5.55555573e-007,1.15763891e-004,-2],[1.00000000e+001,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,2],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,-2],10000
+					,10002];
+			Running_IO_Input OF iRack3A:3:I.Pt02.Data (RADIX := Decimal);
+			Running_TimeElapsedRemaining : TimeElapsedRemaining  := [3,10000,10002];
+			StopControl OF cDO[435] ;
+			StopControl_IO_Output OF iRack3A:5:O.Pt06.Data (RADIX := Decimal);
+			SupplyFanFault OF cDI[309] ;
+			SupplyFanFault_IO_Input OF iRack3A:3:I.Pt00.Data (RADIX := Decimal);
+			Temperature OF cAI[189] ;
+			Temperature_IO_Fault OF iRack1A:1:I.Ch03.Fault (RADIX := Decimal);
+			Temperature_IO_Value OF iRack1A:1:I.Ch03.Data (RADIX := Float);
+			Unit OF cUNIT[45] ;
+		END_TAG
+
+		ROUTINE DewPoint 
+				N: NOP();
+				N: DewPoint4(DewPoint_AOI,Temperature.SCALED,Temperature.STAT.FAULT,RelativeHumidity.SCALED,RelativeHumidity.STAT.FAULT,DewPoint.SCALED,DewPoint.STAT.FAULT);
+				N: MOV(DewPoint.SCALED,DewPoint_Celsius)CPT(DewPoint.SCALED,DewPoint.SCALED*(9/5) + 32);
+		END_ROUTINE
+
+		ROUTINE EnableShutdownFaults 
+				RC: "This DO is always in manual.$N"
+				    "HMI buttons will allow DH faults to be bypassed.$N"
+				    "This is done by toggling the DO using MAN_START and MAN_STOP";
+				N: XIC(EnableShutdownFaults.CMD.MAN_START)XIC(EnableShutdownFaults.CMD.MAN_STOP)NOP();
+				N: XIC(cCOMMON.FirstScan.AlarmInhibit)OTL(EnableShutdownFaults.CMD.MAN_START);
+				N: XIC(EnableShutdownFaults.STAT.AUTO)OTL(EnableShutdownFaults.CMD.MAN);
+				N: DiscreteOutputControl(EnableShutdownFaults.AOI.Control,EnableShutdownFaults.CMD,EnableShutdownFaults.STAT);
+				N: [XIC(EnableShutdownFaults.STAT.ENERGIZE) OTE(EnableShutdownFaults.STAT.ENERGIZE) ,XIC(EnableShutdownFaults.STAT.ENERGIZE) OTE(EnableShutdownFaults.STAT.ON_OPEN) ,XIO(EnableShutdownFaults.STAT.ENERGIZE) [OTE(EnableShutdownFaults.STAT.OFF_CLOSED) ,XIC(EnableShutdownFaults.DELAY.OFF.DN) OTE(EnableShutdownFaults.STAT.OFF_CLOSED_DELAY) ,TON(EnableShutdownFaults.DELAY.OFF,?,?) ] ];
+				N: XIC(EnableShutdownFaults.STAT.OFF_CLOSED_DELAY)OTL(EnableShutdownFaults.CMD.MAN_START);
+				N: XIO(SupplyFanFault.STAT.FAULT)XIO(Running.STAT.FAULT)OTE(EnableShutdownFaults.STAT.PERMISSIVE);
+				N: AFI()OTE(EnableShutdownFaults.STAT.INTERLOCK);
+				N: AFI()OTE(EnableShutdownFaults.STAT.FAULT);
+		END_ROUTINE
+
+		ROUTINE FaultReactivationHighLimit 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Alarm.FacilityDesiccantDryerSugar$'$N"
+				    "ControlModule=$'Alarm.FaultReactivationHighLimit$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(FaultReactivationHighLimit_IO_Input) OTE(FaultReactivationHighLimit.STAT.ENERGIZED) ,XIC(FaultReactivationHighLimit.STAT.ENERGIZED) [XIC(FaultReactivationHighLimit.DELAY.ON.DN) OTL(FaultReactivationHighLimit.STAT.ON) OTU(FaultReactivationHighLimit.STAT.OFF) ,TON(FaultReactivationHighLimit.DELAY.ON,?,?) ] ,XIO(FaultReactivationHighLimit.STAT.ENERGIZED) [XIC(FaultReactivationHighLimit.DELAY.OFF.DN) OTU(FaultReactivationHighLimit.STAT.ON) OTL(FaultReactivationHighLimit.STAT.OFF) ,TON(FaultReactivationHighLimit.DELAY.OFF,?,?) ] ];
+				N: XIC(EnableShutdownFaults.STAT.ON_OPEN)XIC(FaultReactivationHighLimit.STAT.ON)OTE(FaultReactivationHighLimit.STAT.FAULT);
+				RC: "DH1 Facility Reactivation High Temperature: SEE DH1 SCREEN";
+				N: [XIC(FaultReactivationHighLimit.STAT.ON) XIC(PowerInput.STAT.ON) OTE(FaultReactivationHighLimit.ALARM[0].ACTIVE) ,AlarmControl(FaultReactivationHighLimit.AOI.AlarmControl[0],FaultReactivationHighLimit.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE FaultReactivationLowLimit 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Alarm.FacilityDesiccantDryerSugar$'$N"
+				    "ControlModule=$'Alarm.FaultReactivationLowLimit$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(FaultReactivationLowLimit_IO_Input) OTE(FaultReactivationLowLimit.STAT.ENERGIZED) ,XIC(FaultReactivationLowLimit.STAT.ENERGIZED) [XIC(FaultReactivationLowLimit.DELAY.ON.DN) OTL(FaultReactivationLowLimit.STAT.ON) OTU(FaultReactivationLowLimit.STAT.OFF) ,TON(FaultReactivationLowLimit.DELAY.ON,?,?) ] ,XIO(FaultReactivationLowLimit.STAT.ENERGIZED) [XIC(FaultReactivationLowLimit.DELAY.OFF.DN) OTU(FaultReactivationLowLimit.STAT.ON) OTL(FaultReactivationLowLimit.STAT.OFF) ,TON(FaultReactivationLowLimit.DELAY.OFF,?,?) ] ];
+				N: XIC(EnableShutdownFaults.STAT.ON_OPEN)XIC(FaultReactivationLowLimit.STAT.ON)OTE(FaultReactivationLowLimit.STAT.FAULT);
+				RC: "DH1 Facility Reactivation Low Temperature: SEE DH1 SCREEN$N"
+				    "";
+				N: [XIC(FaultReactivationLowLimit.STAT.ON) XIC(PowerInput.STAT.ON) OTE(FaultReactivationLowLimit.ALARM[0].ACTIVE) ,AlarmControl(FaultReactivationLowLimit.AOI.AlarmControl[0],FaultReactivationLowLimit.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE GeneralAlarm 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Alarm.FacilityDesiccantDryerSugar$'$N"
+				    "ControlModule=$'Alarm.GeneralAlarm$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(GeneralAlarm_IO_Input) OTE(GeneralAlarm.STAT.ENERGIZED) ,XIC(GeneralAlarm.STAT.ENERGIZED) [XIC(GeneralAlarm.DELAY.ON.DN) OTL(GeneralAlarm.STAT.ON) OTU(GeneralAlarm.STAT.OFF) ,TON(GeneralAlarm.DELAY.ON,?,?) ] ,XIO(GeneralAlarm.STAT.ENERGIZED) [XIC(GeneralAlarm.DELAY.OFF.DN) OTU(GeneralAlarm.STAT.ON) OTL(GeneralAlarm.STAT.OFF) ,TON(GeneralAlarm.DELAY.OFF,?,?) ] ];
+				N: XIC(EnableShutdownFaults.STAT.ON_OPEN)XIC(GeneralAlarm.STAT.ON)OTE(GeneralAlarm.STAT.FAULT);
+				RC: "DH1 Facility Dehumidifier General Fault: SEE DH1 SCREEN$N"
+				    "";
+				N: [XIC(GeneralAlarm.STAT.ON) XIC(PowerInput.STAT.ON) OTE(GeneralAlarm.ALARM[0].ACTIVE) ,AlarmControl(GeneralAlarm.AOI.AlarmControl[0],GeneralAlarm.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE ReactivationFanFault 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Alarm.FacilityDesiccantDryerSugar$'$N"
+				    "ControlModule=$'Alarm.ReactivationFanFault$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(ReactivationFanFault_IO_Input) OTE(ReactivationFanFault.STAT.ENERGIZED) ,XIC(ReactivationFanFault.STAT.ENERGIZED) [XIC(ReactivationFanFault.DELAY.ON.DN) OTL(ReactivationFanFault.STAT.ON) OTU(ReactivationFanFault.STAT.OFF) ,TON(ReactivationFanFault.DELAY.ON,?,?) ] ,XIO(ReactivationFanFault.STAT.ENERGIZED) [XIC(ReactivationFanFault.DELAY.OFF.DN) OTU(ReactivationFanFault.STAT.ON) OTL(ReactivationFanFault.STAT.OFF) ,TON(ReactivationFanFault.DELAY.OFF,?,?) ] ];
+				RC: "Permissive for all phases$N"
+				    "";
+				N: XIC(EnableShutdownFaults.STAT.ON_OPEN)XIC(ReactivationFanFault.STAT.ON)[XIC(ReactivationFanFault.DELAY.FAULT.DN) OTE(ReactivationFanFault.STAT.FAULT) ,TON(ReactivationFanFault.DELAY.FAULT,?,?) ];
+				RC: "DH1 Facility Dehumidifier Reactivation Fan Fault: SUGAR MILL WILL STOP SOON, SEE DH1 SCREEN$N"
+				    "";
+				N: [XIC(ReactivationFanFault.STAT.ON) XIC(PowerInput.STAT.ON) OTE(ReactivationFanFault.ALARM[0].ACTIVE) ,AlarmControl(ReactivationFanFault.AOI.AlarmControl[0],ReactivationFanFault.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE RelativeHumidity 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Temperature.FacilityDesiccantDryerSilo$'$N"
+				    "ControlModule=$'Temperature.OutputHumidity$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(0,RelativeHumidity.TYPE)MOV(63,RelativeHumidity.DISPLAY_MASK.BITS)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(RelativeHumidity_IO_Value,RelativeHumidity.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(RelativeHumidity.AOI.Scaling,RelativeHumidity.RAW,RelativeHumidity.RAW_LO,RelativeHumidity.RAW_HI,RelativeHumidity.SCALE_LO,RelativeHumidity.SCALE_HI,RelativeHumidity.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(RelativeHumidity_IO_Fault) ,XIC(RelativeHumidity.STAT.FAULT) ]XIO(RelativeHumidity.CMD.RESET)OTE(RelativeHumidity.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(RelativeHumidity.SCALED,RelativeHumidity.LoLo.LIM) ,XIC(RelativeHumidity.LoLo.ACTIVE) ]CMP(RelativeHumidity.SCALED<=(RelativeHumidity.LoLo.LIM+RelativeHumidity.LoLo.DEADBAND))[XIC(RelativeHumidity.LoLo.DELAY.DN) OTE(RelativeHumidity.LoLo.ACTIVE) ,TON(RelativeHumidity.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(RelativeHumidity.SCALED,RelativeHumidity.Lo.LIM) ,XIC(RelativeHumidity.Lo.ACTIVE) ]CMP(RelativeHumidity.SCALED<=(RelativeHumidity.Lo.LIM+RelativeHumidity.Lo.DEADBAND))[XIC(RelativeHumidity.Lo.DELAY.DN) OTE(RelativeHumidity.Lo.ACTIVE) ,TON(RelativeHumidity.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(RelativeHumidity.SCALED,RelativeHumidity.Hi.LIM) ,XIC(RelativeHumidity.Hi.ACTIVE) ]CMP(RelativeHumidity.SCALED>=(RelativeHumidity.Hi.LIM-RelativeHumidity.Hi.DEADBAND))[XIC(RelativeHumidity.Hi.DELAY.DN) OTE(RelativeHumidity.Hi.ACTIVE) ,TON(RelativeHumidity.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(RelativeHumidity.SCALED,RelativeHumidity.HiHi.LIM) ,XIC(RelativeHumidity.HiHi.ACTIVE) ]CMP(RelativeHumidity.SCALED>=(RelativeHumidity.HiHi.LIM-RelativeHumidity.HiHi.DEADBAND))[XIC(RelativeHumidity.HiHi.DELAY.DN) OTE(RelativeHumidity.HiHi.ACTIVE) ,TON(RelativeHumidity.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(RelativeHumidity.AOI.Rate,RelativeHumidity.SCALED,RelativeHumidity.RATE);
+				RC: "$N"
+				    "";
+				N: [LES(RelativeHumidity.RATE.CHANGE,RelativeHumidity.RATE.Lo.LIM) ,XIC(RelativeHumidity.RATE.Lo.ACTIVE) ]CMP(RelativeHumidity.RATE.CHANGE<=(RelativeHumidity.RATE.Lo.LIM+RelativeHumidity.RATE.Lo.DEADBAND))[XIC(RelativeHumidity.RATE.Lo.DELAY.DN) OTE(RelativeHumidity.RATE.Lo.ACTIVE) ,TON(RelativeHumidity.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [LES(RelativeHumidity.RATE.CHANGE,RelativeHumidity.RATE.LoLo.LIM) ,XIC(RelativeHumidity.RATE.LoLo.ACTIVE) ]CMP(RelativeHumidity.RATE.CHANGE<=(RelativeHumidity.RATE.LoLo.LIM+RelativeHumidity.RATE.LoLo.DEADBAND))[XIC(RelativeHumidity.RATE.LoLo.DELAY.DN) OTE(RelativeHumidity.RATE.LoLo.ACTIVE) ,TON(RelativeHumidity.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(RelativeHumidity.STAT.FAULT)[XIC(RelativeHumidity.Fault.DELAY.DN) OTE(RelativeHumidity.Fault.ACTIVE) ,MOV(10000,RelativeHumidity.Fault.DELAY.PRE) TON(RelativeHumidity.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(RelativeHumidity.AOI.Mode,RelativeHumidity.CMD,RelativeHumidity.STAT,RelativeHumidity.MAN_SP,RelativeHumidity.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(RelativeHumidity.LoLo.ACTIVE) XIO(RelativeHumidity.LoLo.DISABLED) XIC(cDI[452].STAT.ON) OTE(RelativeHumidity.ALARM[0].ACTIVE) ,AlarmControl(RelativeHumidity.AOI.AlarmControl[0],RelativeHumidity.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(RelativeHumidity.Lo.ACTIVE) XIO(RelativeHumidity.Lo.DISABLED) XIC(cDI[452].STAT.ON) OTE(RelativeHumidity.ALARM[1].ACTIVE) ,AlarmControl(RelativeHumidity.AOI.AlarmControl[1],RelativeHumidity.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(RelativeHumidity.Hi.ACTIVE) XIO(RelativeHumidity.Hi.DISABLED) XIC(cDI[452].STAT.ON) OTE(RelativeHumidity.ALARM[2].ACTIVE) ,AlarmControl(RelativeHumidity.AOI.AlarmControl[2],RelativeHumidity.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(RelativeHumidity.HiHi.ACTIVE) XIO(RelativeHumidity.HiHi.DISABLED) XIC(cDI[452].STAT.ON) OTE(RelativeHumidity.ALARM[3].ACTIVE) ,AlarmControl(RelativeHumidity.AOI.AlarmControl[3],RelativeHumidity.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(RelativeHumidity.Fault.ACTIVE) XIO(RelativeHumidity.Fault.DISABLED) XIC(cDI[452].STAT.ON) OTE(RelativeHumidity.ALARM[6].ACTIVE) ,AlarmControl(RelativeHumidity.AOI.AlarmControl[6],RelativeHumidity.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE RotationFault 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Alarm.FacilityDesiccantDryerSugar$'$N"
+				    "ControlModule=$'Alarm.RotationFault$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(RotationFault_IO_Input) OTE(RotationFault.STAT.ENERGIZED) ,XIC(RotationFault.STAT.ENERGIZED) [XIC(RotationFault.DELAY.ON.DN) OTL(RotationFault.STAT.ON) OTU(RotationFault.STAT.OFF) ,TON(RotationFault.DELAY.ON,?,?) ] ,XIO(RotationFault.STAT.ENERGIZED) [XIC(RotationFault.DELAY.OFF.DN) OTU(RotationFault.STAT.ON) OTL(RotationFault.STAT.OFF) ,TON(RotationFault.DELAY.OFF,?,?) ] ];
+				RC: "Phase Permissive for All Phases$N"
+				    "$N"
+				    "";
+				N: XIC(EnableShutdownFaults.STAT.ON_OPEN)XIC(RotationFault.STAT.ON)[XIC(RotationFault.DELAY.FAULT.DN) OTE(RotationFault.STAT.FAULT) ,TON(RotationFault.DELAY.FAULT,?,?) ];
+				RC: "DH1 Facility Dehumidifier Rotation Fault: SUGAR MILL WILL STOP SOON, SEE DH1 SCREEN$N"
+				    "";
+				N: [XIC(RotationFault.STAT.ON) XIC(PowerInput.STAT.ON) OTE(RotationFault.ALARM[0].ACTIVE) ,AlarmControl(RotationFault.AOI.AlarmControl[0],RotationFault.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Running 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Activated.FacilityDesiccantDryerSilo$'$N"
+				    "ControlModule=$'Activated.Running$'$N"
+				    "";
+				N: NOP();
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Activated.FacilityDesiccantDryerSugar$'$N"
+				    "ControlModule=$'Activated.Running$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(Running_IO_Input) OTE(Running.STAT.ENERGIZED) ,XIC(Running.STAT.ENERGIZED) [XIC(Running.DELAY.ON.DN) OTL(Running.STAT.ON) OTU(Running.STAT.OFF) ,TON(Running.DELAY.ON,?,?) ] ,XIO(Running.STAT.ENERGIZED) [XIC(Running.DELAY.OFF.DN) OTU(Running.STAT.ON) OTL(Running.STAT.OFF) ,TON(Running.DELAY.OFF,?,?) ] ];
+				N: TimeElapsedRemaining(Running_TimeElapsedRemaining,Running.DELAY.ON.PRE,Running.DELAY.ON.ACC,Running_Intervals);
+				RC: "Not Running is a fault$N"
+				    "";
+				N: XIC(EnableShutdownFaults.STAT.ON_OPEN)XIC(Running.STAT.OFF)[XIC(Running.DELAY.FAULT.DN) OTE(Running.STAT.FAULT) ,TON(Running.DELAY.FAULT,?,?) ];
+				RC: "DH1 Facility Dehumidifier - NOT RUNNING - HB CONCENTRATE AND GEM CONCENTRATE HOPPERS WILL NOT REFILL$N"
+				    "";
+				N: [XIC(Running.STAT.OFF) XIC(PowerInput.STAT.ON) OTE(Running.ALARM[0].ACTIVE) ,AlarmControl(Running.AOI.AlarmControl[0],Running.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "not running is a phase fault for powder hopper refill and also stop the mill and the vacuum fan.$N"
+				    "So that would be a device level interlock for both of those$N"
+				    "";
+				N: [XIC(SupplyFanFault.STAT.ON) ,XIC(RotationFault.STAT.ON) ,XIC(ReactivationFanFault.STAT.ON) ,XIC(GeneralAlarm.STAT.ON) ,XIC(FaultReactivationHighLimit.STAT.ON) ,XIC(FaultReactivationLowLimit.STAT.ON) ]OTE(Running.ALARM[1].ACTIVE);
+		END_ROUTINE
+
+		ROUTINE StopControl 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Device.FacilityDesiccantDryerSugar$'$N"
+				    "ControlModule=$'Device.StopControl$'$N"
+				    "";
+				N: NOP();
+				RC: "When there is no call for powdered sugar refill, or remote blower draws, then run a 4 hour timer.$N"
+				    "when 4 hour timer is done, then stop the DH$N"
+				    "";
+				N: AFI()[XIC(StopControl.TMR[0].DN) OTE(StopControl.STAT.AUTO_RUN) ,MOV(14400000,StopControl.TMR[0].PRE) TON(StopControl.TMR[0],?,?) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,StopControl.MSG.PERM) ,EQU(StopControl.MSG.PERM,0) OTE(StopControl.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,StopControl.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,StopControl.MSG.INTRLK) ,NEQ(StopControl.MSG.INTRLK,0) OTE(StopControl.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.CLEAR$'$N"
+				    "Function=$'STATUS.MESSAGE.CLEAR$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(0,StopControl.MSG.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(StopControl.STAT.AUTO_RUN) NEQ(StopControl.MSG.PERM,0) MOV(StopControl.MSG.PERM,StopControl.MSG.MSG) ,NEQ(StopControl.MSG.INTRLK,0) MOV(StopControl.MSG.INTRLK,StopControl.MSG.MSG) ,NEQ(StopControl.MSG.FAULT,0) MOV(StopControl.MSG.FAULT,StopControl.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(StopControl.AOI.Message,StopControl.ID,StopControl.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(StopControl.AOI.Control,StopControl.CMD,StopControl.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.BASIC.CONTROL$'$N"
+				    "";
+				N: [XIC(StopControl.STAT.ENERGIZE) OTE(StopControl_IO_Output) ,XIC(StopControl.STAT.ENERGIZE) OTE(StopControl.STAT.ON_OPEN) ,XIO(StopControl.STAT.ENERGIZE) OTE(StopControl.STAT.OFF_CLOSED) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(StopControl.STAT.FAULT) OTE(StopControl.ALARM[0].ACTIVE) ,AlarmControl(StopControl.AOI.AlarmControl[0],StopControl.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE SupplyFanFault 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Alarm.FacilityDesiccantDryerSugar$'$N"
+				    "ControlModule=$'Alarm.SupplyFanFault$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(SupplyFanFault_IO_Input) OTE(SupplyFanFault.STAT.ENERGIZED) ,XIC(SupplyFanFault.STAT.ENERGIZED) [XIC(SupplyFanFault.DELAY.ON.DN) OTL(SupplyFanFault.STAT.ON) OTU(SupplyFanFault.STAT.OFF) ,TON(SupplyFanFault.DELAY.ON,?,?) ] ,XIO(SupplyFanFault.STAT.ENERGIZED) [XIC(SupplyFanFault.DELAY.OFF.DN) OTU(SupplyFanFault.STAT.ON) OTL(SupplyFanFault.STAT.OFF) ,TON(SupplyFanFault.DELAY.OFF,?,?) ] ];
+				RC: "Phase Fault for Sugar Mill Powder Refill$N"
+				    "Phase Permissive for USe Bin Refills$N"
+				    "";
+				N: XIC(EnableShutdownFaults.STAT.ON_OPEN)XIC(SupplyFanFault.STAT.ON)[XIC(SupplyFanFault.DELAY.FAULT.DN) OTE(SupplyFanFault.STAT.FAULT) ,TON(SupplyFanFault.DELAY.FAULT,?,?) ];
+				RC: "DH1 Facility Dehumidifier Supply Fan Fault: SUGAR MILL WILL STOP SOON, SEE DH1 SCREEN$N"
+				    "";
+				N: [XIC(SupplyFanFault.STAT.ON) XIC(PowerInput.STAT.ON) OTE(SupplyFanFault.ALARM[0].ACTIVE) ,AlarmControl(SupplyFanFault.AOI.AlarmControl[0],SupplyFanFault.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Temperature 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'DESICCANTDRYER.01.Temperature.FacilityDesiccantDryerSilo$'$N"
+				    "ControlModule=$'Temperature.OutputTemperature$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(0,Temperature.TYPE)MOV(63,Temperature.DISPLAY_MASK.BITS)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(Temperature_IO_Value,Temperature.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(Temperature.AOI.Scaling,Temperature.RAW,Temperature.RAW_LO,Temperature.RAW_HI,Temperature.SCALE_LO,Temperature.SCALE_HI,Temperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Temperature_IO_Fault) ,XIC(Temperature.STAT.FAULT) ]XIO(Temperature.CMD.RESET)OTE(Temperature.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(Temperature.SCALED,Temperature.LoLo.LIM) ,XIC(Temperature.LoLo.ACTIVE) ]CMP(Temperature.SCALED<=(Temperature.LoLo.LIM+Temperature.LoLo.DEADBAND))[XIC(Temperature.LoLo.DELAY.DN) OTE(Temperature.LoLo.ACTIVE) ,TON(Temperature.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(Temperature.SCALED,Temperature.Lo.LIM) ,XIC(Temperature.Lo.ACTIVE) ]CMP(Temperature.SCALED<=(Temperature.Lo.LIM+Temperature.Lo.DEADBAND))[XIC(Temperature.Lo.DELAY.DN) OTE(Temperature.Lo.ACTIVE) ,TON(Temperature.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(Temperature.SCALED,Temperature.Hi.LIM) ,XIC(Temperature.Hi.ACTIVE) ]CMP(Temperature.SCALED>=(Temperature.Hi.LIM-Temperature.Hi.DEADBAND))[XIC(Temperature.Hi.DELAY.DN) OTE(Temperature.Hi.ACTIVE) ,TON(Temperature.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(Temperature.SCALED,Temperature.HiHi.LIM) ,XIC(Temperature.HiHi.ACTIVE) ]CMP(Temperature.SCALED>=(Temperature.HiHi.LIM-Temperature.HiHi.DEADBAND))[XIC(Temperature.HiHi.DELAY.DN) OTE(Temperature.HiHi.ACTIVE) ,TON(Temperature.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(Temperature.AOI.Rate,Temperature.SCALED,Temperature.RATE);
+				RC: "$N"
+				    "";
+				N: [LES(Temperature.RATE.CHANGE,Temperature.RATE.Lo.LIM) ,XIC(Temperature.RATE.Lo.ACTIVE) ]CMP(Temperature.RATE.CHANGE<=(Temperature.RATE.Lo.LIM+Temperature.RATE.Lo.DEADBAND))[XIC(Temperature.RATE.Lo.DELAY.DN) OTE(Temperature.RATE.Lo.ACTIVE) ,TON(Temperature.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [LES(Temperature.RATE.CHANGE,Temperature.RATE.LoLo.LIM) ,XIC(Temperature.RATE.LoLo.ACTIVE) ]CMP(Temperature.RATE.CHANGE<=(Temperature.RATE.LoLo.LIM+Temperature.RATE.LoLo.DEADBAND))[XIC(Temperature.RATE.LoLo.DELAY.DN) OTE(Temperature.RATE.LoLo.ACTIVE) ,TON(Temperature.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Temperature.STAT.FAULT)[XIC(Temperature.Fault.DELAY.DN) OTE(Temperature.Fault.ACTIVE) ,MOV(10000,Temperature.Fault.DELAY.PRE) TON(Temperature.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(Temperature.AOI.Mode,Temperature.CMD,Temperature.STAT,Temperature.MAN_SP,Temperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(Temperature.LoLo.ACTIVE) XIO(Temperature.LoLo.DISABLED) XIC(cDI[452].STAT.ON) OTE(Temperature.ALARM[0].ACTIVE) ,AlarmControl(Temperature.AOI.AlarmControl[0],Temperature.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(Temperature.Lo.ACTIVE) XIO(Temperature.Lo.DISABLED) XIC(cDI[452].STAT.ON) OTE(Temperature.ALARM[1].ACTIVE) ,AlarmControl(Temperature.AOI.AlarmControl[1],Temperature.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(Temperature.Hi.ACTIVE) XIO(Temperature.Hi.DISABLED) XIC(cDI[452].STAT.ON) OTE(Temperature.ALARM[2].ACTIVE) ,AlarmControl(Temperature.AOI.AlarmControl[2],Temperature.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(Temperature.HiHi.ACTIVE) XIO(Temperature.HiHi.DISABLED) XIC(cDI[452].STAT.ON) OTE(Temperature.ALARM[3].ACTIVE) ,AlarmControl(Temperature.AOI.AlarmControl[3],Temperature.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(Temperature.Fault.ACTIVE) XIO(Temperature.Fault.DISABLED) XIC(cDI[452].STAT.ON) OTE(Temperature.ALARM[6].ACTIVE) ,AlarmControl(Temperature.AOI.AlarmControl[6],Temperature.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'DESICCANTDRYER.01$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				N: XIC(FaultReactivationHighLimit.STAT.ON)XIC(FaultReactivationLowLimit.STAT.ON)XIC(ReactivationFanFault.STAT.ON)XIC(RotationFault.STAT.ON)XIC(SupplyFanFault.STAT.ON)XIC(GeneralAlarm.STAT.ON)NOP();
+				N: JSR(Temperature,0)JSR(RelativeHumidity,0)JSR(DewPoint,0);
+				N: JSR(EnableShutdownFaults,0);
+				N: JSR(FaultReactivationHighLimit,0);
+				N: JSR(FaultReactivationLowLimit,0);
+				N: JSR(GeneralAlarm,0);
+				N: JSR(RotationFault,0);
+				N: JSR(SupplyFanFault,0);
+				N: JSR(ReactivationFanFault,0);
+				N: JSR(StopControl,0);
+				N: JSR(Running,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

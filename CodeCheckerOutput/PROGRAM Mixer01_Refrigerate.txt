@@ -1,0 +1,154 @@
+	PROGRAM Mixer01_Refrigerate (Description := "$NProgram=$'PH$'$NClass=$'MIXER.LOW.SPEED:01.01.01$'$N",
+	                             MAIN := "_000_Main",
+	                             MODE := 0,
+	                             DisableFlag := 0,
+	                             UseAsFolder := 0)
+		TAG
+			ActualMinutesRemaining OF Phase.USER.RPAR[5] (RADIX := Float);
+			ActualSecondsRemaining OF Phase.USER.RPAR[6] (RADIX := Float);
+			ActualTemperature OF Phase.ACTUAL[5] (RADIX := Float);
+			ActualTemperatureAdjustment OF Phase.ACTUAL[7] (RADIX := Float);
+			ActualTemperatureError OF Phase.ACTUAL[6] (RADIX := Float);
+			ActualTime OF Phase.ACTUAL[1] (RADIX := Float);
+			ActualTimeAdjustment OF Phase.ACTUAL[3] (RADIX := Float);
+			ActualTimePercent OF Phase.USER.RPAR[7] (RADIX := Float);
+			ActualTimeRemaining OF Phase.USER.RPAR[4] (RADIX := Float);
+			AOI : CB_PHASE_AOI  := [[3],[3,11100000],[3,[0,1015]],[3],[1,0.00000000e+000],[3],[3,1.00000000e+001,9.00000000e+000],[3],[3,1110,111000,110999
+					],[[3],[1],[1],[0],[1],[1],[1],[1]],[3,16,15,15],[1,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],0,0]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,[1,0.00000000e+000,0.00000000e+000],0.00000000e+000
+					],[3,5.00000000e+000,7.80000000e+001]];
+			AutoRunConstantOn OF Phase.CM.AutoRun[1] (RADIX := Decimal);
+			AutoRunDeadband OF Phase.CM.AutoRun[2] (RADIX := Decimal);
+			AutoRunTemperatureControl OF Phase.CM.AutoRun[11] (RADIX := Decimal);
+			EarlyRefrigerationIsEnabled OF Unit.IPAR[10].0 (RADIX := Decimal);
+			EStop OF cDI[5] ;
+			MixerBowlTemperature OF cAI[194] ;
+			MixerCommOk OF cDI[331] ;
+			MixerInterlocked OF cDI[328] ;
+			MixerMotor OF cDO[447] ;
+			MixerRemote OF cDI[327] ;
+			MixerTemperature OF cAI[194] ;
+			OIT : CB_OIT  := [[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0,0,0,221868494,0,0,[0,0,0,0,0,0,0,0,0,0],[0,0,0,0],0,[0,[0,0,0]],[0,[0,0,0]],0,0,0];
+			Phase OF cPHZ[110] ;
+			PhaseClass OF cPHZ_CLASS[10] (Usage := Public);
+			ph_Discharge OF cPHZ[23] ;
+			ph_FlourHopperDump OF cPHZ[24] ;
+			ph_MinorsHopperDump OF cPHZ[29] ;
+			ph_MixHighSpeed OF cPHZ[27] ;
+			ph_MixLowSpeed OF cPHZ[28] (Usage := Public);
+			ph_WaitForOtherMixer OF cPHZ[108] ;
+			ProgressTimeIntervals : TimeElapsedRemainingAOI  := [[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],0,0]];
+			RefrigerationTimer OF Phase.STEP_TMR.ACTIVE ;
+			RefrigerationTimerIntervals : TimeElapsedRemainingAOI  := [[3,780000,752636],[[7.52635986e+002,1.25439329e+001,2.09065557e-001,8.71106517e-003,752636],[2.73640000e+001
+					,4.56066668e-001,7.60111120e-003,8.71106517e-003,27364],[3.20000000e+001,1.20000000e+001,0.00000000e+000
+					,0.00000000e+000,636],[2.70000000e+001,0.00000000e+000,0.00000000e+000,0.00000000e+000,364
+					],780000,752636]];
+			RefrigerationValve OF cDO[448] ;
+			StartRefrigerationEarly OF Unit.IPAR[10].1 (RADIX := Decimal);
+			StartRefrigerationEarlyDelay OF Phase.TMR[3] ;
+			TargetTemperature OF Phase.SPT[4] (RADIX := Float);
+			TargetTemperatureAdjustmentLimit OF Phase.SPT[7] (RADIX := Float);
+			TargetTemperatureSetpoint OF Phase.SPT[5] (RADIX := Float);
+			TargetTemperatureTolerance OF Phase.SPT[6] (RADIX := Float);
+			TargetTime OF Phase.SPT[0] (RADIX := Float);
+			TargetTimeAdjustmentLimit OF Phase.SPT[3] (RADIX := Float);
+			TargetTimeSetpoint OF Phase.SPT[1] (RADIX := Float);
+			TemperatureToleranceDelay OF Phase.TMR[1] ;
+			Unit OF cUNIT[47] ;
+		END_TAG
+
+		ROUTINE _000_FirstScan 
+				N: NOP();
+				N: MOV(10,PhaseClass.TYPE);
+				N: MOV(Unit.ARRAY_INDEX,Phase.INDEX)MOV(PhaseClass.TYPE,Phase.TYPE)MOV(PhaseClass.ID,Phase.CLASS)COP(PhaseClass.NAME,Phase.CLASS_NAME,1)COP(PhaseClass.TYPE_NAME,Phase.TYPE_NAME,1);
+				N: NOP();
+				N: PhaseClassParameter(AOI.PhaseClassParameter,PhaseClass,Phase.USER,Phase.DISPLAY_MASK,Phase.TYPE_MASK);
+				N: PhaseClassParameter(AOI.PhaseClassParameter,PhaseClass,Phase.USER,Phase.DISPLAY_MASK,Phase.TYPE_MASK);
+		END_ROUTINE
+
+		ROUTINE _000_Main 
+				N: NOP();
+				N: XIC(S:FS)JSR(_000_FirstScan,0);
+				N: XIC(Phase.STATE.IDLE)XIC(Phase.STATE.RUNNING)XIC(Phase.STATE.HELD)XIC(Phase.STATE.COMPLETE)XIC(Phase.STATE.ABORTED)XIC(Phase.STATE.STOPPED)NOP();
+				N: XIC(Phase.STATE.HOLDING)XIC(Phase.STATE.RESTARTING)XIC(Phase.STATE.ABORTING)XIC(Phase.STATE.STOPPING)NOP();
+				N: XIC(Phase.STAT.AUTO)[XIC(Phase.CMD.START) XIC(Phase.CMD.HOLD) XIC(Phase.CMD.RESTART) XIC(Phase.CMD.STOP) XIC(Phase.CMD.ABORT) XIC(Phase.CMD.RESET) ,XIC(Phase.CMD.AUTO) XIC(Phase.CMD.MAN) MOV(Phase.STATE_NO,Phase.STATE_NO) MOV(Phase.STEP_INDEX,Phase.STEP_INDEX) MOV(Phase.MSG.FAULT,Phase.MSG.FAULT) ,MOV(Phase.SPT[1],Phase.SPT[1]) MOV(Phase.ACTUAL[1],Phase.ACTUAL[1]) ]NOP();
+				N: JSR(_120_PermissiveFaultAndMessaging,0);
+				N: PhaseMode(AOI.Mode,Phase,cPHZ[0].MSG)PhaseCommon(AOI.Common,Phase)PhaseStepIndex(AOI.StepIndex,Phase)PhaseStateTransition(AOI.StateTransition,Phase.CMD,Phase.STAT,Phase.STATE,Phase.STATE_NO);
+				N: JSR(_050_StepControl,0);
+				N: JSR(_110_ControlModule,0);
+				N: JSR(_130_Alarming,0);
+				N: PhaseStepMapping(AOI.StepMapping,Phase);
+				N: PhaseBypass(AOI.Bypass,Phase);
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _050_StepControl 
+				N: NOP();
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,1)MOV(2000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,2000)[GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.RECORD.PRE) MOV(3000,Phase.STEP_INDEX_GOTO) ,FLL(0,Phase.ACTUAL[1],2) FLL(0,Phase.ACTUAL[4],2) RES(RefrigerationTimer) ];
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,3000)XIC(Phase.STAT.PERMISSIVE)MOV(4000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4000)GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.INITIALIZE.PRE)MOV(5000,Phase.STEP_INDEX_GOTO);
+				N: PhaseTargetAdjustLimit(AOI.TargetAdjustLimit,TargetTimeAdjustmentLimit,ActualTimeAdjustment,TargetTime,TargetTimeSetpoint,Phase.STAT.MAN)PhaseTargetAdjustLimit(AOI.TargetAdjustLimit2,TargetTemperatureAdjustmentLimit,ActualTemperatureAdjustment,TargetTemperature,TargetTemperatureSetpoint,Phase.STAT.MAN);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5000)[GEQ(TargetTime,0) MUL(TargetTime,60000,RefrigerationTimer.PRE) ,EQU(TargetTimeSetpoint,0) MOV(2140000000,RefrigerationTimer.PRE) ,[XIC(MixerMotor.STAT.ON_OPEN) ,LEQ(TargetTime,0) ] RTO(RefrigerationTimer,?,?) ,XIC(RefrigerationTimer.DN) MOV(6000,Phase.STEP_INDEX_GOTO) ];
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5000)MOV(MixerTemperature.SCALED,ActualTemperature)SUB(ActualTemperature,TargetTemperature,ActualTemperatureError);
+				RC: "Complete based on STOP STEP$N"
+				    "";
+				N: XIC(Unit.STATE.RUNNING)XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5000)EQU(TargetTimeSetpoint,0)GRT(Phase.RECIPE.STOP_STEP,0)EQU(Unit.STEP_INDEX,Phase.RECIPE.STOP_STEP)MOV(6000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5000)TimeElapsedRemaining(RefrigerationTimerIntervals.AOI,RefrigerationTimer.PRE,RefrigerationTimer.ACC,RefrigerationTimerIntervals.ACC)[MOV(RefrigerationTimerIntervals.ACC.Elapsed.Minutes,Phase.ACTUAL[0]) MOV(RefrigerationTimerIntervals.ACC.Elapsed.Minutes,ActualTime) ,MOV(RefrigerationTimerIntervals.ACC.Remaining.Minutes,ActualTimeRemaining) ,MOV(RefrigerationTimerIntervals.ACC.RemainingClock.Minutes,ActualMinutesRemaining) ,MOV(RefrigerationTimerIntervals.ACC.RemainingClock.Seconds,ActualSecondsRemaining) ,GRT(TargetTime,0) CPT(ActualTimePercent,100*ActualTime/TargetTime) ];
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5000)[XIC(ph_MixHighSpeed.STATE.DONE) ,XIC(ph_Discharge.STATE.RUNNING) ,XIC(Unit.STATE.DONE) ]MOV(6000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,6000)MOV(10000,Phase.STEP_INDEX_GOTO);
+				N: NOP();
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.RUNNING_COMPLETE);
+				N: XIC(Phase.STATE.HOLDING)EQU(Phase.STEP_INDEX,2000)[GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.RECORD.PRE) MOV(3000,Phase.STEP_INDEX_GOTO) ,FLL(0,Phase.ACTUAL[1],2) FLL(0,Phase.ACTUAL[4],2) RES(RefrigerationTimer) ];
+				N: XIC(Phase.STATE.HOLDING)OTE(Phase.STAT.HOLDING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Restarting)[LIM(3000,Phase.STEP_INDEX,5000) MOV(3000,Phase.STEP_INDEX_GOTO) ,LIM(6000,Phase.STEP_INDEX,9999) MOV(10000,Phase.STEP_INDEX_GOTO) ];
+				N: XIC(Phase.STATE.RESTARTING)OTE(Phase.STAT.RESTARTING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Stopping)MOV(10000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.STOPPING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Aborting)MOV(10000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.ABORTING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.ABORTING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Idle)NOP();
+		END_ROUTINE
+
+		ROUTINE _110_ControlModule 
+				N: NOP();
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				RC: "Latch on a bit that starts refrigeration early$N"
+				    "";
+				N: XIC(EarlyRefrigerationIsEnabled)[XIC(ph_WaitForOtherMixer.STATE.RUNNING) EQU(ph_WaitForOtherMixer.STEP_INDEX,5000) ,XIC(ph_FlourHopperDump.STATE.RUNNING) EQU(ph_FlourHopperDump.STEP_INDEX,5000) ,XIC(ph_MinorsHopperDump.STATE.RUNNING) EQU(ph_MinorsHopperDump.STEP_INDEX,5000) ]OTL(StartRefrigerationEarly);
+				N: XIC(StartRefrigerationEarly)TON(StartRefrigerationEarlyDelay,?,?);
+				N: [XIC(Phase.STATE.RUNNING) XIO(Unit.STAT.CLEANING) EQU(Phase.STEP_INDEX,5000) OTU(StartRefrigerationEarly) ,XIC(Unit.STATE.RUNNING) XIC(StartRefrigerationEarlyDelay.DN) XIO(Unit.STAT.CLEANING) ]OTE(AutoRunConstantOn);
+				N: XIC(Phase.STATE.RUNNING)XIO(Unit.STAT.CLEANING)EQU(Phase.STEP_INDEX,5010)XIC(MixerBowlTemperature.Hi.ACTIVE)OTE(AutoRunDeadband);
+				N: XIC(AutoRunDeadband)[MOV(Phase.SPT[5],Phase.SPT[5]) MOV(Phase.SPT[4],MixerBowlTemperature.Hi.LIM) ,LES(MixerBowlTemperature.Hi.DEADBAND,2) MOV(2,MixerBowlTemperature.Hi.DEADBAND) ];
+				N: [XIC(Phase.CMD.START) ,XIC(Phase.CMD.RESTART) ]OTL(RefrigerationValve.CMD.RESET);
+		END_ROUTINE
+
+		ROUTINE _120_PermissiveFaultAndMessaging 
+				N: NOP();
+				N: [MOV(0,Phase.MSG.PERM) ,XIC(Phase.STAT.AUTO) XIO(MixerRemote.STAT.ON) MOV(1,Phase.MSG.PERM) ,XIC(Phase.STAT.AUTO) XIC(MixerInterlocked.STAT.ON) MOV(3,Phase.MSG.PERM) ,XIC(Phase.STAT.AUTO) XIO(MixerCommOk.STAT.ON) MOV(4,Phase.MSG.PERM) ,XIO(RefrigerationValve.STAT.AUTO) MOV(5,Phase.MSG.PERM) ,EQU(Phase.MSG.PERM,0) OTE(Phase.STAT.PERMISSIVE) ];
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.MSG.FAULT,0)[XIC(EStop.STAT.FAULT) MOV(21,Phase.MSG.FAULT) ,XIC(Phase.STAT.AUTO) XIO(MixerRemote.STAT.ON) MOV(22,Phase.MSG.FAULT) ,XIC(Phase.STAT.AUTO) XIC(MixerInterlocked.STAT.ON) MOV(24,Phase.MSG.FAULT) ,XIC(Phase.STAT.AUTO) XIO(MixerCommOk.STAT.ON) MOV(25,Phase.MSG.FAULT) ,XIC(RefrigerationValve.STAT.FAULT) MOV(26,Phase.MSG.FAULT) ,XIC(cSETUP.SIMULATION.Enabled) XIC(cSETUP.SIMULATION.PHASE) MOV(0,Phase.MSG.FAULT) ];
+				N: [MOV(0,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIO(Phase.STEP.RECORD) MOV(61,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIC(Phase.STEP.RECORD) MOV(62,Phase.MSG.MSG) ,XIC(Phase.STATE.HELD) XIO(Phase.STAT.FAULTED) MOV(63,Phase.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(AOI.Message,Phase.ID,Phase.MSG);
+				N: [LIM(2000,Phase.STEP_INDEX,3000) NEQ(Phase.MSG.PERM,0) MOV(Phase.MSG.PERM,Phase.MSG.MSG) ,GEQ(Phase.STEP_INDEX,3000) NEQ(Phase.MSG.FAULT,0) MOV(Phase.MSG.FAULT,Phase.MSG.MSG) ,EQU(Phase.MSG.FAULT,0) EQU(Phase.MSG.PERM,0) ONS(Phase.MSG.OS.1) CLR(Phase.MSG.MSG) ];
+		END_ROUTINE
+
+		ROUTINE _130_Alarming 
+				N: NOP();
+				N: [XIC(Phase.STAT.FAULTED) OTE(Phase.ALARM[0].ACTIVE) ,AlarmControl(AOI.AlarmControl[0],Phase.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: AFI()[GRT(TargetTemperatureTolerance,0) [XIC(Phase.STATE.RUNNING) GEQ(Phase.STEP_INDEX,5000) ,XIO(ph_Discharge.STATE.IDLE) ] CMP(ABS(ActualTemperatureError)>TargetTemperatureTolerance) [XIC(TemperatureToleranceDelay.DN) OTE(Phase.ALARM[3].ACTIVE) ,TON(TemperatureToleranceDelay,?,?) ] ,LES(Phase.USER.SETTINGS[3],0) MOV(0,Phase.USER.SETTINGS[3]) ,MUL(Phase.USER.SETTINGS[3],1000,TemperatureToleranceDelay.PRE) ,AlarmControl(AOI.AlarmControl[3],Phase.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

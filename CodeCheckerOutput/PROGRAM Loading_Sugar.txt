@@ -1,0 +1,338 @@
+	PROGRAM Loading_Sugar (Description := "$NProgram=$'EM$'$NClass=$'LOADSTATION.01.01$'$N",
+	                       MAIN := "_Main",
+	                       MODE := 0,
+	                       DisableFlag := 0,
+	                       UseAsFolder := 0)
+		TAG
+			ConnectionProx01 OF cDI[427] ;
+			ConnectionProx01_IO_Input OF iRack1A:3:I.Pt10.Data (RADIX := Decimal);
+			ConnectionProx02 OF cDI[426] ;
+			ConnectionProx02_IO_Input OF iRack1A:3:I.Pt11.Data (RADIX := Decimal);
+			ConnectionProx03 OF cDI[425] ;
+			ConnectionProx03_IO_Input OF iRack1A:3:I.Pt12.Data (RADIX := Decimal);
+			EStop OF cDI[5] ;
+			HighLevelSwitch01 OF cDI[69] ;
+			HighLevelSwitch02 OF cDI[76] ;
+			HighLevelSwitch03 OF cDI[83] ;
+			Level01 OF cAI[25] ;
+			Level02 OF cAI[28] ;
+			Level03 OF cAI[31] ;
+			Null : CB_NULL  := [[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0
+					],[0,0,0,0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1],[1],[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1],[1,0,0,0],[[1],[1],[1]],[1,0,0,[0,0
+					,0]]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[0],[[0,0,0],[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[[[0,0,0],[0,0,0]],[[0,0,0,0],[0,0
+					,0,0]],[[0,0,0,0],[0,0,0,0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000
+					,[0,0,0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0
+					,0,0,0],[0,0,0,0,0,0],0.00000000e+000,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0
+					],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1
+					],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000
+					,0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0
+					,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0,0],[0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,[[0,0.00000000e+000,0.00000000e+000,0,[0,0,0],[0,0,0]],[0,0.00000000e+000,0.00000000e+000
+					,0,[0,0,0],[0,0,0]],[0,[0,0,0]]],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0],[[1],[1]]],[0,0,0,0,0,0,0,0,[[0,0,0,0
+					,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0]],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[0,[0,0],0],[0],0,0,0,0,0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0]],0,0,0,0,[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000],[0,0,0,0,0],0,0,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,0,0,0,0,0,0,0,0
+					,[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					]],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0],[0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0],[[1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0]]]];
+			OIT OF dOIT[1] ;
+			PowerInput OF cDI[452] ;
+			PowerInput_Old_Delete OF cDI[11] ;
+			PowerOutput OF cDI[454] ;
+			PowerOutput_Old_Delete OF cDI[12] ;
+			PowerSafety OF cDI[453] ;
+			PowerSafety_Old_Delete OF cDI[13] ;
+			ReadyLight OF cDO[660] ;
+			ReadyLight_IO_Output OF iRack1A:6:O.Pt08.Data (RADIX := Decimal);
+			ResetButtonLight OF cDO[662] ;
+			ResetButtonLight_IO_Output OF iRack1A:6:O.Pt07.Data (RADIX := Decimal);
+			ResetPushButton OF cDI[428] ;
+			ResetPushButton_IO_Input OF iRack1A:3:I.Pt09.Data (RADIX := Decimal);
+			Unit OF cUNIT[68] ;
+			WarningHorn OF cDO[661] ;
+			WarningHorn_IO_Output OF iRack1A:6:O.Pt06.Data (RADIX := Decimal);
+		END_TAG
+
+		ROUTINE ConnectionProx01 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Prox Switch.Loading_Sugar$'$N"
+				    "ControlModule=$'Prox Switch.ConnectionProx01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(ConnectionProx01_IO_Input) OTE(ConnectionProx01.STAT.ENERGIZED) ,XIC(ConnectionProx01.STAT.ENERGIZED) [XIC(ConnectionProx01.DELAY.ON.DN) OTL(ConnectionProx01.STAT.ON) OTU(ConnectionProx01.STAT.OFF) ,TON(ConnectionProx01.DELAY.ON,?,?) ] ,XIO(ConnectionProx01.STAT.ENERGIZED) [XIC(ConnectionProx01.DELAY.OFF.DN) OTU(ConnectionProx01.STAT.ON) OTL(ConnectionProx01.STAT.OFF) ,TON(ConnectionProx01.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE ConnectionProx02 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Prox Switch.Loading_Sugar$'$N"
+				    "ControlModule=$'Prox Switch.ConnectionProx02$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(ConnectionProx02_IO_Input) OTE(ConnectionProx02.STAT.ENERGIZED) ,XIC(ConnectionProx02.STAT.ENERGIZED) [XIC(ConnectionProx02.DELAY.ON.DN) OTL(ConnectionProx02.STAT.ON) OTU(ConnectionProx02.STAT.OFF) ,TON(ConnectionProx02.DELAY.ON,?,?) ] ,XIO(ConnectionProx02.STAT.ENERGIZED) [XIC(ConnectionProx02.DELAY.OFF.DN) OTU(ConnectionProx02.STAT.ON) OTL(ConnectionProx02.STAT.OFF) ,TON(ConnectionProx02.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE ConnectionProx03 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Prox Switch.Loading_Sugar$'$N"
+				    "ControlModule=$'Prox Switch.ConnectionProx03$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(ConnectionProx03_IO_Input) OTE(ConnectionProx03.STAT.ENERGIZED) ,XIC(ConnectionProx03.STAT.ENERGIZED) [XIC(ConnectionProx03.DELAY.ON.DN) OTL(ConnectionProx03.STAT.ON) OTU(ConnectionProx03.STAT.OFF) ,TON(ConnectionProx03.DELAY.ON,?,?) ] ,XIO(ConnectionProx03.STAT.ENERGIZED) [XIC(ConnectionProx03.DELAY.OFF.DN) OTU(ConnectionProx03.STAT.ON) OTL(ConnectionProx03.STAT.OFF) ,TON(ConnectionProx03.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE ReadyLight 
+				N: NOP();
+				N: [XIC(ConnectionProx01.STAT.ON) ,XIC(ConnectionProx02.STAT.ON) ,XIC(ConnectionProx03.STAT.ON) ]OTE(ReadyLight.STAT.AUTO_RUN);
+				RC: "px12 is labeld as Silo07 in the field inside the filling cabinet$N"
+				    "";
+				N: [MOV(0,ReadyLight.MSG.PERM) ,[XIC(ConnectionProx01.STAT.ON) XIC(Level01.Hi.ACTIVE) ,XIC(ConnectionProx02.STAT.ON) XIC(Level02.Hi.ACTIVE) ,XIC(ConnectionProx03.STAT.ON) XIC(Level03.Hi.ACTIVE) ] MOV(1,ReadyLight.MSG.PERM) ,EQU(ReadyLight.MSG.PERM,0) OTE(ReadyLight.STAT.PERMISSIVE) ];
+				RC: "px12 is labeld as Silo07 in the field inside the filling cabinet$N"
+				    "";
+				N: [MOV(0,ReadyLight.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,ReadyLight.MSG.INTRLK) ,[XIC(ConnectionProx01.STAT.ON) XIC(Level01.HiHi.ACTIVE) ,XIC(ConnectionProx02.STAT.ON) XIC(Level02.HiHi.ACTIVE) ,XIC(ConnectionProx03.STAT.ON) XIC(Level03.HiHi.ACTIVE) ] MOV(22,ReadyLight.MSG.INTRLK) ,[XIC(ConnectionProx01.STAT.ON) XIC(HighLevelSwitch01.STAT.ON) ,XIC(ConnectionProx02.STAT.ON) XIC(HighLevelSwitch02.STAT.ON) ,XIC(ConnectionProx03.STAT.ON) XIC(HighLevelSwitch03.STAT.ON) ] MOV(23,ReadyLight.MSG.INTRLK) ,[XIC(ConnectionProx01.STAT.ON) XIC(HighLevelSwitch01.STAT.FAULT) ,XIC(ConnectionProx02.STAT.ON) XIC(HighLevelSwitch02.STAT.FAULT) ,XIC(ConnectionProx03.STAT.ON) XIC(HighLevelSwitch03.STAT.FAULT) ] MOV(24,ReadyLight.MSG.INTRLK) ,NEQ(ReadyLight.MSG.INTRLK,0) OTE(ReadyLight.STAT.INTERLOCK) ];
+				N: [MOV(0,ReadyLight.MSG.MSG) ,XIC(ReadyLight.STAT.ON_OPEN) MOV(61,ReadyLight.MSG.MSG) ];
+				N: [XIC(ReadyLight.STAT.AUTO_RUN) NEQ(ReadyLight.MSG.PERM,0) MOV(ReadyLight.MSG.PERM,ReadyLight.MSG.MSG) ,NEQ(ReadyLight.MSG.INTRLK,0) MOV(ReadyLight.MSG.INTRLK,ReadyLight.MSG.MSG) ,NEQ(ReadyLight.MSG.FAULT,0) MOV(ReadyLight.MSG.FAULT,ReadyLight.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(ReadyLight.AOI.Message,ReadyLight.ID,ReadyLight.MSG);
+				N: DiscreteOutputControl(ReadyLight.AOI.Control,ReadyLight.CMD,ReadyLight.STAT);
+				N: [XIC(ReadyLight.STAT.ENERGIZE) OTE(ReadyLight_IO_Output) ,XIC(ReadyLight.STAT.ENERGIZE) [OTE(ReadyLight.STAT.ON_OPEN) ,XIC(ReadyLight.DELAY.ON.DN) OTE(ReadyLight.STAT.ON_OPEN_DELAY) ,TON(ReadyLight.DELAY.ON,?,?) ] ,XIO(ReadyLight.STAT.ENERGIZE) [OTE(ReadyLight.STAT.OFF_CLOSED) ,XIC(ReadyLight.DELAY.OFF.DN) OTE(ReadyLight.STAT.OFF_CLOSED_DELAY) ,TON(ReadyLight.DELAY.OFF,?,?) ] ];
+				N: OTU(ReadyLight.STAT.DISABLE_REPORTING)MOV(201326647,ReadyLight.REPORT.CMD.Mask.BITS)MOV(1911,ReadyLight.REPORT.STAT_TRUE.Mask.BITS)MOV(1911,ReadyLight.REPORT.STAT_FALSE.Mask.BITS);
+		END_ROUTINE
+
+		ROUTINE ResetButtonLight 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Light.Loading_Sugar$'$N"
+				    "ControlModule=$'Light.ResetButtonLight$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: [XIC(ResetPushButton.STAT.ON) ,XIC(WarningHorn.STAT.AUTO_RUN) ]OTE(ResetButtonLight.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,ResetButtonLight.MSG.PERM) ,EQU(ResetButtonLight.MSG.PERM,0) OTE(ResetButtonLight.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,ResetButtonLight.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,ResetButtonLight.MSG.INTRLK) ,NEQ(ResetButtonLight.MSG.INTRLK,0) OTE(ResetButtonLight.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.CLEAR$'$N"
+				    "Function=$'STATUS.MESSAGE.CLEAR$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(0,ResetButtonLight.MSG.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(ResetButtonLight.STAT.AUTO_RUN) NEQ(ResetButtonLight.MSG.PERM,0) MOV(ResetButtonLight.MSG.PERM,ResetButtonLight.MSG.MSG) ,NEQ(ResetButtonLight.MSG.INTRLK,0) MOV(ResetButtonLight.MSG.INTRLK,ResetButtonLight.MSG.MSG) ,NEQ(ResetButtonLight.MSG.FAULT,0) MOV(ResetButtonLight.MSG.FAULT,ResetButtonLight.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(ResetButtonLight.AOI.Message,ResetButtonLight.ID,ResetButtonLight.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(ResetButtonLight.AOI.Control,ResetButtonLight.CMD,ResetButtonLight.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.BASIC.CONTROL$'$N"
+				    "";
+				N: [XIC(ResetButtonLight.STAT.ENERGIZE) OTE(ResetButtonLight_IO_Output) ,XIC(ResetButtonLight.STAT.ENERGIZE) OTE(ResetButtonLight.STAT.ON_OPEN) ,XIO(ResetButtonLight.STAT.ENERGIZE) OTE(ResetButtonLight.STAT.OFF_CLOSED) ];
+		END_ROUTINE
+
+		ROUTINE ResetPushButton 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Push Button.Loading_Sugar$'$N"
+				    "ControlModule=$'Push Button.ResetPushButton$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(ResetPushButton_IO_Input) OTE(ResetPushButton.STAT.ENERGIZED) ,XIC(ResetPushButton.STAT.ENERGIZED) [XIC(ResetPushButton.DELAY.ON.DN) OTL(ResetPushButton.STAT.ON) OTU(ResetPushButton.STAT.OFF) ,TON(ResetPushButton.DELAY.ON,?,?) ] ,XIO(ResetPushButton.STAT.ENERGIZED) [XIC(ResetPushButton.DELAY.OFF.DN) OTU(ResetPushButton.STAT.ON) OTL(ResetPushButton.STAT.OFF) ,TON(ResetPushButton.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.ON$'$N"
+				    "";
+				N: [XIC(ResetPushButton.STAT.ON) XIC(PowerInput.STAT.ON) OTE(ResetPushButton.ALARM[0].ACTIVE) ,AlarmControl(ResetPushButton.AOI.AlarmControl[0],ResetPushButton.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE WarningHorn 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Horn.Loading_Sugar$'$N"
+				    "ControlModule=$'Horn.WarningHorn$'$N"
+				    "";
+				N: NOP();
+				RC: "No device popup/faceplate for this, force the device into auto$N"
+				    "ICRiley 20240523";
+				N: XIO(WarningHorn.STAT.AUTO)OTL(WarningHorn.CMD.AUTO);
+				N: [XIC(ConnectionProx01.STAT.ON) ,XIC(ConnectionProx02.STAT.ON) ,XIC(ConnectionProx03.STAT.ON) ]XIC(ReadyLight.STAT.OFF_CLOSED)[XIO(ReadyLight.STAT.PERMISSIVE) [XIC(WarningHorn.TMR[0].TT) PulseOnOff(WarningHorn.AOI.Pulse,WarningHorn.DELAY.ON.PRE,WarningHorn.DELAY.OFF.PRE) ,XIO(WarningHorn.TMR[0].TT) ] ,XIC(ReadyLight.STAT.INTERLOCK) ]OTE(WarningHorn.STAT.AUTO_RUN);
+				RC: "TMR[1] - wait for a delay before horn will be engaged$N"
+				    "TMR[0] - warning horn pulses for ";
+				N: [XIC(ConnectionProx01.STAT.ON) ,XIC(ConnectionProx02.STAT.ON) ][TON(WarningHorn.TMR[1],?,?) ,XIC(ReadyLight.STAT.OFF_CLOSED) XIC(WarningHorn.TMR[1].DN) XIO(ReadyLight.STAT.PERMISSIVE) XIO(ReadyLight.STAT.INTERLOCK) TON(WarningHorn.TMR[0],?,?) ];
+				RC: "Un-silence the horn$N"
+				    "when a new, and higher-priority interlock occurs, re-enable the horn$N"
+				    "";
+				N: [NEQ(ReadyLight.MSG.INTRLK,0) GRT(ReadyLight.MSG.INTRLK,ReadyLight.MSG.FAULT) OTU(WarningHorn.STAT.STATE_1) ,MOV(ReadyLight.MSG.INTRLK,ReadyLight.MSG.FAULT) ];
+				N: XIC(ResetPushButton.STAT.ON)OTL(WarningHorn.STAT.STATE_1);
+				N: [XIC(ConnectionProx01.STAT.ON) ,XIC(ConnectionProx02.STAT.ON) ,XIC(ConnectionProx03.STAT.ON) ]XIC(WarningHorn.STAT.ON_OPEN)OTL(WarningHorn.STAT.STATE_2);
+				N: XIO(ConnectionProx01.STAT.ON)XIO(ConnectionProx02.STAT.ON)XIO(ConnectionProx03.STAT.ON)[OTU(WarningHorn.STAT.STATE_1) ,OTU(WarningHorn.STAT.STATE_2) ];
+				N: [MOV(0,WarningHorn.MSG.PERM) ,XIC(WarningHorn.STAT.STATE_1) MOV(1,WarningHorn.MSG.PERM) ,XIO(WarningHorn.TMR[1].DN) MOV(2,WarningHorn.MSG.PERM) ,EQU(WarningHorn.MSG.PERM,0) OTE(WarningHorn.STAT.PERMISSIVE) ];
+				N: DiscreteOutputControl(WarningHorn.AOI.Control,WarningHorn.CMD,WarningHorn.STAT);
+				N: [XIC(WarningHorn.STAT.ENERGIZE) OTE(WarningHorn_IO_Output) ,XIC(WarningHorn.STAT.ENERGIZE) OTE(WarningHorn.STAT.ON_OPEN) ,XIO(WarningHorn.STAT.ENERGIZE) OTE(WarningHorn.STAT.OFF_CLOSED) ];
+				N: [XIC(WarningHorn.STAT.STATE_2) OTE(WarningHorn.ALARM[0].ACTIVE) ,AlarmControl(WarningHorn.AOI.AlarmControl[0],WarningHorn.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: OTU(WarningHorn.STAT.DISABLE_REPORTING)MOV(201326647,WarningHorn.REPORT.CMD.Mask.BITS)MOV(1911,WarningHorn.REPORT.STAT_TRUE.Mask.BITS)MOV(1911,WarningHorn.REPORT.STAT_FALSE.Mask.BITS);
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'LOADSTATION.01.01$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'LOADSTATION.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'PROXSWITCH$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'PX13$'$N"
+				    "[Description]:Connection Prox 03$N"
+				    "";
+				N: JSR(ConnectionProx03,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'PROXSWITCH$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'PX12$'$N"
+				    "[Description]:Connection Prox 02$N"
+				    "";
+				N: JSR(ConnectionProx02,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'PROXSWITCH$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'PX11$'$N"
+				    "[Description]:Connection Prox 01$N"
+				    "";
+				N: JSR(ConnectionProx01,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LIGHT$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'PL4$'$N"
+				    "[Description]:Warning Light$N"
+				    "";
+				N: JSR(ReadyLight,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'HORN$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'HN4$'$N"
+				    "[Description]:Warning Horn$N"
+				    "";
+				N: JSR(WarningHorn,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'PUSHBUTTON$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'PB4$'$N"
+				    "[Description]:Reset Push Button$N"
+				    "";
+				N: JSR(ResetPushButton,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LIGHT$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'PBL4$'$N"
+				    "[Description]:Reset Button Light$N"
+				    "";
+				N: JSR(ResetButtonLight,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

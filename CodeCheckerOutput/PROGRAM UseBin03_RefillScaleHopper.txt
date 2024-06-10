@@ -1,0 +1,21 @@
+	PROGRAM UseBin03_RefillScaleHopper (Description := "$NProgram=$'PH$'$NClass=$'USEBIN.REFILL.HOPPER:01.01.01$'$N",
+	                                    MAIN := "_000_Main",
+	                                    MODE := 0,
+	                                    DisableFlag := 0,
+	                                    UseAsFolder := 0)
+		TAG
+			Arb00 OF cDO[168] ;
+			Unit OF cUNIT[18] ;
+			UseBinAirlock OF cDO[168] ;
+			UsebinHopperHighLevel OF cDI[134] ;
+			UsebinHopperWeight OF cAI[56] ;
+			UsebinLowLevel OF cDI[133] ;
+		END_TAG
+
+		ROUTINE _000_Main 
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

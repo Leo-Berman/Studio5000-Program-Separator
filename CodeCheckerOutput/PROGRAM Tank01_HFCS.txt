@@ -1,0 +1,1200 @@
+	PROGRAM Tank01_HFCS (Description := "$NProgram=$'EM$'$NClass=$'TANK.02.01$'$N",
+	                     MAIN := "_Main",
+	                     MODE := 0,
+	                     DisableFlag := 0,
+	                     UseAsFolder := 0)
+		TAG
+			DischargePressure OF cAI[116] ;
+			DischargePressure_IO_Fault OF iRack2A:1:I.Ch05.Fault (RADIX := Decimal);
+			DischargePressure_IO_Value OF iRack2A:1:I.Ch05.Data (RADIX := Float);
+			DischargeTemperature OF cAI[118] ;
+			DischargeTemperature_IO_Fault OF iRack2A:2:I.Ch03.Fault (RADIX := Decimal);
+			DischargeTemperature_IO_Value OF iRack2A:2:I.Ch03.Data (RADIX := Float);
+			DispTemp01HoneyBun OF cAI[119] ;
+			DispTemp01HoneyBun_IO_Fault OF iRack5:1:I.Ch5Fault (RADIX := Decimal);
+			DispTemp01HoneyBun_IO_Value OF iRack5:1:I.Ch5Data (RADIX := Float);
+			DispTemp02Donut OF cAI[121] ;
+			DispTemp02Donut_IO_Fault OF iRack5:1:I.Ch3Fault (RADIX := Decimal);
+			DispTemp02Donut_IO_Value OF iRack5:1:I.Ch3Data (RADIX := Float);
+			EStop OF cDI[5] ;
+			Flowmeter01HoneyBun OF cAI[120] ;
+			Flowmeter01HoneyBun_IO_Fault : DINT (RADIX := Decimal) := 0;
+			Flowmeter01HoneyBun_IO_Reset OF iRack5:2:O.Counter[4].ResetCount (RADIX := Decimal);
+			Flowmeter01HoneyBun_IO_Value OF iRack5:2:I.Counter[4].Count (RADIX := Decimal);
+			Flowmeter02Donut OF cAI[122] ;
+			Flowmeter02Donut_IO_Fault : DINT (RADIX := Decimal) := 0;
+			Flowmeter02Donut_IO_Reset OF iRack5:2:O.Counter[0].ResetCount (RADIX := Decimal);
+			Flowmeter02Donut_IO_Value OF iRack5:2:I.Counter[0].Count (RADIX := Decimal);
+			HighLevel OF cDI[215] ;
+			HighLevel_IO_Input OF iRack2A:5:I.Pt10.Data (RADIX := Decimal);
+			InletValve OF cDO[629] ;
+			InletValveBrew OF cDO[616] ;
+			InletValveMixer01 OF cDO[453] ;
+			InletValveMixer02 OF cDO[491] ;
+			InletValveMixer04 OF cDO[529] ;
+			InventoryLocation OF rINV_LOCATION[9] ;
+			Level OF cAI[115] ;
+			Level_IO_Fault OF iRack2A:1:I.Ch00.Fault (RADIX := Decimal);
+			Level_IO_SensorOffset : REAL (RADIX := Float) := 6.09999990e+000;
+			Level_IO_SpecificGravity : REAL (RADIX := Float) := 1.37234521e+000;
+			Level_IO_Value OF iRack2A:1:I.Ch00.Data (RADIX := Float);
+			ModuloResult : DINT (RADIX := Decimal) := 64;
+			Null : CB_NULL  := [[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0
+					],[0,0,0,0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1],[1],[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1],[1,0,0,0],[[1],[1],[1]],[1,0,0,[0,0
+					,0]]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[0],[[0,0,0],[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[[[0,0,0],[0,0,0]],[[0,0,0,0],[0,0
+					,0,0]],[[0,0,0,0],[0,0,0,0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000
+					,[0,0,0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0
+					,0,0,0],[0,0,0,0,0,0],0.00000000e+000,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0
+					],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1
+					],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000
+					,0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0
+					,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0,0],[0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,[[0,0.00000000e+000,0.00000000e+000,0,[0,0,0],[0,0,0]],[0,0.00000000e+000,0.00000000e+000
+					,0,[0,0,0],[0,0,0]],[0,[0,0,0]]],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0],[[1],[1]]],[0,0,0,0,0,0,0,0,[[0,0,0,0
+					,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0]],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[0,[0,0],0],[0],0,0,0,0,0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0]],0,0,0,0,[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000],[0,0,0,0,0],0,0,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,0,0,0,0,0,0,0,0
+					,[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					]],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0],[0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0],[[1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0]]]];
+			OIT OF dOIT[1] ;
+			ph_BrewAddHFCS OF cPHZ[102] ;
+			ph_Mixer01AddHFCS OF cPHZ[20] ;
+			ph_Mixer02AddHFCS OF cPHZ[38] ;
+			ph_Mixer04AddHFCS OF cPHZ[56] ;
+			PowerInput OF cDI[19] ;
+			PowerOutput OF cDI[20] ;
+			PowerSafety OF cDI[21] ;
+			Pump OF cDO[312] ;
+			PumpSpeedReference OF cAO[69] ;
+			Pump_IO_ClearFaults OF iDrive_M200:O.ClearFaults (RADIX := Decimal);
+			Pump_IO_Faulted OF iDrive_M200:I.Faulted (RADIX := Decimal);
+			Pump_IO_Running OF iDrive_M200:I.Active (RADIX := Decimal);
+			Pump_IO_Setpoint OF iDrive_M200:O.FreqCommand (RADIX := Decimal);
+			Pump_IO_Speed OF iDrive_M200:I.OutputFreq (RADIX := Decimal);
+			Pump_IO_Start OF iDrive_M200:O.Start (RADIX := Decimal);
+			Pump_IO_Stop OF iDrive_M200:O.Stop (RADIX := Decimal);
+			RecirculationValve OF cDO[311] ;
+			RecirculationValve_IO_Closed OF iRack2A:4:I.Pt03.Data (RADIX := Decimal);
+			RecirculationValve_IO_Opened OF iRack2A:4:I.Pt02.Data (RADIX := Decimal);
+			RecirculationValve_IO_Output OF iRack2A:7:O.Pt01.Data (RADIX := Decimal);
+			SafetyPower OF cDI[21] ;
+			SiloSelected OF cDI[216] ;
+			Temperature OF cAI[117] ;
+			TemperatureControlValve OF cDO[310] ;
+			TemperatureControlValve_IO_Closed OF iRack2A:4:I.Pt05.Data (RADIX := Decimal);
+			TemperatureControlValve_IO_Opened OF iRack2A:4:I.Pt04.Data (RADIX := Decimal);
+			TemperatureControlValve_IO_Output OF iRack2A:7:O.Pt02.Data (RADIX := Decimal);
+			TemperatureControlValve_TimeToCool : REAL (RADIX := Float) := 3.56666680e+004;
+			TemperatureControlValve_TimeToHeat : REAL (RADIX := Float) := 5.04875488e+001;
+			Temperature_IO_Fault OF iRack2A:2:I.Ch02.Fault (RADIX := Decimal);
+			Temperature_IO_Value OF iRack2A:2:I.Ch02.Data (RADIX := Float);
+			Unit OF cUNIT[31] ;
+			ValidPath : BOOL (RADIX := Decimal) := 1;
+			Volume : DINT (RADIX := Decimal) := 3324;
+			Weight OF cAI[123] ;
+			Weight_AOI_Hi : SiloWeightVolume_V2  := [0,2.15000000e+002,4.95800000e-002,6.00000000e+001,0.00000000e+000,0.00000000e+000,5.80000000e+001
+					,3.32000008e+001,2.03827475e+006,1.01057664e+005,3.34863777e+001,2.86376953e-001,3.34863777e+001
+					,3.14159012e+000,5.80000000e+001,0.00000000e+000,1.16955961e+005,1.92131875e+006,5.79867676e+003
+					,9.52589844e+004,3.32000008e+001,1.04719675e+000,1.81800000e+002];
+			Weight_AOI_HiHi : SiloWeightVolume_V2  := [0,2.25000000e+002,4.95800000e-002,6.00000000e+001,0.00000000e+000,0.00000000e+000,5.80000000e+001
+					,3.32000008e+001,2.14395775e+006,1.06297430e+005,3.34863777e+001,2.86376953e-001,3.34863777e+001
+					,3.14159012e+000,5.80000000e+001,0.00000000e+000,1.16955961e+005,2.02700175e+006,5.79867676e+003
+					,1.00498750e+005,3.32000008e+001,1.04719675e+000,1.91800000e+002];
+			Weight_AOI_Lo : SiloWeightVolume_V2  := [0,1.80000000e+001,4.95800000e-002,6.00000000e+001,0.00000000e+000,0.00000000e+000,5.80000000e+001
+					,3.32000008e+001,1.89093125e+004,9.37523743e+002,1.82863770e+001,2.86376953e-001,3.34863777e+001
+					,3.14159012e+000,3.16728745e+001,0.00000000e+000,1.89093125e+004,0.00000000e+000,9.37523743e+002
+					,0.00000000e+000,1.80000000e+001,1.04719675e+000,0.00000000e+000];
+			Weight_AOI_Lolo : SiloWeightVolume_V2  := [0,1.00000000e+001,4.95800000e-002,6.00000000e+001,0.00000000e+000,0.00000000e+000,5.80000000e+001
+					,3.32000008e+001,3.32408984e+003,1.64808380e+002,1.02863770e+001,2.86376953e-001,3.34863777e+001
+					,3.14159012e+000,1.78164940e+001,0.00000000e+000,3.32408984e+003,0.00000000e+000,1.64808380e+002
+					,0.00000000e+000,1.00000000e+001,1.04719675e+000,0.00000000e+000];
+			Weight_AOI_Scaled : SiloWeightVolume_V1  := [0,1.74271973e+002,4.95800000e-002,6.00000000e+001,0.00000000e+000,0.00000000e+000,5.80000000e+001
+					,3.32000008e+001,1.60784825e+006,7.97171172e+004,3.34863777e+001,2.86376953e-001,3.34863777e+001
+					,3.14159012e+000,5.80000000e+001,0.00000000e+000,1.16955961e+005,1.49089225e+006,5.79867676e+003
+					,7.39184375e+004,3.32000008e+001,1.04719675e+000,1.41071976e+002];
+			Weight_AOI_Scaled2 : SiloWeightVolume_V2  := [0,1.38075607e+002,4.95800000e-002,6.00000000e+001,0.00000000e+000,0.00000000e+000,5.80000000e+001
+					,3.32000008e+001,1.22531388e+006,6.07510586e+004,3.34863777e+001,2.86376953e-001,3.34863777e+001
+					,3.14159012e+000,5.80000000e+001,0.00000000e+000,1.16955961e+005,1.10835788e+006,5.79867676e+003
+					,5.49523828e+004,3.32000008e+001,1.04719675e+000,1.04875610e+002];
+			Weight_AOI_ScaleHi : SiloWeightVolume_V1  := [0,2.40000000e+002,4.95800000e-002,6.00000000e+001,0.00000000e+000,0.00000000e+000,5.80000000e+001
+					,3.32000008e+001,2.30248250e+006,1.14157086e+005,3.34863777e+001,2.86376953e-001,3.34863777e+001
+					,3.14159012e+000,5.80000000e+001,0.00000000e+000,1.16955961e+005,2.18552650e+006,5.79867676e+003
+					,1.08358406e+005,3.32000008e+001,1.04719675e+000,2.06800000e+002];
+			Weight_AOI_ScaleHi2 : SiloWeightVolume_V2  := [0,2.40000000e+002,4.95800000e-002,6.00000000e+001,0.00000000e+000,0.00000000e+000,5.80000000e+001
+					,3.32000008e+001,2.30248250e+006,1.14157086e+005,3.34863777e+001,2.86376953e-001,3.34863777e+001
+					,3.14159012e+000,5.80000000e+001,0.00000000e+000,1.16955961e+005,2.18552650e+006,5.79867676e+003
+					,1.08358406e+005,3.32000008e+001,1.04719675e+000,2.06800000e+002];
+		END_TAG
+
+		ROUTINE DischargePressure 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Pressure.Tank01_HFCS$'$N"
+				    "ControlModule=$'Pressure.DischargePressure$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(DischargePressure_IO_Value,DischargePressure.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(DischargePressure.AOI.Scaling,DischargePressure.RAW,DischargePressure.RAW_LO,DischargePressure.RAW_HI,DischargePressure.SCALE_LO,DischargePressure.SCALE_HI,DischargePressure.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(DischargePressure_IO_Fault) ,XIC(DischargePressure.STAT.FAULT) ]XIO(DischargePressure.CMD.RESET)OTE(DischargePressure.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Pump.STAT.ON_OPEN_DELAY)[LES(DischargePressure.SCALED,DischargePressure.LoLo.LIM) ,XIC(DischargePressure.LoLo.ACTIVE) ]CMP(DischargePressure.SCALED<=(DischargePressure.LoLo.LIM+DischargePressure.LoLo.DEADBAND))[XIC(DischargePressure.LoLo.DELAY.DN) OTE(DischargePressure.LoLo.ACTIVE) ,TON(DischargePressure.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(DischargePressure.SCALED,DischargePressure.Lo.LIM) ,XIC(DischargePressure.Lo.ACTIVE) ]CMP(DischargePressure.SCALED<=(DischargePressure.Lo.LIM+DischargePressure.Lo.DEADBAND))[XIC(DischargePressure.Lo.DELAY.DN) OTE(DischargePressure.Lo.ACTIVE) ,TON(DischargePressure.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(DischargePressure.SCALED,DischargePressure.Hi.LIM) ,XIC(DischargePressure.Hi.ACTIVE) ]CMP(DischargePressure.SCALED>=(DischargePressure.Hi.LIM-DischargePressure.Hi.DEADBAND))[XIC(DischargePressure.Hi.DELAY.DN) OTE(DischargePressure.Hi.ACTIVE) ,TON(DischargePressure.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(DischargePressure.SCALED,DischargePressure.HiHi.LIM) ,XIC(DischargePressure.HiHi.ACTIVE) ]CMP(DischargePressure.SCALED>=(DischargePressure.HiHi.LIM-DischargePressure.HiHi.DEADBAND))[XIC(DischargePressure.HiHi.DELAY.DN) OTE(DischargePressure.HiHi.ACTIVE) ,TON(DischargePressure.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(DischargePressure.AOI.Rate,DischargePressure.SCALED,DischargePressure.RATE);
+				RC: "$N"
+				    "";
+				N: [LES(DischargePressure.RATE.CHANGE,DischargePressure.RATE.Lo.LIM) ,XIC(DischargePressure.RATE.Lo.ACTIVE) ]CMP(DischargePressure.RATE.CHANGE<=(DischargePressure.RATE.Lo.LIM+DischargePressure.RATE.Lo.DEADBAND))[XIC(DischargePressure.RATE.Lo.DELAY.DN) OTE(DischargePressure.RATE.Lo.ACTIVE) ,TON(DischargePressure.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [LES(DischargePressure.RATE.CHANGE,DischargePressure.RATE.LoLo.LIM) ,XIC(DischargePressure.RATE.LoLo.ACTIVE) ]CMP(DischargePressure.RATE.CHANGE<=(DischargePressure.RATE.LoLo.LIM+DischargePressure.RATE.LoLo.DEADBAND))[XIC(DischargePressure.RATE.LoLo.DELAY.DN) OTE(DischargePressure.RATE.LoLo.ACTIVE) ,TON(DischargePressure.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(DischargePressure.STAT.FAULT)[XIC(DischargePressure.Fault.DELAY.DN) OTE(DischargePressure.Fault.ACTIVE) ,MOV(10000,DischargePressure.Fault.DELAY.PRE) TON(DischargePressure.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(DischargePressure.AOI.Mode,DischargePressure.CMD,DischargePressure.STAT,DischargePressure.MAN_SP,DischargePressure.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(DischargePressure.LoLo.ACTIVE) XIO(DischargePressure.LoLo.DISABLED) XIC(cDI[455].STAT.ON) OTE(DischargePressure.ALARM[0].ACTIVE) ,AlarmControl(DischargePressure.AOI.AlarmControl[0],DischargePressure.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(DischargePressure.Lo.ACTIVE) XIO(DischargePressure.Lo.DISABLED) XIC(cDI[455].STAT.ON) OTE(DischargePressure.ALARM[1].ACTIVE) ,AlarmControl(DischargePressure.AOI.AlarmControl[1],DischargePressure.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(DischargePressure.Hi.ACTIVE) XIO(DischargePressure.Hi.DISABLED) XIC(cDI[455].STAT.ON) OTE(DischargePressure.ALARM[2].ACTIVE) ,AlarmControl(DischargePressure.AOI.AlarmControl[2],DischargePressure.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(DischargePressure.HiHi.ACTIVE) XIO(DischargePressure.HiHi.DISABLED) XIC(cDI[455].STAT.ON) OTE(DischargePressure.ALARM[3].ACTIVE) ,AlarmControl(DischargePressure.AOI.AlarmControl[3],DischargePressure.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(DischargePressure.Fault.ACTIVE) XIO(DischargePressure.Fault.DISABLED) XIC(cDI[455].STAT.ON) OTE(DischargePressure.ALARM[6].ACTIVE) ,AlarmControl(DischargePressure.AOI.AlarmControl[6],DischargePressure.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE DischargeTemperature 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Temperature.Tank01_HFCS$'$N"
+				    "ControlModule=$'Temperature.DischargeTemperature$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(0,DischargeTemperature.TYPE)MOV(63,DischargeTemperature.DISPLAY_MASK.BITS)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(DischargeTemperature_IO_Value,DischargeTemperature.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(DischargeTemperature.AOI.Scaling,DischargeTemperature.RAW,DischargeTemperature.RAW_LO,DischargeTemperature.RAW_HI,DischargeTemperature.SCALE_LO,DischargeTemperature.SCALE_HI,DischargeTemperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(DischargeTemperature_IO_Fault) ,XIC(DischargeTemperature.STAT.FAULT) ]XIO(DischargeTemperature.CMD.RESET)OTE(DischargeTemperature.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(DischargeTemperature.SCALED,DischargeTemperature.LoLo.LIM) ,XIC(DischargeTemperature.LoLo.ACTIVE) ]CMP(DischargeTemperature.SCALED<=(DischargeTemperature.LoLo.LIM+DischargeTemperature.LoLo.DEADBAND))[XIC(DischargeTemperature.LoLo.DELAY.DN) OTE(DischargeTemperature.LoLo.ACTIVE) ,TON(DischargeTemperature.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(DischargeTemperature.SCALED,DischargeTemperature.Lo.LIM) ,XIC(DischargeTemperature.Lo.ACTIVE) ]CMP(DischargeTemperature.SCALED<=(DischargeTemperature.Lo.LIM+DischargeTemperature.Lo.DEADBAND))[XIC(DischargeTemperature.Lo.DELAY.DN) OTE(DischargeTemperature.Lo.ACTIVE) ,TON(DischargeTemperature.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(DischargeTemperature.SCALED,DischargeTemperature.Hi.LIM) ,XIC(DischargeTemperature.Hi.ACTIVE) ]CMP(DischargeTemperature.SCALED>=(DischargeTemperature.Hi.LIM-DischargeTemperature.Hi.DEADBAND))[XIC(DischargeTemperature.Hi.DELAY.DN) OTE(DischargeTemperature.Hi.ACTIVE) ,TON(DischargeTemperature.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(DischargeTemperature.SCALED,DischargeTemperature.HiHi.LIM) ,XIC(DischargeTemperature.HiHi.ACTIVE) ]CMP(DischargeTemperature.SCALED>=(DischargeTemperature.HiHi.LIM-DischargeTemperature.HiHi.DEADBAND))[XIC(DischargeTemperature.HiHi.DELAY.DN) OTE(DischargeTemperature.HiHi.ACTIVE) ,TON(DischargeTemperature.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(DischargeTemperature.AOI.Rate,DischargeTemperature.SCALED,DischargeTemperature.RATE);
+				RC: "$N"
+				    "";
+				N: [LES(DischargeTemperature.RATE.CHANGE,DischargeTemperature.RATE.Lo.LIM) ,XIC(DischargeTemperature.RATE.Lo.ACTIVE) ]CMP(DischargeTemperature.RATE.CHANGE<=(DischargeTemperature.RATE.Lo.LIM+DischargeTemperature.RATE.Lo.DEADBAND))[XIC(DischargeTemperature.RATE.Lo.DELAY.DN) OTE(DischargeTemperature.RATE.Lo.ACTIVE) ,TON(DischargeTemperature.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [LES(DischargeTemperature.RATE.CHANGE,DischargeTemperature.RATE.LoLo.LIM) ,XIC(DischargeTemperature.RATE.LoLo.ACTIVE) ]CMP(DischargeTemperature.RATE.CHANGE<=(DischargeTemperature.RATE.LoLo.LIM+DischargeTemperature.RATE.LoLo.DEADBAND))[XIC(DischargeTemperature.RATE.LoLo.DELAY.DN) OTE(DischargeTemperature.RATE.LoLo.ACTIVE) ,TON(DischargeTemperature.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(DischargeTemperature.STAT.FAULT)[XIC(DischargeTemperature.Fault.DELAY.DN) OTE(DischargeTemperature.Fault.ACTIVE) ,MOV(10000,DischargeTemperature.Fault.DELAY.PRE) TON(DischargeTemperature.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(DischargeTemperature.AOI.Mode,DischargeTemperature.CMD,DischargeTemperature.STAT,DischargeTemperature.MAN_SP,DischargeTemperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(DischargeTemperature.LoLo.ACTIVE) XIO(DischargeTemperature.LoLo.DISABLED) XIC(cDI[455].STAT.ON) OTE(DischargeTemperature.ALARM[0].ACTIVE) ,AlarmControl(DischargeTemperature.AOI.AlarmControl[0],DischargeTemperature.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(DischargeTemperature.Lo.ACTIVE) XIO(DischargeTemperature.Lo.DISABLED) XIC(cDI[455].STAT.ON) OTE(DischargeTemperature.ALARM[1].ACTIVE) ,AlarmControl(DischargeTemperature.AOI.AlarmControl[1],DischargeTemperature.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(DischargeTemperature.Hi.ACTIVE) XIO(DischargeTemperature.Hi.DISABLED) XIC(cDI[455].STAT.ON) OTE(DischargeTemperature.ALARM[2].ACTIVE) ,AlarmControl(DischargeTemperature.AOI.AlarmControl[2],DischargeTemperature.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(DischargeTemperature.HiHi.ACTIVE) XIO(DischargeTemperature.HiHi.DISABLED) XIC(cDI[455].STAT.ON) OTE(DischargeTemperature.ALARM[3].ACTIVE) ,AlarmControl(DischargeTemperature.AOI.AlarmControl[3],DischargeTemperature.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(DischargeTemperature.Fault.ACTIVE) XIO(DischargeTemperature.Fault.DISABLED) XIC(cDI[455].STAT.ON) OTE(DischargeTemperature.ALARM[6].ACTIVE) ,AlarmControl(DischargeTemperature.AOI.AlarmControl[6],DischargeTemperature.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE DispTemp01HoneyBun 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Temperature.Tank01_HFCS$'$N"
+				    "ControlModule=$'Temperature.DispTemp01HoneyBun$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(0,DispTemp01HoneyBun.TYPE)MOV(63,DispTemp01HoneyBun.DISPLAY_MASK.BITS)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(DispTemp01HoneyBun_IO_Value,DispTemp01HoneyBun.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(DispTemp01HoneyBun.AOI.Scaling,DispTemp01HoneyBun.RAW,DispTemp01HoneyBun.RAW_LO,DispTemp01HoneyBun.RAW_HI,DispTemp01HoneyBun.SCALE_LO,DispTemp01HoneyBun.SCALE_HI,DispTemp01HoneyBun.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(DispTemp01HoneyBun_IO_Fault) ,XIC(DispTemp01HoneyBun.STAT.FAULT) ]XIO(DispTemp01HoneyBun.CMD.RESET)OTE(DispTemp01HoneyBun.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Pump.STAT.ON_OPEN)XIC(RecirculationValve.STAT.OFF_CLOSED)[LES(DispTemp01HoneyBun.SCALED,DispTemp01HoneyBun.LoLo.LIM) ,XIC(DispTemp01HoneyBun.LoLo.ACTIVE) ]CMP(DispTemp01HoneyBun.SCALED<=(DispTemp01HoneyBun.LoLo.LIM+DispTemp01HoneyBun.LoLo.DEADBAND))[XIC(DispTemp01HoneyBun.LoLo.DELAY.DN) OTE(DispTemp01HoneyBun.LoLo.ACTIVE) ,TON(DispTemp01HoneyBun.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Pump.STAT.ON_OPEN)XIC(RecirculationValve.STAT.OFF_CLOSED)[LES(DispTemp01HoneyBun.SCALED,DispTemp01HoneyBun.Lo.LIM) ,XIC(DispTemp01HoneyBun.Lo.ACTIVE) ]CMP(DispTemp01HoneyBun.SCALED<=(DispTemp01HoneyBun.Lo.LIM+DispTemp01HoneyBun.Lo.DEADBAND))[XIC(DispTemp01HoneyBun.Lo.DELAY.DN) OTE(DispTemp01HoneyBun.Lo.ACTIVE) ,TON(DispTemp01HoneyBun.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(DispTemp01HoneyBun.SCALED,DispTemp01HoneyBun.Hi.LIM) ,XIC(DispTemp01HoneyBun.Hi.ACTIVE) ]CMP(DispTemp01HoneyBun.SCALED>=(DispTemp01HoneyBun.Hi.LIM-DispTemp01HoneyBun.Hi.DEADBAND))[XIC(DispTemp01HoneyBun.Hi.DELAY.DN) OTE(DispTemp01HoneyBun.Hi.ACTIVE) ,TON(DispTemp01HoneyBun.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(DispTemp01HoneyBun.SCALED,DispTemp01HoneyBun.HiHi.LIM) ,XIC(DispTemp01HoneyBun.HiHi.ACTIVE) ]CMP(DispTemp01HoneyBun.SCALED>=(DispTemp01HoneyBun.HiHi.LIM-DispTemp01HoneyBun.HiHi.DEADBAND))[XIC(DispTemp01HoneyBun.HiHi.DELAY.DN) OTE(DispTemp01HoneyBun.HiHi.ACTIVE) ,TON(DispTemp01HoneyBun.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(DispTemp01HoneyBun.AOI.Rate,DispTemp01HoneyBun.SCALED,DispTemp01HoneyBun.RATE);
+				RC: "$N"
+				    "";
+				N: [LES(DispTemp01HoneyBun.RATE.CHANGE,DispTemp01HoneyBun.RATE.Lo.LIM) ,XIC(DispTemp01HoneyBun.RATE.Lo.ACTIVE) ]CMP(DispTemp01HoneyBun.RATE.CHANGE<=(DispTemp01HoneyBun.RATE.Lo.LIM+DispTemp01HoneyBun.RATE.Lo.DEADBAND))[XIC(DispTemp01HoneyBun.RATE.Lo.DELAY.DN) OTE(DispTemp01HoneyBun.RATE.Lo.ACTIVE) ,TON(DispTemp01HoneyBun.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [LES(DispTemp01HoneyBun.RATE.CHANGE,DispTemp01HoneyBun.RATE.LoLo.LIM) ,XIC(DispTemp01HoneyBun.RATE.LoLo.ACTIVE) ]CMP(DispTemp01HoneyBun.RATE.CHANGE<=(DispTemp01HoneyBun.RATE.LoLo.LIM+DispTemp01HoneyBun.RATE.LoLo.DEADBAND))[XIC(DispTemp01HoneyBun.RATE.LoLo.DELAY.DN) OTE(DispTemp01HoneyBun.RATE.LoLo.ACTIVE) ,TON(DispTemp01HoneyBun.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(DispTemp01HoneyBun.STAT.FAULT)[XIC(DispTemp01HoneyBun.Fault.DELAY.DN) OTE(DispTemp01HoneyBun.Fault.ACTIVE) ,MOV(10000,DispTemp01HoneyBun.Fault.DELAY.PRE) TON(DispTemp01HoneyBun.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(DispTemp01HoneyBun.AOI.Mode,DispTemp01HoneyBun.CMD,DispTemp01HoneyBun.STAT,DispTemp01HoneyBun.MAN_SP,DispTemp01HoneyBun.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(DispTemp01HoneyBun.LoLo.ACTIVE) XIO(DispTemp01HoneyBun.LoLo.DISABLED) XIC(cDI[442].STAT.ON) OTE(DispTemp01HoneyBun.ALARM[0].ACTIVE) ,AlarmControl(DispTemp01HoneyBun.AOI.AlarmControl[0],DispTemp01HoneyBun.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(DispTemp01HoneyBun.Lo.ACTIVE) XIO(DispTemp01HoneyBun.Lo.DISABLED) XIC(cDI[442].STAT.ON) OTE(DispTemp01HoneyBun.ALARM[1].ACTIVE) ,AlarmControl(DispTemp01HoneyBun.AOI.AlarmControl[1],DispTemp01HoneyBun.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(DispTemp01HoneyBun.Hi.ACTIVE) XIO(DispTemp01HoneyBun.Hi.DISABLED) XIC(cDI[442].STAT.ON) OTE(DispTemp01HoneyBun.ALARM[2].ACTIVE) ,AlarmControl(DispTemp01HoneyBun.AOI.AlarmControl[2],DispTemp01HoneyBun.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(DispTemp01HoneyBun.HiHi.ACTIVE) XIO(DispTemp01HoneyBun.HiHi.DISABLED) XIC(cDI[442].STAT.ON) OTE(DispTemp01HoneyBun.ALARM[3].ACTIVE) ,AlarmControl(DispTemp01HoneyBun.AOI.AlarmControl[3],DispTemp01HoneyBun.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(DispTemp01HoneyBun.Fault.ACTIVE) XIO(DispTemp01HoneyBun.Fault.DISABLED) XIC(cDI[442].STAT.ON) OTE(DispTemp01HoneyBun.ALARM[6].ACTIVE) ,AlarmControl(DispTemp01HoneyBun.AOI.AlarmControl[6],DispTemp01HoneyBun.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE DispTemp02Donut 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Temperature.Tank01_HFCS$'$N"
+				    "ControlModule=$'Temperature.DispTemp02Donut$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(DispTemp02Donut_IO_Value,DispTemp02Donut.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(DispTemp02Donut.AOI.Scaling,DispTemp02Donut.RAW,DispTemp02Donut.RAW_LO,DispTemp02Donut.RAW_HI,DispTemp02Donut.SCALE_LO,DispTemp02Donut.SCALE_HI,DispTemp02Donut.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(DispTemp02Donut_IO_Fault) ,XIC(DispTemp02Donut.STAT.FAULT) ]XIO(DispTemp02Donut.CMD.RESET)OTE(DispTemp02Donut.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Pump.STAT.ON_OPEN)XIC(RecirculationValve.STAT.OFF_CLOSED)[LES(DispTemp02Donut.SCALED,DispTemp02Donut.LoLo.LIM) ,XIC(DispTemp02Donut.LoLo.ACTIVE) ]CMP(DispTemp02Donut.SCALED<=(DispTemp02Donut.LoLo.LIM+DispTemp02Donut.LoLo.DEADBAND))[XIC(DispTemp02Donut.LoLo.DELAY.DN) OTE(DispTemp02Donut.LoLo.ACTIVE) ,TON(DispTemp02Donut.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Pump.STAT.ON_OPEN)XIC(RecirculationValve.STAT.OFF_CLOSED)[LES(DispTemp02Donut.SCALED,DispTemp02Donut.Lo.LIM) ,XIC(DispTemp02Donut.Lo.ACTIVE) ]CMP(DispTemp02Donut.SCALED<=(DispTemp02Donut.Lo.LIM+DispTemp02Donut.Lo.DEADBAND))[XIC(DispTemp02Donut.Lo.DELAY.DN) OTE(DispTemp02Donut.Lo.ACTIVE) ,TON(DispTemp02Donut.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(DispTemp02Donut.SCALED,DispTemp02Donut.Hi.LIM) ,XIC(DispTemp02Donut.Hi.ACTIVE) ]CMP(DispTemp02Donut.SCALED>=(DispTemp02Donut.Hi.LIM-DispTemp02Donut.Hi.DEADBAND))[XIC(DispTemp02Donut.Hi.DELAY.DN) OTE(DispTemp02Donut.Hi.ACTIVE) ,TON(DispTemp02Donut.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(DispTemp02Donut.SCALED,DispTemp02Donut.HiHi.LIM) ,XIC(DispTemp02Donut.HiHi.ACTIVE) ]CMP(DispTemp02Donut.SCALED>=(DispTemp02Donut.HiHi.LIM-DispTemp02Donut.HiHi.DEADBAND))[XIC(DispTemp02Donut.HiHi.DELAY.DN) OTE(DispTemp02Donut.HiHi.ACTIVE) ,TON(DispTemp02Donut.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(DispTemp02Donut.AOI.Rate,DispTemp02Donut.SCALED,DispTemp02Donut.RATE);
+				RC: "$N"
+				    "";
+				N: [LES(DispTemp02Donut.RATE.CHANGE,DispTemp02Donut.RATE.Lo.LIM) ,XIC(DispTemp02Donut.RATE.Lo.ACTIVE) ]CMP(DispTemp02Donut.RATE.CHANGE<=(DispTemp02Donut.RATE.Lo.LIM+DispTemp02Donut.RATE.Lo.DEADBAND))[XIC(DispTemp02Donut.RATE.Lo.DELAY.DN) OTE(DispTemp02Donut.RATE.Lo.ACTIVE) ,TON(DispTemp02Donut.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [LES(DispTemp02Donut.RATE.CHANGE,DispTemp02Donut.RATE.LoLo.LIM) ,XIC(DispTemp02Donut.RATE.LoLo.ACTIVE) ]CMP(DispTemp02Donut.RATE.CHANGE<=(DispTemp02Donut.RATE.LoLo.LIM+DispTemp02Donut.RATE.LoLo.DEADBAND))[XIC(DispTemp02Donut.RATE.LoLo.DELAY.DN) OTE(DispTemp02Donut.RATE.LoLo.ACTIVE) ,TON(DispTemp02Donut.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(DispTemp02Donut.STAT.FAULT)[XIC(DispTemp02Donut.Fault.DELAY.DN) OTE(DispTemp02Donut.Fault.ACTIVE) ,MOV(10000,DispTemp02Donut.Fault.DELAY.PRE) TON(DispTemp02Donut.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(DispTemp02Donut.AOI.Mode,DispTemp02Donut.CMD,DispTemp02Donut.STAT,DispTemp02Donut.MAN_SP,DispTemp02Donut.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(DispTemp02Donut.LoLo.ACTIVE) XIO(DispTemp02Donut.LoLo.DISABLED) XIC(cDI[442].STAT.ON) OTE(DispTemp02Donut.ALARM[0].ACTIVE) ,AlarmControl(DispTemp02Donut.AOI.AlarmControl[0],DispTemp02Donut.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(DispTemp02Donut.Lo.ACTIVE) XIO(DispTemp02Donut.Lo.DISABLED) XIC(cDI[442].STAT.ON) OTE(DispTemp02Donut.ALARM[1].ACTIVE) ,AlarmControl(DispTemp02Donut.AOI.AlarmControl[1],DispTemp02Donut.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(DispTemp02Donut.Hi.ACTIVE) XIO(DispTemp02Donut.Hi.DISABLED) XIC(cDI[442].STAT.ON) OTE(DispTemp02Donut.ALARM[2].ACTIVE) ,AlarmControl(DispTemp02Donut.AOI.AlarmControl[2],DispTemp02Donut.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(DispTemp02Donut.HiHi.ACTIVE) XIO(DispTemp02Donut.HiHi.DISABLED) XIC(cDI[442].STAT.ON) OTE(DispTemp02Donut.ALARM[3].ACTIVE) ,AlarmControl(DispTemp02Donut.AOI.AlarmControl[3],DispTemp02Donut.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(DispTemp02Donut.Fault.ACTIVE) XIO(DispTemp02Donut.Fault.DISABLED) XIC(cDI[442].STAT.ON) OTE(DispTemp02Donut.ALARM[6].ACTIVE) ,AlarmControl(DispTemp02Donut.AOI.AlarmControl[6],DispTemp02Donut.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Flowmeter01HoneyBun 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Flowmeter.Tank01_HFCS$'$N"
+				    "ControlModule=$'Flowmeter.Flowmeter01HoneyBun$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(63,Flowmeter01HoneyBun.DISPLAY_MASK.BITS)NOP();
+				RC: "Template=$'TANK.02.01.FLOWMETER.FLOWMETER01HONEYBUN$'$N"
+				    "Function=$'ANALOG.COUNTER$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(Flowmeter01HoneyBun_IO_Value,Flowmeter01HoneyBun.RAW) ,EQU(Flowmeter01HoneyBun_IO_Fault,0) OTE(Flowmeter01HoneyBun.STAT.DATA_OK) ];
+				RC: "Template=$'TANK.02.01.FLOWMETER.FLOWMETER01HONEYBUN$'$N"
+				    "Function=$'ANALOG.COUNTER.SCALE$'$N"
+				    "[Description]$N"
+				    "";
+				N: MUL(Flowmeter01HoneyBun.RAW,Flowmeter01HoneyBun.SCALE_FACTOR,Flowmeter01HoneyBun.SCALED);
+				N: [XIC(\Mixer01_AddHFCS.Phase.CM.AutoRun[2]) ,XIC(\Mixer02_AddHFCS.Phase.CM.AutoRun[2]) ]OTE(Flowmeter01HoneyBun.TOTALIZER.RESET);
+				RC: "Template=$'TANK.02.01.FLOWMETER.FLOWMETER01HONEYBUN$'$N"
+				    "Function=$'ANALOG.COUNTER.RESET$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Flowmeter01HoneyBun.TOTALIZER.RESET)OTE(Flowmeter01HoneyBun_IO_Reset);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(Flowmeter01HoneyBun.SCALED,Flowmeter01HoneyBun.LoLo.LIM) ,XIC(Flowmeter01HoneyBun.LoLo.ACTIVE) ]CMP(Flowmeter01HoneyBun.SCALED<=(Flowmeter01HoneyBun.LoLo.LIM+Flowmeter01HoneyBun.LoLo.DEADBAND))[XIC(Flowmeter01HoneyBun.LoLo.DELAY.DN) OTE(Flowmeter01HoneyBun.LoLo.ACTIVE) ,TON(Flowmeter01HoneyBun.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(Flowmeter01HoneyBun.SCALED,Flowmeter01HoneyBun.Lo.LIM) ,XIC(Flowmeter01HoneyBun.Lo.ACTIVE) ]CMP(Flowmeter01HoneyBun.SCALED<=(Flowmeter01HoneyBun.Lo.LIM+Flowmeter01HoneyBun.Lo.DEADBAND))[XIC(Flowmeter01HoneyBun.Lo.DELAY.DN) OTE(Flowmeter01HoneyBun.Lo.ACTIVE) ,TON(Flowmeter01HoneyBun.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(Flowmeter01HoneyBun.SCALED,Flowmeter01HoneyBun.Hi.LIM) ,XIC(Flowmeter01HoneyBun.Hi.ACTIVE) ]CMP(Flowmeter01HoneyBun.SCALED>=(Flowmeter01HoneyBun.Hi.LIM-Flowmeter01HoneyBun.Hi.DEADBAND))[XIC(Flowmeter01HoneyBun.Hi.DELAY.DN) OTE(Flowmeter01HoneyBun.Hi.ACTIVE) ,TON(Flowmeter01HoneyBun.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(Flowmeter01HoneyBun.SCALED,Flowmeter01HoneyBun.HiHi.LIM) ,XIC(Flowmeter01HoneyBun.HiHi.ACTIVE) ]CMP(Flowmeter01HoneyBun.SCALED>=(Flowmeter01HoneyBun.HiHi.LIM-Flowmeter01HoneyBun.HiHi.DEADBAND))[XIC(Flowmeter01HoneyBun.HiHi.DELAY.DN) OTE(Flowmeter01HoneyBun.HiHi.ACTIVE) ,TON(Flowmeter01HoneyBun.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(Flowmeter01HoneyBun.AOI.Rate,Flowmeter01HoneyBun.SCALED,Flowmeter01HoneyBun.RATE);
+				RC: "$N"
+				    "";
+				N: [XIC(\Mixer01_AddHFCS.Phase.CM.AutoRun[20]) ,XIC(\Mixer02_AddHFCS.Phase.CM.AutoRun[20]) ][LES(Flowmeter01HoneyBun.RATE.CHANGE,Flowmeter01HoneyBun.RATE.Lo.LIM) ,XIC(Flowmeter01HoneyBun.RATE.Lo.ACTIVE) ]CMP(Flowmeter01HoneyBun.RATE.CHANGE<=(Flowmeter01HoneyBun.RATE.Lo.LIM+Flowmeter01HoneyBun.RATE.Lo.DEADBAND))[XIC(Flowmeter01HoneyBun.RATE.Lo.DELAY.DN) OTE(Flowmeter01HoneyBun.RATE.Lo.ACTIVE) ,TON(Flowmeter01HoneyBun.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [XIC(\Mixer01_AddHFCS.Phase.CM.AutoRun[20]) ,XIC(\Mixer02_AddHFCS.Phase.CM.AutoRun[20]) ][LES(Flowmeter01HoneyBun.RATE.CHANGE,Flowmeter01HoneyBun.RATE.LoLo.LIM) ,XIC(Flowmeter01HoneyBun.RATE.LoLo.ACTIVE) ]CMP(Flowmeter01HoneyBun.RATE.CHANGE<=(Flowmeter01HoneyBun.RATE.LoLo.LIM+Flowmeter01HoneyBun.RATE.LoLo.DEADBAND))[XIC(Flowmeter01HoneyBun.RATE.LoLo.DELAY.DN) OTE(Flowmeter01HoneyBun.RATE.LoLo.ACTIVE) ,TON(Flowmeter01HoneyBun.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Flowmeter01HoneyBun.STAT.FAULT)[XIC(Flowmeter01HoneyBun.Fault.DELAY.DN) OTE(Flowmeter01HoneyBun.Fault.ACTIVE) ,MOV(10000,Flowmeter01HoneyBun.Fault.DELAY.PRE) TON(Flowmeter01HoneyBun.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(Flowmeter01HoneyBun.AOI.Mode,Flowmeter01HoneyBun.CMD,Flowmeter01HoneyBun.STAT,Flowmeter01HoneyBun.MAN_SP,Flowmeter01HoneyBun.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LO$'$N"
+				    "";
+				N: [XIC(Flowmeter01HoneyBun.RATE.Lo.ACTIVE) XIO(Flowmeter01HoneyBun.RATE.Lo.DISABLED) XIC(PowerInput.STAT.ON) OTE(Flowmeter01HoneyBun.ALARM[4].ACTIVE) ,AlarmControl(Flowmeter01HoneyBun.AOI.AlarmControl[4],Flowmeter01HoneyBun.ALARM[4],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LOLO$'$N"
+				    "";
+				N: [XIC(Flowmeter01HoneyBun.RATE.LoLo.ACTIVE) XIO(Flowmeter01HoneyBun.RATE.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(Flowmeter01HoneyBun.ALARM[5].ACTIVE) ,AlarmControl(Flowmeter01HoneyBun.AOI.AlarmControl[5],Flowmeter01HoneyBun.ALARM[5],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(Flowmeter01HoneyBun.Fault.ACTIVE) XIO(Flowmeter01HoneyBun.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(Flowmeter01HoneyBun.ALARM[6].ACTIVE) ,AlarmControl(Flowmeter01HoneyBun.AOI.AlarmControl[6],Flowmeter01HoneyBun.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: Arbitration(Flowmeter01HoneyBun.AOI.Arbitration,Flowmeter01HoneyBun.ARB,Flowmeter01HoneyBun.INDEX,1);
+		END_ROUTINE
+
+		ROUTINE Flowmeter02Donut 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Flowmeter.Tank01_HFCS$'$N"
+				    "ControlModule=$'Flowmeter.Flowmeter02Donut$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(63,Flowmeter02Donut.DISPLAY_MASK.BITS)NOP();
+				RC: "Template=$'TANK.02.01.FLOWMETER.FLOWMETER02DONUT$'$N"
+				    "Function=$'ANALOG.COUNTER$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(Flowmeter02Donut_IO_Value,Flowmeter02Donut.RAW) ,EQU(Flowmeter02Donut_IO_Fault,0) OTE(Flowmeter02Donut.STAT.DATA_OK) ];
+				RC: "Template=$'TANK.02.01.FLOWMETER.FLOWMETER02DONUT$'$N"
+				    "Function=$'ANALOG.COUNTER.SCALE$'$N"
+				    "[Description]$N"
+				    "";
+				N: MUL(Flowmeter02Donut.RAW,Flowmeter02Donut.SCALE_FACTOR,Flowmeter02Donut.SCALED);
+				N: XIC(\Mixer04_AddHFCS.Phase.CM.AutoRun[2])OTE(Flowmeter02Donut.TOTALIZER.RESET);
+				RC: "Template=$'TANK.02.01.FLOWMETER.FLOWMETER02DONUT$'$N"
+				    "Function=$'ANALOG.COUNTER.RESET$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Flowmeter02Donut.TOTALIZER.RESET)OTE(Flowmeter02Donut_IO_Reset);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(Flowmeter02Donut.AOI.Rate,Flowmeter02Donut.SCALED,Flowmeter02Donut.RATE);
+				RC: "$N"
+				    "";
+				N: XIC(\Mixer04_AddHFCS.Phase.CM.AutoRun[20])[LES(Flowmeter02Donut.RATE.CHANGE,Flowmeter02Donut.RATE.Lo.LIM) ,XIC(Flowmeter02Donut.RATE.Lo.ACTIVE) ]CMP(Flowmeter02Donut.RATE.CHANGE<=(Flowmeter02Donut.RATE.Lo.LIM+Flowmeter02Donut.RATE.Lo.DEADBAND))[XIC(Flowmeter02Donut.RATE.Lo.DELAY.DN) OTE(Flowmeter02Donut.RATE.Lo.ACTIVE) ,TON(Flowmeter02Donut.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: XIC(\Mixer04_AddHFCS.Phase.CM.AutoRun[20])[LES(Flowmeter02Donut.RATE.CHANGE,Flowmeter02Donut.RATE.LoLo.LIM) ,XIC(Flowmeter02Donut.RATE.LoLo.ACTIVE) ]CMP(Flowmeter02Donut.RATE.CHANGE<=(Flowmeter02Donut.RATE.LoLo.LIM+Flowmeter02Donut.RATE.LoLo.DEADBAND))[XIC(Flowmeter02Donut.RATE.LoLo.DELAY.DN) OTE(Flowmeter02Donut.RATE.LoLo.ACTIVE) ,TON(Flowmeter02Donut.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Flowmeter02Donut.STAT.FAULT)[XIC(Flowmeter02Donut.Fault.DELAY.DN) OTE(Flowmeter02Donut.Fault.ACTIVE) ,MOV(10000,Flowmeter02Donut.Fault.DELAY.PRE) TON(Flowmeter02Donut.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(Flowmeter02Donut.AOI.Mode,Flowmeter02Donut.CMD,Flowmeter02Donut.STAT,Flowmeter02Donut.MAN_SP,Flowmeter02Donut.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LO$'$N"
+				    "";
+				N: [XIC(Flowmeter02Donut.RATE.Lo.ACTIVE) XIO(Flowmeter02Donut.RATE.Lo.DISABLED) XIC(PowerInput.STAT.ON) OTE(Flowmeter02Donut.ALARM[4].ACTIVE) ,AlarmControl(Flowmeter02Donut.AOI.AlarmControl[4],Flowmeter02Donut.ALARM[4],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LOLO$'$N"
+				    "";
+				N: [XIC(Flowmeter02Donut.RATE.LoLo.ACTIVE) XIO(Flowmeter02Donut.RATE.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(Flowmeter02Donut.ALARM[5].ACTIVE) ,AlarmControl(Flowmeter02Donut.AOI.AlarmControl[5],Flowmeter02Donut.ALARM[5],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(Flowmeter02Donut.Fault.ACTIVE) XIO(Flowmeter02Donut.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(Flowmeter02Donut.ALARM[6].ACTIVE) ,AlarmControl(Flowmeter02Donut.AOI.AlarmControl[6],Flowmeter02Donut.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: Arbitration(Flowmeter02Donut.AOI.Arbitration,Flowmeter02Donut.ARB,Flowmeter02Donut.INDEX,1);
+		END_ROUTINE
+
+		ROUTINE HighLevel 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Level Switch.Tank01_HFCS$'$N"
+				    "ControlModule=$'Level Switch.HighLevel$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIO(HighLevel_IO_Input) OTE(HighLevel.STAT.ENERGIZED) ,XIC(HighLevel.STAT.ENERGIZED) [XIC(HighLevel.DELAY.ON.DN) OTL(HighLevel.STAT.ON) OTU(HighLevel.STAT.OFF) ,TON(HighLevel.DELAY.ON,?,?) ] ,XIO(HighLevel.STAT.ENERGIZED) [XIC(HighLevel.DELAY.OFF.DN) OTU(HighLevel.STAT.ON) OTL(HighLevel.STAT.OFF) ,TON(HighLevel.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.ON$'$N"
+				    "";
+				N: [XIC(HighLevel.STAT.ON) XIC(cDI[455].STAT.ON) OTE(HighLevel.ALARM[0].ACTIVE) ,AlarmControl(HighLevel.AOI.AlarmControl[0],HighLevel.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Level 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Level.Tank01_HFCS$'$N"
+				    "ControlModule=$'Level.Level$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: ADD(Level_IO_Value,-1.526,Level.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: [AnalogInputScaling(Level.AOI.Scaling,Level.RAW,Level.RAW_LO,Level.RAW_HI,Level.SCALE_LO,401.46,Level.SCALED) ,MOV(6.1,Level_IO_SensorOffset) MOV(1.37234525,Level_IO_SpecificGravity) ADD(Level.SCALED,Level_IO_SensorOffset,Level.SCALED) DIV(Level.SCALED,Level_IO_SpecificGravity,Level.SCALED) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Level_IO_Fault) ,XIC(Level.STAT.FAULT) ]XIO(Level.CMD.RESET)OTE(Level.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(Level.SCALED,Level.LoLo.LIM) ,XIC(Level.LoLo.ACTIVE) ]CMP(Level.SCALED<=(Level.LoLo.LIM+Level.LoLo.DEADBAND))[XIC(Level.LoLo.DELAY.DN) OTE(Level.LoLo.ACTIVE) ,TON(Level.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(Level.SCALED,Level.Lo.LIM) ,XIC(Level.Lo.ACTIVE) ]CMP(Level.SCALED<=(Level.Lo.LIM+Level.Lo.DEADBAND))[XIC(Level.Lo.DELAY.DN) OTE(Level.Lo.ACTIVE) ,TON(Level.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(Level.SCALED,Level.Hi.LIM) ,XIC(Level.Hi.ACTIVE) ]CMP(Level.SCALED>=(Level.Hi.LIM-Level.Hi.DEADBAND))[XIC(Level.Hi.DELAY.DN) OTE(Level.Hi.ACTIVE) ,TON(Level.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(Level.SCALED,Level.HiHi.LIM) ,XIC(Level.HiHi.ACTIVE) ]CMP(Level.SCALED>=(Level.HiHi.LIM-Level.HiHi.DEADBAND))[XIC(Level.HiHi.DELAY.DN) OTE(Level.HiHi.ACTIVE) ,TON(Level.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(Level.AOI.Rate,Level.SCALED,Level.RATE);
+				RC: "$N"
+				    "";
+				N: [LES(Level.RATE.CHANGE,Level.RATE.Lo.LIM) ,XIC(Level.RATE.Lo.ACTIVE) ]CMP(Level.RATE.CHANGE<=(Level.RATE.Lo.LIM+Level.RATE.Lo.DEADBAND))[XIC(Level.RATE.Lo.DELAY.DN) OTE(Level.RATE.Lo.ACTIVE) ,TON(Level.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [LES(Level.RATE.CHANGE,Level.RATE.LoLo.LIM) ,XIC(Level.RATE.LoLo.ACTIVE) ]CMP(Level.RATE.CHANGE<=(Level.RATE.LoLo.LIM+Level.RATE.LoLo.DEADBAND))[XIC(Level.RATE.LoLo.DELAY.DN) OTE(Level.RATE.LoLo.ACTIVE) ,TON(Level.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Level.STAT.FAULT)[XIC(Level.Fault.DELAY.DN) OTE(Level.Fault.ACTIVE) ,MOV(10000,Level.Fault.DELAY.PRE) TON(Level.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(Level.AOI.Mode,Level.CMD,Level.STAT,Level.MAN_SP,Level.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(Level.LoLo.ACTIVE) XIO(Level.LoLo.DISABLED) XIC(cDI[455].STAT.ON) OTE(Level.ALARM[0].ACTIVE) ,AlarmControl(Level.AOI.AlarmControl[0],Level.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(Level.Lo.ACTIVE) XIO(Level.Lo.DISABLED) XIC(cDI[455].STAT.ON) OTE(Level.ALARM[1].ACTIVE) ,AlarmControl(Level.AOI.AlarmControl[1],Level.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(Level.Hi.ACTIVE) XIO(Level.Hi.DISABLED) XIC(cDI[455].STAT.ON) OTE(Level.ALARM[2].ACTIVE) ,AlarmControl(Level.AOI.AlarmControl[2],Level.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(Level.HiHi.ACTIVE) XIO(Level.HiHi.DISABLED) XIC(cDI[455].STAT.ON) OTE(Level.ALARM[3].ACTIVE) ,AlarmControl(Level.AOI.AlarmControl[3],Level.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LO$'$N"
+				    "";
+				N: [XIC(Level.RATE.Lo.ACTIVE) XIO(Level.RATE.Lo.DISABLED) XIC(cDI[455].STAT.ON) OTE(Level.ALARM[4].ACTIVE) ,AlarmControl(Level.AOI.AlarmControl[4],Level.ALARM[4],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LOLO$'$N"
+				    "";
+				N: [XIC(Level.RATE.LoLo.ACTIVE) XIO(Level.RATE.LoLo.DISABLED) XIC(cDI[455].STAT.ON) OTE(Level.ALARM[5].ACTIVE) ,AlarmControl(Level.AOI.AlarmControl[5],Level.ALARM[5],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(Level.Fault.ACTIVE) XIO(Level.Fault.DISABLED) XIC(cDI[455].STAT.ON) OTE(Level.ALARM[6].ACTIVE) ,AlarmControl(Level.AOI.AlarmControl[6],Level.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Pump 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.VFD.Tank01_HFCS$'$N"
+				    "ControlModule=$'VFD.Pump$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: OTE(Pump.STAT.AUTO_RUN);
+				N: [[XIC(RecirculationValve.STAT.ON_OPEN) ,XIC(InletValveBrew.STAT.ON_OPEN) ,XIC(InletValveMixer01.STAT.ON_OPEN) ,XIC(InletValveMixer02.STAT.ON_OPEN) ,XIC(InletValveMixer04.STAT.ON_OPEN) ] TOF(Pump.TMR[0],?,?) ,XIC(Pump.TMR[0].DN) OTE(ValidPath) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,Pump.MSG.PERM) ,XIC(Level.LoLo.ACTIVE) MOV(1,Pump.MSG.PERM) ,XIC(Level.Fault.ACTIVE) MOV(2,Pump.MSG.PERM) ,XIO(ValidPath) MOV(3,Pump.MSG.PERM) ,EQU(Pump.MSG.PERM,0) OTE(Pump.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,Pump.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,Pump.MSG.INTRLK) ,XIC(DischargePressure.HiHi.ACTIVE) MOV(22,Pump.MSG.INTRLK) ,XIC(DischargePressure.Fault.ACTIVE) MOV(23,Pump.MSG.INTRLK) ,NEQ(Pump.MSG.INTRLK,0) OTE(Pump.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VFD.FAULT$'$N"
+				    "Function=$'VFD.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Pump.STAT.ENERGIZE) [XIO(Pump.STAT.ON_OPEN) ,XIC(Pump.STAT.OFF_CLOSED) ] ,XIO(Pump.STAT.ENERGIZE) [XIC(Pump.STAT.ON_OPEN) ,XIO(Pump.STAT.OFF_CLOSED) ] ,XIC(Pump.STAT.VFD_FAULT) ,XIC(Pump.STAT.FAULT) ]XIO(Pump.CMD.RESET)[XIC(Pump.DELAY.FAULT.DN) OTE(Pump.STAT.FAULT) ,TON(Pump.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VFD$'$N"
+				    "Function=$'STATUS.MESSAGE.VFD$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,Pump.MSG.MSG) ,XIC(Pump.STAT.ENERGIZE) XIO(Pump.STAT.ON_OPEN) MOV(61,Pump.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Pump.STAT.AUTO_RUN) NEQ(Pump.MSG.PERM,0) MOV(Pump.MSG.PERM,Pump.MSG.MSG) ,NEQ(Pump.MSG.INTRLK,0) MOV(Pump.MSG.INTRLK,Pump.MSG.MSG) ,NEQ(Pump.MSG.FAULT,0) MOV(Pump.MSG.FAULT,Pump.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(Pump.AOI.Message,Pump.ID,Pump.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(Pump.AOI.Control,Pump.CMD,Pump.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VFD.SPEED.SETPOINT$'$N"
+				    "Function=$'VFD.SPEED.SETPOINT$'$N"
+				    "[Description]$N"
+				    "$N"
+				    "This is the recirc speed.  Pump cavitates at 23Hz so set to 21Hz to provide a buffer.";
+				N: XIO(ph_Mixer01AddHFCS.CM.AutoRun[10])XIO(ph_Mixer02AddHFCS.CM.AutoRun[10])XIO(ph_BrewAddHFCS.CM.AutoRun[10])MOV(PumpSpeedReference.SP_MAN,PumpSpeedReference.SP);
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'RUNG.CONTROLMODULE.PHASE.SPEED.CONTROL$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(ph_Mixer01AddHFCS.CM.AutoRun[10])[MOV(ph_Mixer01AddHFCS.USER.SETTINGS[0],PumpSpeedReference.SP) ,XIC(ph_Mixer01AddHFCS.PREACT.DRIBBLING) MOV(ph_Mixer01AddHFCS.USER.SETTINGS[1],PumpSpeedReference.SP) ];
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'RUNG.CONTROLMODULE.PHASE.SPEED.CONTROL$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(ph_Mixer02AddHFCS.CM.AutoRun[10])[MOV(ph_Mixer02AddHFCS.USER.SETTINGS[0],PumpSpeedReference.SP) ,XIC(ph_Mixer02AddHFCS.PREACT.DRIBBLING) MOV(ph_Mixer02AddHFCS.USER.SETTINGS[1],PumpSpeedReference.SP) ];
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'RUNG.CONTROLMODULE.PHASE.SPEED.CONTROL$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(ph_Mixer04AddHFCS.CM.AutoRun[10])[MOV(ph_Mixer04AddHFCS.USER.SETTINGS[0],PumpSpeedReference.SP) ,XIC(ph_Mixer04AddHFCS.PREACT.DRIBBLING) MOV(ph_Mixer04AddHFCS.USER.SETTINGS[1],PumpSpeedReference.SP) ];
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'RUNG.CONTROLMODULE.PHASE.SPEED.CONTROL$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(ph_BrewAddHFCS.CM.AutoRun[10])[MOV(ph_BrewAddHFCS.USER.SETTINGS[0],PumpSpeedReference.SP) ,XIC(ph_BrewAddHFCS.PREACT.DRIBBLING) MOV(ph_BrewAddHFCS.USER.SETTINGS[1],PumpSpeedReference.SP) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VFD.SPEED.CV$'$N"
+				    "Function=$'VFD.SPEED.CV$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,PumpSpeedReference.CV) ,XIC(Pump.STAT.AUTO) XIC(Pump.STAT.ENERGIZE) MOV(PumpSpeedReference.SP,PumpSpeedReference.CV) ,XIC(Pump.STAT.MAN) XIC(Pump.STAT.ENERGIZE) MOV(PumpSpeedReference.CV_MAN,PumpSpeedReference.CV) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VFD.IO.OUTPUT$'$N"
+				    "Function=$'VFD.IO.CONTROL$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Pump.STAT.ENERGIZE) OTE(Pump_IO_Start) ,XIO(Pump.STAT.ENERGIZE) OTE(Pump_IO_Stop) ,[XIO(Pump.STAT.ON_OPEN_BYPASS) XIC(Pump_IO_Running) ,XIC(Pump.STAT.ON_OPEN_BYPASS) XIC(Pump.STAT.ENERGIZE) ] [OTE(Pump.STAT.ON_OPEN) ,XIC(Pump.DELAY.ON.DN) OTE(Pump.STAT.ON_OPEN_DELAY) ,TON(Pump.DELAY.ON,?,?) ] ,[XIO(Pump.STAT.OFF_CLOSED_BYPASS) XIO(Pump_IO_Running) ,XIC(Pump.STAT.OFF_CLOSED_BYPASS) XIO(Pump.STAT.ENERGIZE) ] [OTE(Pump.STAT.OFF_CLOSED) ,XIC(Pump.DELAY.OFF.DN) OTE(Pump.STAT.OFF_CLOSED_DELAY) ,TON(Pump.DELAY.OFF,?,?) ] ,XIC(Pump_IO_Faulted) XIO(cCOMMON.FirstScan.AlarmInhibit) OTE(Pump.STAT.VFD_FAULT) ,[XIC(Pump.CMD.RESET) ,XIC(cCOMMON.FirstScan.ResetFaultToVFD) ,XIC(Pump_IO_ClearFaults) ] XIC(Pump_IO_Faulted) OTE(Pump_IO_ClearFaults) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VFD.IO.SPEED$'$N"
+				    "Function=$'VFD.IO.SPEED$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MUL(PumpSpeedReference.CV,100,Pump_IO_Setpoint) ,DIV(Pump_IO_Speed,100,PumpSpeedReference.CV_ACTUAL) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(Pump.STAT.FAULT) OTE(Pump.ALARM[0].ACTIVE) ,AlarmControl(Pump.AOI.AlarmControl[0],Pump.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.DISCONNECT$'$N"
+				    "";
+				N: [XIO(Pump.STAT.DISCONNECT) OTE(Pump.ALARM[1].ACTIVE) ,AlarmControl(Pump.AOI.AlarmControl[1],Pump.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.VFD_FAULT$'$N"
+				    "";
+				N: [XIC(PowerSafety.STAT.ON) XIC(Pump.STAT.VFD_FAULT) OTE(Pump.ALARM[2].ACTIVE) ,AlarmControl(Pump.AOI.AlarmControl[2],Pump.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: Arbitration(Pump.AOI.Arbitration,Pump.ARB,Pump.INDEX,1);
+		END_ROUTINE
+
+		ROUTINE RecirculationValve 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Valve.Tank01_HFCS$'$N"
+				    "ControlModule=$'Valve.RecirculationValve$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: [XIC(ph_Mixer01AddHFCS.CM.AutoRun[9]) ,XIC(ph_Mixer02AddHFCS.CM.AutoRun[9]) ,XIC(ph_Mixer04AddHFCS.CM.AutoRun[9]) ,XIC(ph_BrewAddHFCS.CM.AutoRun[9]) ]OTE(RecirculationValve.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,RecirculationValve.MSG.PERM) ,EQU(RecirculationValve.MSG.PERM,0) OTE(RecirculationValve.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,RecirculationValve.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,RecirculationValve.MSG.INTRLK) ,NEQ(RecirculationValve.MSG.INTRLK,0) OTE(RecirculationValve.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VALVE.FAULT$'$N"
+				    "Function=$'VALVE.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(RecirculationValve.STAT.ENERGIZE) [XIO(RecirculationValve.STAT.OFF_CLOSED) ,XIC(RecirculationValve.STAT.ON_OPEN) ] ,XIO(RecirculationValve.STAT.ENERGIZE) [XIC(RecirculationValve.STAT.OFF_CLOSED) ,XIO(RecirculationValve.STAT.ON_OPEN) ] ,XIC(RecirculationValve.STAT.FAULT) ]XIO(RecirculationValve.CMD.RESET)[XIC(RecirculationValve.DELAY.FAULT.DN) OTE(RecirculationValve.STAT.FAULT) ,TON(RecirculationValve.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VALVE$'$N"
+				    "Function=$'STATUS.MESSAGE.VALVE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,RecirculationValve.MSG.MSG) ,XIC(RecirculationValve.STAT.ENERGIZE) XIC(RecirculationValve.STAT.OFF_CLOSED) MOV(61,RecirculationValve.MSG.MSG) ,XIO(RecirculationValve.STAT.ENERGIZE) XIO(RecirculationValve.STAT.OFF_CLOSED) MOV(62,RecirculationValve.MSG.MSG) ,XIC(RecirculationValve.STAT.ENERGIZE) XIO(RecirculationValve.STAT.ON_OPEN) MOV(63,RecirculationValve.MSG.MSG) ,XIO(RecirculationValve.STAT.ENERGIZE) XIC(RecirculationValve.STAT.ON_OPEN) MOV(64,RecirculationValve.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(RecirculationValve.STAT.AUTO_RUN) NEQ(RecirculationValve.MSG.PERM,0) MOV(RecirculationValve.MSG.PERM,RecirculationValve.MSG.MSG) ,NEQ(RecirculationValve.MSG.INTRLK,0) MOV(RecirculationValve.MSG.INTRLK,RecirculationValve.MSG.MSG) ,NEQ(RecirculationValve.MSG.FAULT,0) MOV(RecirculationValve.MSG.FAULT,RecirculationValve.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(RecirculationValve.AOI.Message,RecirculationValve.ID,RecirculationValve.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(RecirculationValve.AOI.Control,RecirculationValve.CMD,RecirculationValve.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.VALVE.OPNCLS.FEEDBACK$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.VALVE$'$N"
+				    "";
+				N: [XIC(RecirculationValve.STAT.ENERGIZE) OTE(RecirculationValve_IO_Output) ,[XIO(RecirculationValve.STAT.ON_OPEN_BYPASS) XIC(RecirculationValve_IO_Opened) ,XIC(RecirculationValve.STAT.ON_OPEN_BYPASS) XIO(RecirculationValve.STAT.ENERGIZE) ] [OTE(RecirculationValve.STAT.ON_OPEN) ,XIC(RecirculationValve.DELAY.ON.DN) OTE(RecirculationValve.STAT.ON_OPEN_DELAY) ,TON(RecirculationValve.DELAY.ON,?,?) ] ,[XIO(RecirculationValve.STAT.OFF_CLOSED_BYPASS) XIC(RecirculationValve_IO_Closed) ,XIC(RecirculationValve.STAT.OFF_CLOSED_BYPASS) XIC(RecirculationValve.STAT.ENERGIZE) ] [OTE(RecirculationValve.STAT.OFF_CLOSED) ,XIC(RecirculationValve.DELAY.OFF.DN) OTE(RecirculationValve.STAT.OFF_CLOSED_DELAY) ,TON(RecirculationValve.DELAY.OFF,?,?) ] ,XIC(cDI[455].STAT.ON) XIC(cDI[457].STAT.ON) XIC(cDI[456].STAT.ON) OTE(RecirculationValve.STAT.ControlPowerOn) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(RecirculationValve.STAT.ControlPowerOn) XIC(RecirculationValve.STAT.FAULT) OTE(RecirculationValve.ALARM[0].ACTIVE) ,AlarmControl(RecirculationValve.AOI.AlarmControl[0],RecirculationValve.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Temperature 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Temperature.Tank01_HFCS$'$N"
+				    "ControlModule=$'Temperature.Temperature$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(0,Temperature.TYPE)MOV(63,Temperature.DISPLAY_MASK.BITS)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(Temperature_IO_Value,Temperature.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(Temperature.AOI.Scaling,Temperature.RAW,Temperature.RAW_LO,Temperature.RAW_HI,Temperature.SCALE_LO,Temperature.SCALE_HI,Temperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Temperature_IO_Fault) ,XIC(Temperature.STAT.FAULT) ]XIO(Temperature.CMD.RESET)OTE(Temperature.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(Temperature.SCALED,Temperature.LoLo.LIM) ,XIC(Temperature.LoLo.ACTIVE) ]CMP(Temperature.SCALED<=(Temperature.LoLo.LIM+Temperature.LoLo.DEADBAND))[XIC(Temperature.LoLo.DELAY.DN) OTE(Temperature.LoLo.ACTIVE) ,TON(Temperature.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(Temperature.SCALED,Temperature.Lo.LIM) ,XIC(Temperature.Lo.ACTIVE) ]CMP(Temperature.SCALED<=(Temperature.Lo.LIM+Temperature.Lo.DEADBAND))[XIC(Temperature.Lo.DELAY.DN) OTE(Temperature.Lo.ACTIVE) ,TON(Temperature.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(Temperature.SCALED,Temperature.Hi.LIM) ,XIC(Temperature.Hi.ACTIVE) ]CMP(Temperature.SCALED>=(Temperature.Hi.LIM-Temperature.Hi.DEADBAND))[XIC(Temperature.Hi.DELAY.DN) OTE(Temperature.Hi.ACTIVE) ,TON(Temperature.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(Temperature.SCALED,Temperature.HiHi.LIM) ,XIC(Temperature.HiHi.ACTIVE) ]CMP(Temperature.SCALED>=(Temperature.HiHi.LIM-Temperature.HiHi.DEADBAND))[XIC(Temperature.HiHi.DELAY.DN) OTE(Temperature.HiHi.ACTIVE) ,TON(Temperature.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(Temperature.AOI.Rate,Temperature.SCALED,Temperature.RATE);
+				RC: "$N"
+				    "";
+				N: [LES(Temperature.RATE.CHANGE,Temperature.RATE.Lo.LIM) ,XIC(Temperature.RATE.Lo.ACTIVE) ]CMP(Temperature.RATE.CHANGE<=(Temperature.RATE.Lo.LIM+Temperature.RATE.Lo.DEADBAND))[XIC(Temperature.RATE.Lo.DELAY.DN) OTE(Temperature.RATE.Lo.ACTIVE) ,TON(Temperature.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [LES(Temperature.RATE.CHANGE,Temperature.RATE.LoLo.LIM) ,XIC(Temperature.RATE.LoLo.ACTIVE) ]CMP(Temperature.RATE.CHANGE<=(Temperature.RATE.LoLo.LIM+Temperature.RATE.LoLo.DEADBAND))[XIC(Temperature.RATE.LoLo.DELAY.DN) OTE(Temperature.RATE.LoLo.ACTIVE) ,TON(Temperature.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Temperature.STAT.FAULT)[XIC(Temperature.Fault.DELAY.DN) OTE(Temperature.Fault.ACTIVE) ,MOV(10000,Temperature.Fault.DELAY.PRE) TON(Temperature.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(Temperature.AOI.Mode,Temperature.CMD,Temperature.STAT,Temperature.MAN_SP,Temperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(Temperature.LoLo.ACTIVE) XIO(Temperature.LoLo.DISABLED) XIC(cDI[455].STAT.ON) OTE(Temperature.ALARM[0].ACTIVE) ,AlarmControl(Temperature.AOI.AlarmControl[0],Temperature.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(Temperature.Lo.ACTIVE) XIO(Temperature.Lo.DISABLED) XIC(cDI[455].STAT.ON) OTE(Temperature.ALARM[1].ACTIVE) ,AlarmControl(Temperature.AOI.AlarmControl[1],Temperature.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(Temperature.Hi.ACTIVE) XIO(Temperature.Hi.DISABLED) XIC(cDI[455].STAT.ON) OTE(Temperature.ALARM[2].ACTIVE) ,AlarmControl(Temperature.AOI.AlarmControl[2],Temperature.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(Temperature.HiHi.ACTIVE) XIO(Temperature.HiHi.DISABLED) XIC(cDI[455].STAT.ON) OTE(Temperature.ALARM[3].ACTIVE) ,AlarmControl(Temperature.AOI.AlarmControl[3],Temperature.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(Temperature.Fault.ACTIVE) XIO(Temperature.Fault.DISABLED) XIC(cDI[455].STAT.ON) OTE(Temperature.ALARM[6].ACTIVE) ,AlarmControl(Temperature.AOI.AlarmControl[6],Temperature.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE TemperatureControlValve 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'TANK.02.01.Valve.Tank01_HFCS$'$N"
+				    "ControlModule=$'Valve.TemperatureControlValve$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(TemperatureControlValve.STAT.AUTO)[XIC(Temperature.Lo.ACTIVE) ,XIC(TemperatureControlValve.STAT.AUTO_RUN) ]XIO(Temperature.Hi.ACTIVE)OTE(TemperatureControlValve.STAT.AUTO_RUN);
+				N: [XIC(TemperatureControlValve.STAT.ON_OPEN) RTO(TemperatureControlValve.TMR[0],?,?) ,DIV(TemperatureControlValve.TMR[0].ACC,60000.0,TemperatureControlValve_TimeToHeat) ,XIC(TemperatureControlValve.STAT.ON_OPEN) ONS(TemperatureControlValve.OS[1]) RES(TemperatureControlValve.TMR[0]) ];
+				N: [XIO(TemperatureControlValve.STAT.ON_OPEN) RTO(TemperatureControlValve.TMR[1],?,?) ,DIV(TemperatureControlValve.TMR[1].ACC,60000.0,TemperatureControlValve_TimeToCool) ,XIO(TemperatureControlValve.STAT.ON_OPEN) ONS(TemperatureControlValve.OS[2]) RES(TemperatureControlValve.TMR[1]) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,TemperatureControlValve.MSG.PERM) ,EQU(TemperatureControlValve.MSG.PERM,0) OTE(TemperatureControlValve.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,TemperatureControlValve.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,TemperatureControlValve.MSG.INTRLK) ,XIC(Temperature.Fault.ACTIVE) MOV(22,TemperatureControlValve.MSG.INTRLK) ,NEQ(TemperatureControlValve.MSG.INTRLK,0) OTE(TemperatureControlValve.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VALVE.FAULT$'$N"
+				    "Function=$'VALVE.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(TemperatureControlValve.STAT.ENERGIZE) [XIO(TemperatureControlValve.STAT.ON_OPEN) ,XIC(TemperatureControlValve.STAT.OFF_CLOSED) ] ,XIO(TemperatureControlValve.STAT.ENERGIZE) [XIC(TemperatureControlValve.STAT.ON_OPEN) ,XIO(TemperatureControlValve.STAT.OFF_CLOSED) ] ,XIC(TemperatureControlValve.STAT.FAULT) ]XIO(TemperatureControlValve.CMD.RESET)[XIC(TemperatureControlValve.DELAY.FAULT.DN) OTE(TemperatureControlValve.STAT.FAULT) ,TON(TemperatureControlValve.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VALVE$'$N"
+				    "Function=$'STATUS.MESSAGE.VALVE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,TemperatureControlValve.MSG.MSG) ,XIC(TemperatureControlValve.STAT.ENERGIZE) XIC(TemperatureControlValve.STAT.OFF_CLOSED) MOV(61,TemperatureControlValve.MSG.MSG) ,XIO(TemperatureControlValve.STAT.ENERGIZE) XIO(TemperatureControlValve.STAT.OFF_CLOSED) MOV(62,TemperatureControlValve.MSG.MSG) ,XIC(TemperatureControlValve.STAT.ENERGIZE) XIO(TemperatureControlValve.STAT.ON_OPEN) MOV(63,TemperatureControlValve.MSG.MSG) ,XIO(TemperatureControlValve.STAT.ENERGIZE) XIC(TemperatureControlValve.STAT.ON_OPEN) MOV(64,TemperatureControlValve.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(TemperatureControlValve.STAT.AUTO_RUN) NEQ(TemperatureControlValve.MSG.PERM,0) MOV(TemperatureControlValve.MSG.PERM,TemperatureControlValve.MSG.MSG) ,NEQ(TemperatureControlValve.MSG.INTRLK,0) MOV(TemperatureControlValve.MSG.INTRLK,TemperatureControlValve.MSG.MSG) ,NEQ(TemperatureControlValve.MSG.FAULT,0) MOV(TemperatureControlValve.MSG.FAULT,TemperatureControlValve.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(TemperatureControlValve.AOI.Message,TemperatureControlValve.ID,TemperatureControlValve.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(TemperatureControlValve.AOI.Control,TemperatureControlValve.CMD,TemperatureControlValve.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.VALVE.OPNCLS.FEEDBACK$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.VALVE$'$N"
+				    "";
+				N: [XIC(TemperatureControlValve.STAT.ENERGIZE) OTE(TemperatureControlValve_IO_Output) ,[XIO(TemperatureControlValve.STAT.ON_OPEN_BYPASS) XIC(TemperatureControlValve_IO_Opened) ,XIC(TemperatureControlValve.STAT.ON_OPEN_BYPASS) XIC(TemperatureControlValve.STAT.ENERGIZE) ] [OTE(TemperatureControlValve.STAT.ON_OPEN) ,XIC(TemperatureControlValve.DELAY.ON.DN) OTE(TemperatureControlValve.STAT.ON_OPEN_DELAY) ,TON(TemperatureControlValve.DELAY.ON,?,?) ] ,[XIO(TemperatureControlValve.STAT.OFF_CLOSED_BYPASS) XIC(TemperatureControlValve_IO_Closed) ,XIC(TemperatureControlValve.STAT.OFF_CLOSED_BYPASS) XIO(TemperatureControlValve.STAT.ENERGIZE) ] [OTE(TemperatureControlValve.STAT.OFF_CLOSED) ,XIC(TemperatureControlValve.DELAY.OFF.DN) OTE(TemperatureControlValve.STAT.OFF_CLOSED_DELAY) ,TON(TemperatureControlValve.DELAY.OFF,?,?) ] ,XIC(cDI[455].STAT.ON) XIC(cDI[457].STAT.ON) XIC(cDI[456].STAT.ON) OTE(TemperatureControlValve.STAT.ControlPowerOn) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(TemperatureControlValve.STAT.ControlPowerOn) XIC(TemperatureControlValve.STAT.FAULT) OTE(TemperatureControlValve.ALARM[0].ACTIVE) ,AlarmControl(TemperatureControlValve.AOI.AlarmControl[0],TemperatureControlValve.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Weight 
+				N: NOP();
+				N: XIO(Weight.TMR[0].DN)MOV(5000,Weight.TMR[0].PRE)TON(Weight.TMR[0],?,?);
+				N: XIC(Weight.TMR[0].DN)SiloWeightVolume_V2(Weight_AOI_Scaled2,Level.SCALED,0.04958,60,0,0,58,33.2,Volume,Weight.SCALED)TRN(Weight.SCALED,Weight.SCALED)[MOD(Weight.SCALED,100,ModuloResult) SUB(Weight.SCALED,ModuloResult,Weight.SCALED) ,GEQ(ModuloResult,50) ADD(Weight.SCALED,100,Weight.SCALED) ];
+				N: XIC(Weight.TMR[0].DN)SiloWeightVolume_V2(Weight_AOI_ScaleHi2,Level.SCALE_HI,0.04958,60,0,0,58,33.2,Volume,Weight.SCALE_HI)TRN(Weight.SCALE_HI,Weight.SCALE_HI)[MOD(Weight.SCALE_HI,100,ModuloResult) SUB(Weight.SCALE_HI,ModuloResult,Weight.SCALE_HI) ,GEQ(ModuloResult,50) ADD(Weight.SCALE_HI,100,Weight.SCALE_HI) ];
+				N: XIC(Weight.TMR[0].DN)SiloWeightVolume_V2(Weight_AOI_HiHi,Level.HiHi.LIM,0.04958,60,0,0,58,33.2,Volume,Weight.HiHi.LIM)TRN(Weight.HiHi.LIM,Weight.HiHi.LIM)[MOD(Weight.HiHi.LIM,100,ModuloResult) SUB(Weight.HiHi.LIM,ModuloResult,Weight.HiHi.LIM) ,GEQ(ModuloResult,50) ADD(Weight.HiHi.LIM,100,Weight.HiHi.LIM) ];
+				N: XIC(Weight.TMR[0].DN)SiloWeightVolume_V2(Weight_AOI_Hi,Level.Hi.LIM,0.04958,60,0,0,58,33.2,Volume,Weight.Hi.LIM)TRN(Weight.Hi.LIM,Weight.Hi.LIM)[MOD(Weight.Hi.LIM,100,ModuloResult) SUB(Weight.Hi.LIM,ModuloResult,Weight.Hi.LIM) ,GEQ(ModuloResult,50) ADD(Weight.Hi.LIM,100,Weight.Hi.LIM) ];
+				N: XIC(Weight.TMR[0].DN)SiloWeightVolume_V2(Weight_AOI_Lo,Level.Lo.LIM,0.04958,60,0,0,58,33.2,Volume,Weight.Lo.LIM)TRN(Weight.Lo.LIM,Weight.Lo.LIM)[MOD(Weight.Lo.LIM,100,ModuloResult) SUB(Weight.Lo.LIM,ModuloResult,Weight.Lo.LIM) ,GEQ(ModuloResult,50) ADD(Weight.Lo.LIM,100,Weight.Lo.LIM) ];
+				N: XIC(Weight.TMR[0].DN)SiloWeightVolume_V2(Weight_AOI_Lolo,Level.LoLo.LIM,0.04958,60,0,0,58,33.2,Volume,Weight.LoLo.LIM)TRN(Weight.LoLo.LIM,Weight.LoLo.LIM)[MOD(Weight.LoLo.LIM,100,ModuloResult) SUB(Weight.LoLo.LIM,ModuloResult,Weight.LoLo.LIM) ,GEQ(ModuloResult,50) ADD(Weight.LoLo.LIM,100,Weight.LoLo.LIM) ];
+				N: [LES(Weight.SCALED,Weight.LoLo.LIM) ,XIC(Weight.LoLo.ACTIVE) ]CMP(Weight.SCALED<=(Weight.LoLo.LIM+Weight.LoLo.DEADBAND))[XIC(Weight.LoLo.DELAY.DN) OTE(Weight.LoLo.ACTIVE) ,TON(Weight.LoLo.DELAY,?,?) ];
+				N: [LES(Weight.SCALED,Weight.Lo.LIM) ,XIC(Weight.Lo.ACTIVE) ]CMP(Weight.SCALED<=(Weight.Lo.LIM+Weight.Lo.DEADBAND))[XIC(Weight.Lo.DELAY.DN) OTE(Weight.Lo.ACTIVE) ,TON(Weight.Lo.DELAY,?,?) ];
+				N: [GRT(Weight.SCALED,Weight.Hi.LIM) ,XIC(Weight.Hi.ACTIVE) ]CMP(Weight.SCALED>=(Weight.Hi.LIM-Weight.Hi.DEADBAND))[XIC(Weight.Hi.DELAY.DN) OTE(Weight.Hi.ACTIVE) ,TON(Weight.Hi.DELAY,?,?) ];
+				N: [GRT(Weight.SCALED,Weight.HiHi.LIM) ,XIC(Weight.HiHi.ACTIVE) ]CMP(Weight.SCALED>=(Weight.HiHi.LIM-Weight.HiHi.DEADBAND))[XIC(Weight.HiHi.DELAY.DN) OTE(Weight.HiHi.ACTIVE) ,TON(Weight.HiHi.DELAY,?,?) ];
+				N: AnalogInputRate(Weight.AOI.Rate,Weight.SCALED,Weight.RATE);
+				N: [LES(Weight.RATE.CHANGE,Weight.RATE.Lo.LIM) ,XIC(Weight.RATE.Lo.ACTIVE) ]CMP(Weight.RATE.CHANGE<=(Weight.RATE.Lo.LIM+Weight.RATE.Lo.DEADBAND))[XIC(Weight.RATE.Lo.DELAY.DN) OTE(Weight.RATE.Lo.ACTIVE) ,TON(Weight.RATE.Lo.DELAY,?,?) ];
+				N: [LES(Weight.RATE.CHANGE,Weight.RATE.LoLo.LIM) ,XIC(Weight.RATE.LoLo.ACTIVE) ]CMP(Weight.RATE.CHANGE<=(Weight.RATE.LoLo.LIM+Weight.RATE.LoLo.DEADBAND))[XIC(Weight.RATE.LoLo.DELAY.DN) OTE(Weight.RATE.LoLo.ACTIVE) ,TON(Weight.RATE.LoLo.DELAY,?,?) ];
+				N: MOV(Weight.SCALED,InventoryLocation.MEASURED);
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'TANK.02.01$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'TANK.02.01$'$N"
+				    "";
+				N: NOP();
+				N: XIC(SafetyPower.CMD.RESET)OTL(Pump.CMD.RESET)OTL(RecirculationValve.CMD.RESET)OTL(TemperatureControlValve.CMD.RESET);
+				N: XIC(SafetyPower.CMD.RESET)OTL(DischargePressure.CMD.RESET)OTL(DischargeTemperature.CMD.RESET)OTL(DispTemp01HoneyBun.CMD.RESET)OTL(DispTemp02Donut.CMD.RESET)OTL(Level.CMD.RESET)OTL(Temperature.CMD.RESET);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LEVEL$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'LT200$'$N"
+				    "[Description]:Level$N"
+				    "";
+				N: JSR(Level,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'PRESSURE$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'PT200$'$N"
+				    "[Description]:Discharge Pressure$N"
+				    "";
+				N: JSR(DischargePressure,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'TEMPERATURE$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'TT200$'$N"
+				    "[Description]:Temperature$N"
+				    "";
+				N: JSR(Temperature,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'AV202$'$N"
+				    "[Description]:Temperature Control Valve$N"
+				    "";
+				N: JSR(TemperatureControlValve,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'AV201$'$N"
+				    "[Description]:Recirculation Valve$N"
+				    "";
+				N: JSR(RecirculationValve,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VFD$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'M200$'$N"
+				    "[Description]:Pump$N"
+				    "";
+				N: JSR(Pump,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LEVELSWITCH$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'LI200$'$N"
+				    "[Description]:High Level$N"
+				    "";
+				N: JSR(HighLevel,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'TEMPERATURE$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'TT201$'$N"
+				    "[Description]:Discharge Temperature$N"
+				    "";
+				N: JSR(DischargeTemperature,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'TEMPERATURE$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'TT502$'$N"
+				    "[Description]:Disp Temp 01 Honey Bun$N"
+				    "";
+				N: JSR(DispTemp01HoneyBun,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'FLOWMETER$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'LMS504$'$N"
+				    "[Description]:Flowmeter 01 Honey Bun$N"
+				    "";
+				N: JSR(Flowmeter01HoneyBun,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'TEMPERATURE$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'TT500$'$N"
+				    "[Description]:Disp Temp 02 Donut$N"
+				    "";
+				N: JSR(DispTemp02Donut,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'FLOWMETER$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'LM500$'$N"
+				    "[Description]:Flowmeter 02 Donut$N"
+				    "";
+				N: JSR(Flowmeter02Donut,0);
+				N: JSR(Weight,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

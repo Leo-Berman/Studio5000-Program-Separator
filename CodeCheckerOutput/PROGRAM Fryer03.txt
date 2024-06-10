@@ -1,0 +1,437 @@
+	PROGRAM Fryer03 (Description := "$NProgram=$'EM$'$NClass=$'OILFRYER.01.01$'$N",
+	                 MAIN := "_Main",
+	                 MODE := 0,
+	                 DisableFlag := 0,
+	                 UseAsFolder := 0)
+		TAG
+			CommunicationOk OF cDI[479] ;
+			EStop OF cDI[5] ;
+			FilterPumpRunning OF cDI[475] ;
+			FreshOilDispensing OF cDO[692] ;
+			FreshOilInletValve OF cDO[696] ;
+			FreshOilInletValve_IO_Closed OF Rack6:2:I.Data.16 (RADIX := Decimal);
+			FreshOilInletValve_IO_Opened OF Rack6:2:I.Data.15 (RADIX := Decimal);
+			FreshOilInletValve_IO_Output OF Rack6:5:O.Data.6 (RADIX := Decimal);
+			FreshOilReady OF cDO[693] ;
+			FreshOilRequestHold OF cDI[470] ;
+			FreshOilRequestHold_IO_Input OF Interface.ToBatch[28].1 (RADIX := Decimal);
+			FreshOilRequestStart OF cDI[471] ;
+			FreshOilRequestStart_IO_Input OF Interface.ToBatch[28].0 (RADIX := Decimal);
+			FryerOilHigh OF cDI[477] ;
+			FryerOilHighHigh OF cDI[474] ;
+			FryerOilHighHigh_IO_Input OF Interface.ToBatch[29].2 (RADIX := Decimal);
+			FryerOilHigh_IO_Input OF Interface.ToBatch[29].1 (RADIX := Decimal);
+			FryerOilLow OF cDI[478] ;
+			FryerOilLow_IO_Input OF Interface.ToBatch[29].0 (RADIX := Decimal);
+			Interface OF eInterfaceMoline3 ;
+			OilTemperature OF cAI[282] ;
+			OilTemperature_IO_Fault OF Rack6:1:I.Ch3Fault (RADIX := Decimal);
+			OilTemperature_IO_Value OF Rack6:1:I.Ch3Data (RADIX := Float);
+			OIT OF dOIT[1] ;
+			ph_AddOilFresh OF cPHZ[120] ;
+			ph_AddOilUsed OF cPHZ[121] ;
+			ph_Fryer03AddFreshOil OF cPHZ[120] ;
+			ph_Fryer03AddUsedOil OF cPHZ[121] ;
+			PowerInput OF cDI[533] ;
+			PowerOutput OF cDI[535] ;
+			PowerSafety OF cDI[536] ;
+			ProductionMode OF cDI[465] ;
+			RequestDrainOil OF cDI[469] ;
+			RequestStorageOil OF cDI[472] ;
+			SanitationMode OF cDI[466] ;
+			StandbyMode OF cDI[467] ;
+			StorageTankAlarm OF cDO[690] ;
+			StorageTankFull OF cDO[689] ;
+			StorageTankReady OF cDO[691] ;
+			StoredOilDispensing OF cDO[694] ;
+			StoredOilInletValve OF cDO[697] ;
+			StoredOilInletValve_IO_Closed OF Rack6:2:I.Data.18 (RADIX := Decimal);
+			StoredOilInletValve_IO_Opened OF Rack6:2:I.Data.17 (RADIX := Decimal);
+			StoredOilInletValve_IO_Output OF Rack6:5:O.Data.7 (RADIX := Decimal);
+			StoredOilReady OF cDO[695] ;
+			StoredOilRequestHold OF cDI[473] ;
+			StoredOilRequestHold_IO_Input OF Interface.ToBatch[21].1 (RADIX := Decimal);
+			StoredOilRequestStart_IO_Input OF Interface.ToBatch[21].0 (RADIX := Decimal);
+			TemperatureOk OF cDI[468] ;
+		END_TAG
+
+		ROUTINE FreshOilInletValve 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'OILFRYER.01.01.Valve.Fryer03$'$N"
+				    "ControlModule=$'Valve.FreshOilInletValve$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_Fryer03AddFreshOil.CM.AutoRun[1])OTE(FreshOilInletValve.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,FreshOilInletValve.MSG.PERM) ,XIO(StoredOilInletValve.STAT.OFF_CLOSED) MOV(1,FreshOilInletValve.MSG.PERM) ,EQU(FreshOilInletValve.MSG.PERM,0) OTE(FreshOilInletValve.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,FreshOilInletValve.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,FreshOilInletValve.MSG.INTRLK) ,NEQ(FreshOilInletValve.MSG.INTRLK,0) OTE(FreshOilInletValve.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VALVE.FAULT$'$N"
+				    "Function=$'VALVE.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(FreshOilInletValve.STAT.ENERGIZE) [XIO(FreshOilInletValve.STAT.ON_OPEN) ,XIC(FreshOilInletValve.STAT.OFF_CLOSED) ] ,XIO(FreshOilInletValve.STAT.ENERGIZE) [XIC(FreshOilInletValve.STAT.ON_OPEN) ,XIO(FreshOilInletValve.STAT.OFF_CLOSED) ] ,XIC(FreshOilInletValve.STAT.FAULT) ]XIO(FreshOilInletValve.CMD.RESET)[XIC(FreshOilInletValve.DELAY.FAULT.DN) OTE(FreshOilInletValve.STAT.FAULT) ,TON(FreshOilInletValve.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VALVE$'$N"
+				    "Function=$'STATUS.MESSAGE.VALVE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,FreshOilInletValve.MSG.MSG) ,XIC(FreshOilInletValve.STAT.ENERGIZE) XIC(FreshOilInletValve.STAT.OFF_CLOSED) MOV(61,FreshOilInletValve.MSG.MSG) ,XIO(FreshOilInletValve.STAT.ENERGIZE) XIO(FreshOilInletValve.STAT.OFF_CLOSED) MOV(62,FreshOilInletValve.MSG.MSG) ,XIC(FreshOilInletValve.STAT.ENERGIZE) XIO(FreshOilInletValve.STAT.ON_OPEN) MOV(63,FreshOilInletValve.MSG.MSG) ,XIO(FreshOilInletValve.STAT.ENERGIZE) XIC(FreshOilInletValve.STAT.ON_OPEN) MOV(64,FreshOilInletValve.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(FreshOilInletValve.STAT.AUTO_RUN) NEQ(FreshOilInletValve.MSG.PERM,0) MOV(FreshOilInletValve.MSG.PERM,FreshOilInletValve.MSG.MSG) ,NEQ(FreshOilInletValve.MSG.INTRLK,0) MOV(FreshOilInletValve.MSG.INTRLK,FreshOilInletValve.MSG.MSG) ,NEQ(FreshOilInletValve.MSG.FAULT,0) MOV(FreshOilInletValve.MSG.FAULT,FreshOilInletValve.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(FreshOilInletValve.AOI.Message,FreshOilInletValve.ID,FreshOilInletValve.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(FreshOilInletValve.AOI.Control,FreshOilInletValve.CMD,FreshOilInletValve.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.VALVE.OPNCLS.FEEDBACK$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.VALVE$'$N"
+				    "";
+				N: [XIC(FreshOilInletValve.STAT.ENERGIZE) OTE(FreshOilInletValve_IO_Output) ,[XIO(FreshOilInletValve.STAT.ON_OPEN_BYPASS) XIC(FreshOilInletValve_IO_Opened) ,XIC(FreshOilInletValve.STAT.ON_OPEN_BYPASS) XIC(FreshOilInletValve.STAT.ENERGIZE) ] [OTE(FreshOilInletValve.STAT.ON_OPEN) ,XIC(FreshOilInletValve.DELAY.ON.DN) OTE(FreshOilInletValve.STAT.ON_OPEN_DELAY) ,TON(FreshOilInletValve.DELAY.ON,?,?) ] ,[XIO(FreshOilInletValve.STAT.OFF_CLOSED_BYPASS) XIC(FreshOilInletValve_IO_Closed) ,XIC(FreshOilInletValve.STAT.OFF_CLOSED_BYPASS) XIO(FreshOilInletValve.STAT.ENERGIZE) ] [OTE(FreshOilInletValve.STAT.OFF_CLOSED) ,XIC(FreshOilInletValve.DELAY.OFF.DN) OTE(FreshOilInletValve.STAT.OFF_CLOSED_DELAY) ,TON(FreshOilInletValve.DELAY.OFF,?,?) ] ,XIC(PowerInput.STAT.ON) XIC(PowerOutput.STAT.ON) XIC(PowerSafety.STAT.ON) OTE(FreshOilInletValve.STAT.ControlPowerOn) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(FreshOilInletValve.STAT.ControlPowerOn) XIC(FreshOilInletValve.STAT.FAULT) OTE(FreshOilInletValve.ALARM[0].ACTIVE) ,AlarmControl(FreshOilInletValve.AOI.AlarmControl[0],FreshOilInletValve.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: Arbitration(FreshOilInletValve.AOI.Arbitration,FreshOilInletValve.ARB,FreshOilInletValve.INDEX,1);
+		END_ROUTINE
+
+		ROUTINE FreshOilRequestHold 
+				N: NOP();
+				N: [[XIC(FreshOilRequestHold_IO_Input) ,XIC(FreshOilRequestHold.STAT.BITS.22) ] OTE(FreshOilRequestHold.STAT.ENERGIZED) ,XIC(FreshOilRequestHold.STAT.ENERGIZED) [XIC(FreshOilRequestHold.DELAY.ON.DN) OTL(FreshOilRequestHold.STAT.ON) OTU(FreshOilRequestHold.STAT.OFF) ,TON(FreshOilRequestHold.DELAY.ON,?,?) ] ,XIO(FreshOilRequestHold.STAT.ENERGIZED) [XIC(FreshOilRequestHold.DELAY.OFF.DN) OTU(FreshOilRequestHold.STAT.ON) OTL(FreshOilRequestHold.STAT.OFF) ,TON(FreshOilRequestHold.DELAY.OFF,?,?) ] ];
+				N: [XIC(FreshOilRequestHold.DELAY.FAULT.DN) OTE(FreshOilRequestHold.STAT.FAULT) ,XIC(FreshOilRequestHold.STAT.ON) TON(FreshOilRequestHold.DELAY.FAULT,?,?) ];
+		END_ROUTINE
+
+		ROUTINE FreshOilRequestStart 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'OILFRYER.01.01.Digital Input.Fryer03$'$N"
+				    "ControlModule=$'Digital Input.RequestFreshOil$'$N"
+				    "";
+				N: NOP();
+				N: XIC(FreshOilRequestStart.STAT.BITS.22)XIC(FreshOilRequestHold.STAT.BITS.22)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [[XIC(FreshOilRequestStart_IO_Input) XIC(FreshOilRequestStart.STAT.BITS.21) ,XIC(FreshOilRequestStart.STAT.BITS.22) ] OTE(FreshOilRequestStart.STAT.ENERGIZED) ,XIC(FreshOilRequestStart.STAT.ENERGIZED) [XIC(FreshOilRequestStart.DELAY.ON.DN) OTL(FreshOilRequestStart.STAT.ON) OTU(FreshOilRequestStart.STAT.OFF) ,TON(FreshOilRequestStart.DELAY.ON,?,?) ] ,XIO(FreshOilRequestStart.STAT.ENERGIZED) [XIC(FreshOilRequestStart.DELAY.OFF.DN) OTU(FreshOilRequestStart.STAT.ON) OTL(FreshOilRequestStart.STAT.OFF) ,TON(FreshOilRequestStart.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE FryerOilHigh 
+				N: NOP();
+				N: [XIC(FryerOilHigh_IO_Input) OTE(FryerOilHigh.STAT.ENERGIZED) ,XIC(FryerOilHigh.STAT.ENERGIZED) [XIC(FryerOilHigh.DELAY.ON.DN) OTL(FryerOilHigh.STAT.ON) OTU(FryerOilHigh.STAT.OFF) ,TON(FryerOilHigh.DELAY.ON,?,?) ] ,XIO(FryerOilHigh.STAT.ENERGIZED) [XIC(FryerOilHigh.DELAY.OFF.DN) OTU(FryerOilHigh.STAT.ON) OTL(FryerOilHigh.STAT.OFF) ,TON(FryerOilHigh.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE FryerOilHighHigh 
+				N: NOP();
+				N: [XIC(FryerOilHighHigh_IO_Input) OTE(FryerOilHighHigh.STAT.ENERGIZED) ,XIC(FryerOilHighHigh.STAT.ENERGIZED) [XIC(FryerOilHighHigh.DELAY.ON.DN) OTL(FryerOilHighHigh.STAT.ON) OTU(FryerOilHighHigh.STAT.OFF) ,TON(FryerOilHighHigh.DELAY.ON,?,?) ] ,XIO(FryerOilHighHigh.STAT.ENERGIZED) [XIC(FryerOilHighHigh.DELAY.OFF.DN) OTU(FryerOilHighHigh.STAT.ON) OTL(FryerOilHighHigh.STAT.OFF) ,TON(FryerOilHighHigh.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE FryerOilLow 
+				N: XIC(FryerOilLow.STAT.ENERGIZED)XIC(FryerOilHigh.STAT.ENERGIZED)XIC(FryerOilHighHigh.STAT.ENERGIZED)NOP();
+				N: [XIC(FryerOilLow_IO_Input) OTE(FryerOilLow.STAT.ENERGIZED) ,XIC(FryerOilLow.STAT.ENERGIZED) [XIC(FryerOilLow.DELAY.ON.DN) OTL(FryerOilLow.STAT.ON) OTU(FryerOilLow.STAT.OFF) ,TON(FryerOilLow.DELAY.ON,?,?) ] ,XIO(FryerOilLow.STAT.ENERGIZED) [XIC(FryerOilLow.DELAY.OFF.DN) OTU(FryerOilLow.STAT.ON) OTL(FryerOilLow.STAT.OFF) ,TON(FryerOilLow.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE Interface 
+				N: NOP();
+				RC: "MESSAGING PULSE TIMER$N"
+				    "When messaging is enabled for this interface, run a self-resetting timer.$N"
+				    "The DN bit is used to trigger the MSG read.$N"
+				    "The host on the other end of this interface is responsible for reading from the DataWrite[] array.$N"
+				    " $N"
+				    "";
+				N: XIC(Interface.Control.MessagingEnabled)XIO(Interface.Control.MessageTimer.DN)TON(Interface.Control.MessageTimer,?,?);
+				RC: "MESSAGE$N"
+				    "Trigger the message instruction to read the data$N"
+				    " $N"
+				    "";
+				N: [XIC(Interface.Control.MessageTimer.DN) MSG(eInterfaceMoline3_MSG) ,XIC(eInterfaceMoline3_MSG.ER) OTE(Interface.Control.MessageError) ];
+				N: MOV(Interface.Control.HeartbeatTimer.ACC,Interface.FromBatch[1]);
+				RC: "COMMUNICATIONS WATCHDOG$N"
+				    "check on the heartbeat from batch, if the tag is not changing, set an alarm$N"
+				    "";
+				N: [XIO(Interface.Control.CommunicationAlarm) OTE(Interface.Control.CommunicationOK) ,XIC(Interface.Control.WatchdogTimer.DN) OTE(Interface.Control.CommunicationAlarm) ,[EQU(Interface.ToBatch[1],Interface.Control.HeartbeatLastScan) ,XIC(Interface.Control.MessageError) ] TON(Interface.Control.WatchdogTimer,?,?) ,MOV(10000,Interface.Control.WatchdogTimer.PRE) MOV(Interface.ToBatch[1],Interface.Control.HeartbeatLastScan) ];
+				N: NOP();
+				N: [XIC(Interface.Control.CommunicationOK) OTE(CommunicationOk.STAT.ENERGIZED) ,XIC(CommunicationOk.STAT.ENERGIZED) [XIC(CommunicationOk.DELAY.ON.DN) OTL(CommunicationOk.STAT.ON) OTU(CommunicationOk.STAT.OFF) ,TON(CommunicationOk.DELAY.ON,?,?) ] ,XIO(CommunicationOk.STAT.ENERGIZED) [XIC(CommunicationOk.DELAY.OFF.DN) OTU(CommunicationOk.STAT.ON) OTL(CommunicationOk.STAT.OFF) ,TON(CommunicationOk.DELAY.OFF,?,?) ] ];
+				N: XIO(CommunicationOk.STAT.ON)OTE(CommunicationOk.STAT.FAULT);
+				N: [XIO(CommunicationOk.STAT.ON) OTE(CommunicationOk.ALARM[0].ACTIVE) ,AlarmControl(CommunicationOk.AOI.AlarmControl[0],CommunicationOk.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: NOP();
+				RC: "COMMUNICATIONS WATCHDOG$N"
+				    "send heartbeat signal to batch.$N"
+				    "";
+				N: MOV(Interface.Control.HeartbeatTimer.ACC,Interface.FromBatch[1])MOV(60000,Interface.Control.HeartbeatTimer.PRE)XIO(Interface.Control.HeartbeatTimer.DN)TON(Interface.Control.HeartbeatTimer,?,?);
+				RC: "Request to run conveyors to send scrap$N"
+				    "";
+				N: XIC(Interface.FromBatch[4].0)OTE(Interface.FromBatch[4].0);
+				RC: "This is set when batching system is using the scrap tower scale to meter LIW into mixers. Batch system will probably set $QStop Feeding$Q during this time anyway.$N"
+				    "";
+				N: XIC(Interface.FromBatch[4].1)OTE(Interface.FromBatch[4].1);
+				RC: "Ready for scrap to convey to hopper$N"
+				    "";
+				N: XIC(Interface.FromBatch[4].2)OTE(Interface.FromBatch[4].2);
+				N: XIC(ph_AddOilUsed.STAT.PERMISSIVE)OTE(Interface.FromBatch[21].0);
+				N: XIC(ph_AddOilUsed.STATE.RUNNING)XIC(ph_AddOilUsed.CM.AutoRun[1])OTE(Interface.FromBatch[21].1);
+				N: [XIC(ph_AddOilUsed.STATE.IDLE) ,XIC(ph_AddOilUsed.STATE.RUNNING) XIO(ph_AddOilUsed.STAT.PERMISSIVE) ,XIC(ph_AddOilUsed.STATE.HELD) ]OTE(Interface.FromBatch[21].2);
+				N: XIC(ph_AddOilUsed.STATE.HELD)GRT(ph_AddOilUsed.MSG.FAULT,0)OTE(Interface.FromBatch[21].3);
+				N: XIC(ph_AddOilFresh.STAT.PERMISSIVE)OTE(Interface.FromBatch[28].0);
+				N: XIC(ph_AddOilFresh.STATE.RUNNING)XIC(ph_AddOilFresh.CM.AutoRun[1])OTE(Interface.FromBatch[28].1);
+				N: [XIC(ph_AddOilFresh.STATE.IDLE) ,XIC(ph_AddOilFresh.STATE.RUNNING) XIO(ph_AddOilFresh.STAT.PERMISSIVE) ,XIC(ph_AddOilFresh.STATE.HELD) ]OTE(Interface.FromBatch[28].2);
+				N: XIC(Interface.FromBatch[28].3)OTE(Interface.FromBatch[28].3);
+				N: XIC(Interface.FromBatch[31].0)OTE(Interface.FromBatch[31].0);
+				N: XIC(Interface.FromBatch[31].1)OTE(Interface.FromBatch[31].1);
+				N: XIC(Interface.FromBatch[31].2)OTE(Interface.FromBatch[31].2);
+				N: XIC(Interface.FromBatch[31].3)OTE(Interface.FromBatch[31].3);
+				N: XIC(Interface.FromBatch[38].0)OTE(Interface.FromBatch[38].0);
+				N: XIC(Interface.FromBatch[38].1)OTE(Interface.FromBatch[38].1);
+				N: XIC(Interface.FromBatch[38].2)OTE(Interface.FromBatch[38].2);
+				N: XIC(Interface.FromBatch[38].3)OTE(Interface.FromBatch[38].3);
+				N: NOP();
+				RC: "Set this when scrap infeed conveyors are running and system can expect scrap to fall into the scrap hopper.$N"
+				    "";
+				N: XIC(Interface.ToBatch[4].0)OTE(Interface.ToBatch[4].0);
+				RC: "Moline sets when ready to run conveyors into hopper$N"
+				    "";
+				N: XIC(Interface.ToBatch[4].1)OTE(Interface.ToBatch[4].1);
+				RC: "Set until see FromBatch Refill Running$N"
+				    "";
+				N: XIC(Interface.ToBatch[21].0)OTE(Interface.ToBatch[21].0);
+				RC: "Set until Not Running$N"
+				    "";
+				N: XIC(Interface.ToBatch[21].1)OTE(Interface.ToBatch[21].1);
+				RC: "Set until FromBach Refill Running.$N"
+				    "";
+				N: XIC(Interface.ToBatch[28].0)OTE(Interface.ToBatch[28].0);
+				RC: "Set until FromBach Refill Not Running.$N"
+				    "";
+				N: XIC(Interface.ToBatch[28].1)OTE(Interface.ToBatch[28].1);
+				RC: "Fryer 2$TMakeup Tank$T$TLow Level$T$T1 = Low$N"
+				    "";
+				N: XIC(Interface.ToBatch[29].0)OTE(Interface.ToBatch[29].0);
+				RC: "Fryer 2$TMakeup Tank$T$THigh Level$T$T1 = High$N"
+				    "";
+				N: XIC(Interface.ToBatch[29].1)OTE(Interface.ToBatch[29].1);
+				RC: "Fryer 2$TMakeup Tank$T$THigh High Level$T$T1 = High High$N"
+				    "";
+				N: XIC(Interface.ToBatch[29].2)OTE(Interface.ToBatch[29].2);
+				RC: "$QSet until FromBatch Recirc Running.$N"
+				    "Start/Restart Recirc if Enabled and not faulted.$Q$N"
+				    "";
+				N: XIC(Interface.ToBatch[31].0)OTE(Interface.ToBatch[31].0);
+				N: XIC(Interface.ToBatch[31].1)OTE(Interface.ToBatch[31].1);
+				N: XIC(Interface.ToBatch[38].0)OTE(Interface.ToBatch[38].0);
+				N: XIC(Interface.ToBatch[38].1)OTE(Interface.ToBatch[38].1);
+				N: XIC(Interface.ToBatch[39].0)OTE(Interface.ToBatch[39].0);
+				N: XIC(Interface.ToBatch[39].1)OTE(Interface.ToBatch[39].1);
+				N: XIC(Interface.ToBatch[39].2)OTE(Interface.ToBatch[39].2);
+		END_ROUTINE
+
+		ROUTINE OilTemperature 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'OILFRYER.01.01.Temperature.Fryer03$'$N"
+				    "ControlModule=$'Temperature.OilTemperature$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(OilTemperature_IO_Value,OilTemperature.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(OilTemperature.AOI.Scaling,OilTemperature.RAW,OilTemperature.RAW_LO,OilTemperature.RAW_HI,OilTemperature.SCALE_LO,OilTemperature.SCALE_HI,OilTemperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(OilTemperature_IO_Fault) ,XIC(OilTemperature.STAT.FAULT) ]XIO(OilTemperature.CMD.RESET)OTE(OilTemperature.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(OilTemperature.SCALED,OilTemperature.LoLo.LIM) ,XIC(OilTemperature.LoLo.ACTIVE) ]CMP(OilTemperature.SCALED<=(OilTemperature.LoLo.LIM+OilTemperature.LoLo.DEADBAND))[XIC(OilTemperature.LoLo.DELAY.DN) OTE(OilTemperature.LoLo.ACTIVE) ,TON(OilTemperature.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(OilTemperature.SCALED,OilTemperature.Lo.LIM) ,XIC(OilTemperature.Lo.ACTIVE) ]CMP(OilTemperature.SCALED<=(OilTemperature.Lo.LIM+OilTemperature.Lo.DEADBAND))[XIC(OilTemperature.Lo.DELAY.DN) OTE(OilTemperature.Lo.ACTIVE) ,TON(OilTemperature.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(OilTemperature.SCALED,OilTemperature.Hi.LIM) ,XIC(OilTemperature.Hi.ACTIVE) ]CMP(OilTemperature.SCALED>=(OilTemperature.Hi.LIM-OilTemperature.Hi.DEADBAND))[XIC(OilTemperature.Hi.DELAY.DN) OTE(OilTemperature.Hi.ACTIVE) ,TON(OilTemperature.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(OilTemperature.SCALED,OilTemperature.HiHi.LIM) ,XIC(OilTemperature.HiHi.ACTIVE) ]CMP(OilTemperature.SCALED>=(OilTemperature.HiHi.LIM-OilTemperature.HiHi.DEADBAND))[XIC(OilTemperature.HiHi.DELAY.DN) OTE(OilTemperature.HiHi.ACTIVE) ,TON(OilTemperature.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(OilTemperature.AOI.Rate,OilTemperature.SCALED,OilTemperature.RATE);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(OilTemperature.STAT.FAULT)[XIC(OilTemperature.Fault.DELAY.DN) OTE(OilTemperature.Fault.ACTIVE) ,MOV(10000,OilTemperature.Fault.DELAY.PRE) TON(OilTemperature.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(OilTemperature.AOI.Mode,OilTemperature.CMD,OilTemperature.STAT,OilTemperature.MAN_SP,OilTemperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(OilTemperature.LoLo.ACTIVE) XIO(OilTemperature.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(OilTemperature.ALARM[0].ACTIVE) ,AlarmControl(OilTemperature.AOI.AlarmControl[0],OilTemperature.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(OilTemperature.Lo.ACTIVE) XIO(OilTemperature.Lo.DISABLED) XIC(PowerInput.STAT.ON) OTE(OilTemperature.ALARM[1].ACTIVE) ,AlarmControl(OilTemperature.AOI.AlarmControl[1],OilTemperature.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(OilTemperature.Hi.ACTIVE) XIO(OilTemperature.Hi.DISABLED) XIC(PowerInput.STAT.ON) OTE(OilTemperature.ALARM[2].ACTIVE) ,AlarmControl(OilTemperature.AOI.AlarmControl[2],OilTemperature.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(OilTemperature.HiHi.ACTIVE) XIO(OilTemperature.HiHi.DISABLED) XIC(PowerInput.STAT.ON) OTE(OilTemperature.ALARM[3].ACTIVE) ,AlarmControl(OilTemperature.AOI.AlarmControl[3],OilTemperature.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(OilTemperature.Fault.ACTIVE) XIO(OilTemperature.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(OilTemperature.ALARM[6].ACTIVE) ,AlarmControl(OilTemperature.AOI.AlarmControl[6],OilTemperature.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE StoredOilInletValve 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'OILFRYER.01.01.Valve.Fryer03$'$N"
+				    "ControlModule=$'Valve.StoredOilInletValve$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_Fryer03AddUsedOil.CM.AutoRun[1])OTE(StoredOilInletValve.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,StoredOilInletValve.MSG.PERM) ,XIO(FreshOilInletValve.STAT.OFF_CLOSED) MOV(1,StoredOilInletValve.MSG.PERM) ,EQU(StoredOilInletValve.MSG.PERM,0) OTE(StoredOilInletValve.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,StoredOilInletValve.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,StoredOilInletValve.MSG.INTRLK) ,NEQ(StoredOilInletValve.MSG.INTRLK,0) OTE(StoredOilInletValve.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VALVE.FAULT$'$N"
+				    "Function=$'VALVE.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(StoredOilInletValve.STAT.ENERGIZE) [XIO(StoredOilInletValve.STAT.ON_OPEN) ,XIC(StoredOilInletValve.STAT.OFF_CLOSED) ] ,XIO(StoredOilInletValve.STAT.ENERGIZE) [XIC(StoredOilInletValve.STAT.ON_OPEN) ,XIO(StoredOilInletValve.STAT.OFF_CLOSED) ] ,XIC(StoredOilInletValve.STAT.FAULT) ]XIO(StoredOilInletValve.CMD.RESET)[XIC(StoredOilInletValve.DELAY.FAULT.DN) OTE(StoredOilInletValve.STAT.FAULT) ,TON(StoredOilInletValve.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VALVE$'$N"
+				    "Function=$'STATUS.MESSAGE.VALVE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,StoredOilInletValve.MSG.MSG) ,XIC(StoredOilInletValve.STAT.ENERGIZE) XIC(StoredOilInletValve.STAT.OFF_CLOSED) MOV(61,StoredOilInletValve.MSG.MSG) ,XIO(StoredOilInletValve.STAT.ENERGIZE) XIO(StoredOilInletValve.STAT.OFF_CLOSED) MOV(62,StoredOilInletValve.MSG.MSG) ,XIC(StoredOilInletValve.STAT.ENERGIZE) XIO(StoredOilInletValve.STAT.ON_OPEN) MOV(63,StoredOilInletValve.MSG.MSG) ,XIO(StoredOilInletValve.STAT.ENERGIZE) XIC(StoredOilInletValve.STAT.ON_OPEN) MOV(64,StoredOilInletValve.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(StoredOilInletValve.STAT.AUTO_RUN) NEQ(StoredOilInletValve.MSG.PERM,0) MOV(StoredOilInletValve.MSG.PERM,StoredOilInletValve.MSG.MSG) ,NEQ(StoredOilInletValve.MSG.INTRLK,0) MOV(StoredOilInletValve.MSG.INTRLK,StoredOilInletValve.MSG.MSG) ,NEQ(StoredOilInletValve.MSG.FAULT,0) MOV(StoredOilInletValve.MSG.FAULT,StoredOilInletValve.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(StoredOilInletValve.AOI.Message,StoredOilInletValve.ID,StoredOilInletValve.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(StoredOilInletValve.AOI.Control,StoredOilInletValve.CMD,StoredOilInletValve.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.VALVE.OPNCLS.FEEDBACK$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.VALVE$'$N"
+				    "";
+				N: [XIC(StoredOilInletValve.STAT.ENERGIZE) OTE(StoredOilInletValve_IO_Output) ,[XIO(StoredOilInletValve.STAT.ON_OPEN_BYPASS) XIC(StoredOilInletValve_IO_Opened) ,XIC(StoredOilInletValve.STAT.ON_OPEN_BYPASS) XIC(StoredOilInletValve.STAT.ENERGIZE) ] [OTE(StoredOilInletValve.STAT.ON_OPEN) ,XIC(StoredOilInletValve.DELAY.ON.DN) OTE(StoredOilInletValve.STAT.ON_OPEN_DELAY) ,TON(StoredOilInletValve.DELAY.ON,?,?) ] ,[XIO(StoredOilInletValve.STAT.OFF_CLOSED_BYPASS) XIC(StoredOilInletValve_IO_Closed) ,XIC(StoredOilInletValve.STAT.OFF_CLOSED_BYPASS) XIO(StoredOilInletValve.STAT.ENERGIZE) ] [OTE(StoredOilInletValve.STAT.OFF_CLOSED) ,XIC(StoredOilInletValve.DELAY.OFF.DN) OTE(StoredOilInletValve.STAT.OFF_CLOSED_DELAY) ,TON(StoredOilInletValve.DELAY.OFF,?,?) ] ,XIC(PowerInput.STAT.ON) XIC(PowerOutput.STAT.ON) XIC(PowerSafety.STAT.ON) OTE(StoredOilInletValve.STAT.ControlPowerOn) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(StoredOilInletValve.STAT.ControlPowerOn) XIC(StoredOilInletValve.STAT.FAULT) OTE(StoredOilInletValve.ALARM[0].ACTIVE) ,AlarmControl(StoredOilInletValve.AOI.AlarmControl[0],StoredOilInletValve.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE StoredOilRequestHold 
+				N: NOP();
+				N: [XIC(StoredOilRequestHold_IO_Input) OTE(StoredOilRequestHold.STAT.ENERGIZED) ,XIC(StoredOilRequestHold.STAT.ENERGIZED) [XIC(StoredOilRequestHold.DELAY.ON.DN) OTL(StoredOilRequestHold.STAT.ON) OTU(StoredOilRequestHold.STAT.OFF) ,TON(StoredOilRequestHold.DELAY.ON,?,?) ] ,XIO(StoredOilRequestHold.STAT.ENERGIZED) [XIC(StoredOilRequestHold.DELAY.OFF.DN) OTU(StoredOilRequestHold.STAT.ON) OTL(StoredOilRequestHold.STAT.OFF) ,TON(StoredOilRequestHold.DELAY.OFF,?,?) ] ];
+				N: [XIC(StoredOilRequestHold.DELAY.FAULT.DN) OTE(StoredOilRequestHold.STAT.FAULT) ,XIC(StoredOilRequestHold.STAT.ON) TON(StoredOilRequestHold.DELAY.FAULT,?,?) ];
+		END_ROUTINE
+
+		ROUTINE StoredOilRequestStart 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'OILFRYER.01.01.Digital Input.Fryer03$'$N"
+				    "ControlModule=$'Digital Input.RequestStorageOil$'$N"
+				    "";
+				N: NOP();
+				N: [XIC(StoredOilRequestStart_IO_Input) XIC(RequestStorageOil.STAT.BITS.21) OTE(RequestStorageOil.STAT.ENERGIZED) ,XIC(RequestStorageOil.STAT.ENERGIZED) [XIC(RequestStorageOil.DELAY.ON.DN) OTL(RequestStorageOil.STAT.ON) OTU(RequestStorageOil.STAT.OFF) ,TON(RequestStorageOil.DELAY.ON,?,?) ] ,XIO(RequestStorageOil.STAT.ENERGIZED) [XIC(RequestStorageOil.DELAY.OFF.DN) OTU(RequestStorageOil.STAT.ON) OTL(RequestStorageOil.STAT.OFF) ,TON(RequestStorageOil.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'OILFRYER.01.01$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'OILFRYER.01.01$'$N"
+				    "";
+				N: NOP();
+				N: JSR(Interface,0);
+				N: JSR(FreshOilRequestStart,0)JSR(FreshOilRequestHold,0);
+				N: JSR(StoredOilRequestStart,0)JSR(StoredOilRequestHold,0);
+				N: JSR(FryerOilHighHigh,0)JSR(FryerOilHigh,0)JSR(FryerOilLow,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'TEMPERATURE$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'Oil Temperature$'$N"
+				    "[Description]:Oil Temperature$N"
+				    "";
+				N: JSR(OilTemperature,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'AV522$'$N"
+				    "[Description]:Fresh Oil Inlet Valve$N"
+				    "";
+				N: JSR(FreshOilInletValve,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'AV523$'$N"
+				    "[Description]:Stored Oil Inlet Valve$N"
+				    "";
+				N: JSR(StoredOilInletValve,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		ROUTINE _Reserved 
+				RC: "This routine does not do anything and is not JSR$'d.$N"
+				    "The point of this routine is to reference cDO/DI/AO/AI/etc which are not currently used in the code, but which have been reserved, $N"
+				    "so that they do not appear to be unreferenced when you cross-reference them because cross-reference does not show tag comments if it doesn$'t hit a base tag. $N"
+				    "This prevents us from accidentally using a cDO/CDI that we meant to save and then double-referencing it later, leading to issues";
+				N: NOP();
+				N: XIC(StoredOilReady.STAT.ON_OPEN)XIC(StoredOilDispensing.STAT.ON_OPEN)XIC(FreshOilReady.STAT.ON_OPEN)XIC(FreshOilDispensing.STAT.ON_OPEN)XIC(StorageTankReady.STAT.ON_OPEN)XIC(StorageTankAlarm.STAT.ON_OPEN)XIC(StorageTankFull.STAT.ON_OPEN)NOP();
+				N: XIC(FilterPumpRunning.STAT.ON)XIC(RequestDrainOil.STAT.ON)XIC(TemperatureOk.STAT.ON)XIC(StandbyMode.STAT.ON)XIC(SanitationMode.STAT.ON)XIC(ProductionMode.STAT.ON)NOP();
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

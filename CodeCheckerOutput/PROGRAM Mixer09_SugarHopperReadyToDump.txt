@@ -1,0 +1,216 @@
+	PROGRAM Mixer09_SugarHopperReadyToDump (Description := "$NProgram=$'PH$'$NClass=$'HOPPER.READY:01.01.01$'$N",
+	                                        MAIN := "_000_Main",
+	                                        MODE := 0,
+	                                        DisableFlag := 0,
+	                                        UseAsFolder := 0)
+		TAG
+			AOI : CB_PHASE_AOI  := [[3],[3,10830000],[3,[0,1015]],[3],[1,0.00000000e+000],[3],[1,0.00000000e+000,0.00000000e+000],[3],[3,1083,108300,108299
+					],[[1],[1],[1],[1],[1],[1],[1],[1]],[3,16,15,15],[1,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],0,0]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,[1,0.00000000e+000,0.00000000e+000],0.00000000e+000
+					],[1,0.00000000e+000,0.00000000e+000]];
+			DumpPhase OF cPHZ[82] ;
+			DumpPhaseDoneForThisBatch : BOOL (RADIX := Decimal) := 0;
+			EStop OF cDI[5] ;
+			OIT : CB_OIT  := [[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0,0,0,0,0,0,[0,0,0,0,0,0,0,0,0,0],[0,0,0,0],0,[0,[0,0,0]],[0,[0,0,0]],0,0,0];
+			Phase OF cPHZ[83] (Usage := Public);
+			PhaseClass OF cPHZ_CLASS[7] (Usage := Public);
+			Unit OF cUNIT[59] ;
+		END_TAG
+
+		ROUTINE _000_FirstScan 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'HOPPER.READY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.TYPE$'$N"
+				    "Function=$'TYPE$'$N"
+				    "";
+				N: MOV(7,PhaseClass.TYPE);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.INDEX.SETTING$'$N"
+				    "Function=$'INDEX.SETTING$'$N"
+				    "";
+				N: MOV(Unit.ARRAY_INDEX,Phase.INDEX)MOV(PhaseClass.TYPE,Phase.TYPE)MOV(PhaseClass.ID,Phase.CLASS)COP(PhaseClass.NAME,Phase.CLASS_NAME,1)COP(PhaseClass.TYPE_NAME,Phase.TYPE_NAME,1);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.DISPLAY.MASK.SETTING$'$N"
+				    "Function=$'DISPLAY.MASK.SETTING$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.CLASS.PARAMETERS$'$N"
+				    "Function=$'CLASS.PARAMETERS$'$N"
+				    "";
+				N: PhaseClassParameter(AOI.PhaseClassParameter,PhaseClass,Phase.USER,Phase.DISPLAY_MASK,Phase.TYPE_MASK);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.SECTION.FIRSTSCAN.SETTING$'$N"
+				    "Function=$'STANDARD.PHASE.SECTION.FIRSTSCAN.SETTING$'$N"
+				    "";
+				N: PhaseClassParameter(AOI.PhaseClassParameter,PhaseClass,Phase.USER,Phase.DISPLAY_MASK,Phase.TYPE_MASK);
+		END_ROUTINE
+
+		ROUTINE _000_Main 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'HOPPER.READY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.FIRSTSCAN$'$N"
+				    "Function=$'EXECUTE.FIRSTSCAN$'$N"
+				    "";
+				N: XIC(S:FS)JSR(_000_FirstScan,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.WATCHWINDOW.STATE$'$N"
+				    "Function=$'WATCHWINDOW.PHASE.STATE$'$N"
+				    "";
+				N: XIC(Phase.STATE.IDLE)XIC(Phase.STATE.RUNNING)XIC(Phase.STATE.HELD)XIC(Phase.STATE.COMPLETE)XIC(Phase.STATE.ABORTED)XIC(Phase.STATE.STOPPED)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.WATCHWINDOW.STATE.TRANSITION$'$N"
+				    "Function=$'WATCHWINDOW.PHASE.STATE.TRANSITION$'$N"
+				    "";
+				N: XIC(Phase.STATE.HOLDING)XIC(Phase.STATE.RESTARTING)XIC(Phase.STATE.ABORTING)XIC(Phase.STATE.STOPPING)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.WATCHWINDOW.CONTROL$'$N"
+				    "Function=$'WATCHWINDOW.PHASE.CONTROL$'$N"
+				    "";
+				N: [XIC(Phase.CMD.START) XIC(Phase.CMD.HOLD) XIC(Phase.CMD.RESTART) XIC(Phase.CMD.STOP) XIC(Phase.CMD.ABORT) XIC(Phase.CMD.RESET) ,MOV(Phase.STATE_NO,Phase.STATE_NO) MOV(Phase.STEP_INDEX,Phase.STEP_INDEX) MOV(Phase.MSG.FAULT,Phase.MSG.FAULT) ]NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.PERMISSIVES.FAULTS.MESSAGING$'$N"
+				    "Function=$'EXECUTE.PERMISSIVES.FAULTS.MESSAGING$'$N"
+				    "";
+				N: JSR(_120_PermissiveFaultAndMessaging,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.AOI$'$N"
+				    "Function=$'AOI$'$N"
+				    "";
+				N: PhaseMode(AOI.Mode,Phase,cPHZ[0].MSG)PhaseCommon(AOI.Common,Phase)PhaseStepIndex(AOI.StepIndex,Phase)PhaseStateTransition(AOI.StateTransition,Phase.CMD,Phase.STAT,Phase.STATE,Phase.STATE_NO);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.STEPCONTROL$'$N"
+				    "Function=$'EXECUTE.STEPCONTROL$'$N"
+				    "";
+				N: JSR(_050_StepControl,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.STEP.MAPPING$'$N"
+				    "Function=$'STEP.MAPPING$'$N"
+				    "";
+				N: PhaseStepMapping(AOI.StepMapping,Phase);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.BYPASS$'$N"
+				    "Function=$'BYPASS$'$N"
+				    "";
+				N: PhaseBypass(AOI.Bypass,Phase);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MAIN.EXTENDED.FUNCTION$'$N"
+				    "Function=$'EXTENDED.FUNCTION$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _050_StepControl 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'HOPPER.READY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.SIMULATE.RETURN$'$N"
+				    "Function=$'SIMULATE.RETURN$'$N"
+				    "";
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.STEPCTRL.IDLE$'$N"
+				    "Function=$'STEP.CONTROL.IDE$'$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,1)MOV(2000,Phase.STEP_INDEX_GOTO);
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.READY.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.INITIAL.RECORDSTEP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,2000)MOV(5000,Phase.STEP_INDEX_GOTO);
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.READY.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.DUMP.PHASE.DONE.CHECK$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [XIO(Phase.STATE.IDLE) XIC(DumpPhase.STATE.DONE) EQU(DumpPhase.LINE_INDEX,Phase.LINE_INDEX) OTL(DumpPhaseDoneForThisBatch) ,XIC(Phase.STATE.Oneshot.Idle) OTU(DumpPhaseDoneForThisBatch) ];
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.READY.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.DUMP.PHASE.DONE$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5000)XIC(DumpPhaseDoneForThisBatch)MOV(10000,Phase.STEP_INDEX_GOTO);
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.READY.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.COMPLETE$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.RUNNING_COMPLETE);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.STEPCTRL.SECTION.HOLDING$'$N"
+				    "Function=$'STEP.CONTROL.SECTION.HOLDING$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.READY.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.HOLDING.COMPLETE$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.HOLDING)OTE(Phase.STAT.HOLDING_COMPLETE);
+				RC: "Proceed immediately to HELD$N"
+				    " $N"
+				    "Added to mirror Mixer 1 Flour Hopper Ready to Dump ICRiley 20140315";
+				N: XIC(Phase.STATE.RESTARTING)OTE(Phase.STAT.RESTARTING_COMPLETE);
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.READY.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.STOPPING$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.Oneshot.Stopping)MOV(10000,Phase.STEP_INDEX_GOTO);
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.READY.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.HOLDING.COMPLETE$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX_GOTO,10000)OTE(Phase.STAT.STOPPING_COMPLETE);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.STEPCTRL.SECTION.ABORTING$'$N"
+				    "Function=$'STEP.CONTROL.SECTION.ABORTING$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.READY.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.ABORTING$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.Oneshot.Aborting)MOV(10000,Phase.STEP_INDEX_GOTO);
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.READY.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.ABORTING.COMPLETE$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.ABORTING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.ABORTING_COMPLETE);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.STEPCTRL.SECTION.RESET$'$N"
+				    "Function=$'STEP.CONTROL.SECTION.RESET$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.READY.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.RESET$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.Oneshot.Idle)MOV(0,Phase.STEP_INDEX_GOTO_ON_RESTART)OTU(Phase.STAT.OUT_TOL)OTU(Phase.PREACT.PreactOutOfLimitHigh)OTU(Phase.PREACT.PreactOutOfLimitLow);
+		END_ROUTINE
+
+		ROUTINE _120_PermissiveFaultAndMessaging 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'HOPPER.READY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: [MOV(0,Phase.MSG.PERM) ,EQU(Phase.MSG.PERM,0) OTE(Phase.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.MSG.FAULT,0)[XIC(EStop.STAT.FAULT) MOV(21,Phase.MSG.FAULT) ,XIC(cSETUP.SIMULATION.Enabled) XIC(cSETUP.SIMULATION.PHASE) MOV(0,Phase.MSG.FAULT) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "";
+				N: [MOV(0,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIO(Phase.STEP.RECORD) MOV(61,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIC(Phase.STEP.RECORD) MOV(62,Phase.MSG.MSG) ,XIC(Phase.STATE.HELD) XIO(Phase.STAT.FAULTED) MOV(63,Phase.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE.UNIQUE$'$N"
+				    "Function=$'STATUS.MESSAGE.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(AOI.Message,Phase.ID,Phase.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE.STATUS$'$N"
+				    "Function=$'MESSAGE$'$N"
+				    "";
+				N: [LIM(2000,Phase.STEP_INDEX,3000) NEQ(Phase.MSG.PERM,0) MOV(Phase.MSG.PERM,Phase.MSG.MSG) ,GEQ(Phase.STEP_INDEX,3000) NEQ(Phase.MSG.FAULT,0) MOV(Phase.MSG.FAULT,Phase.MSG.MSG) ,EQU(Phase.MSG.FAULT,0) EQU(Phase.MSG.PERM,0) ONS(Phase.MSG.OS.1) CLR(Phase.MSG.MSG) ];
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

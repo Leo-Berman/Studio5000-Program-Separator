@@ -1,0 +1,262 @@
+	PROGRAM SafetySystem (Description := "$NProgram=$'EM$'$NClass=$'SYSTEMESTOP.01$'$N",
+	                      MAIN := "_Main",
+	                      MODE := 0,
+	                      DisableFlag := 0,
+	                      UseAsFolder := 0)
+		TAG
+			EStop OF cDI[5] ;
+			InputPower OF cDI[6] ;
+			Null : CB_NULL  := [[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0
+					],[0,0,0,0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1],[1],[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1],[1,0,0,0],[[1],[1],[1]],[1,0,0,[0,0
+					,0]]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[0],[[0,0,0],[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[[[0,0,0],[0,0,0]],[[0,0,0,0],[0,0
+					,0,0]],[[0,0,0,0],[0,0,0,0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000
+					,[0,0,0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0
+					,0,0,0],[0,0,0,0,0,0],0.00000000e+000,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0
+					],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1
+					],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000
+					,0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0
+					,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0,0],[0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,[[0,0.00000000e+000,0.00000000e+000,0,[0,0,0],[0,0,0]],[0,0.00000000e+000,0.00000000e+000
+					,0,[0,0,0],[0,0,0]],[0,[0,0,0]]],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0],[[1],[1]]],[0,0,0,0,0,0,0,0,[[0,0,0,0
+					,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0]],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[0,[0,0],0],[0],0,0,0,0,0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0]],0,0,0,0,[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000],[0,0,0,0,0],0,0,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,0,0,0,0,0,0,0,0
+					,[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					]],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0],[0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0],[[1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0]]]];
+			OIT OF dOIT[1] ;
+			OutputPower OF cDI[7] ;
+			SafetyCabinetA_EStop OF cDI[10] ;
+			SafetyCabinetA_InputPower OF cDI[11] ;
+			SafetyCabinetA_OutputPower OF cDI[12] ;
+			SafetyCabinetA_SafetyPower OF cDI[13] ;
+			SafetyCabinetB_EStop OF cDI[18] ;
+			SafetyCabinetB_InputPower OF cDI[19] ;
+			SafetyCabinetB_OutputPower OF cDI[20] ;
+			SafetyCabinetB_SafetyPower OF cDI[21] ;
+			SafetyCabinetC_EStop OF cDI[26] ;
+			SafetyCabinetC_InputPower OF cDI[27] ;
+			SafetyCabinetC_OutputPower OF cDI[28] ;
+			SafetyCabinetC_SafetyPower OF cDI[29] ;
+			SafetyCabinetD_EStop OF cDI[433] ;
+			SafetyCabinetD_InputPower OF cDI[434] ;
+			SafetyCabinetD_OutputPower OF cDI[435] ;
+			SafetyCabinetD_SafetyPower OF cDI[436] ;
+			SafetyCabinetE_EStop OF cDI[441] ;
+			SafetyCabinetE_InputPower OF cDI[442] ;
+			SafetyCabinetE_OutputPower OF cDI[443] ;
+			SafetyCabinetE_SafetyPower OF cDI[444] ;
+			SafetyPower OF cDI[8] ;
+		END_TAG
+
+		ROUTINE EStop 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'SYSTEMESTOP.01.Alarm.SafetyMainCabinet$'$N"
+				    "ControlModule=$'Alarm.EStop$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(0,EStop.TYPE)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [[XIC(SafetyCabinetA_EStop.STAT.ON) ,XIC(SafetyCabinetB_EStop.STAT.ON) ,XIC(SafetyCabinetC_EStop.STAT.ON) ,XIC(SafetyCabinetD_EStop.STAT.ON) ,XIC(SafetyCabinetE_EStop.STAT.ON) ] OTE(EStop.STAT.ENERGIZED) ,XIC(EStop.STAT.ENERGIZED) [XIC(EStop.DELAY.ON.DN) OTL(EStop.STAT.ON) OTU(EStop.STAT.OFF) ,TON(EStop.DELAY.ON,?,?) ] ,XIO(EStop.STAT.ENERGIZED) [XIC(EStop.DELAY.OFF.DN) OTU(EStop.STAT.ON) OTL(EStop.STAT.OFF) ,TON(EStop.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.FAULT$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.FAULT$'$N"
+				    "";
+				N: XIC(EStop.STAT.ON)[XIC(EStop.DELAY.FAULT.DN) OTE(EStop.STAT.FAULT) ,TON(EStop.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.ON$'$N"
+				    "";
+				N: [XIC(EStop.STAT.ON) OTE(EStop.ALARM[0].ACTIVE) ,AlarmControl(EStop.AOI.AlarmControl[0],EStop.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(EStop.STAT.FAULT) OTE(EStop.ALARM[1].ACTIVE) ,AlarmControl(EStop.AOI.AlarmControl[1],EStop.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE InputPower 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'SYSTEMESTOP.01.Alarm.SafetyMainCabinet$'$N"
+				    "ControlModule=$'Alarm.InputPowerOn$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(0,InputPower.TYPE)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [[XIC(SafetyCabinetA_InputPower.STAT.ON) ,XIC(SafetyCabinetB_InputPower.STAT.ON) ,XIC(SafetyCabinetC_InputPower.STAT.ON) ,XIC(SafetyCabinetD_InputPower.STAT.ON) ,XIC(SafetyCabinetE_InputPower.STAT.ON) ] XIO(cCOMMON.FirstScan.AlarmInhibit) OTE(InputPower.STAT.ENERGIZED) ,XIO(InputPower.STAT.ENERGIZED) [XIC(InputPower.DELAY.ON.DN) OTL(InputPower.STAT.ON) OTU(InputPower.STAT.OFF) ,TON(InputPower.DELAY.ON,?,?) ] ,XIC(InputPower.STAT.ENERGIZED) [XIC(InputPower.DELAY.OFF.DN) OTU(InputPower.STAT.ON) OTL(InputPower.STAT.OFF) ,TON(InputPower.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.FAULT$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.FAULT$'$N"
+				    "";
+				N: XIC(InputPower.STAT.ON)[XIC(InputPower.DELAY.FAULT.DN) OTE(InputPower.STAT.FAULT) ,TON(InputPower.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.ON$'$N"
+				    "";
+				N: [XIC(InputPower.STAT.ON) OTE(InputPower.ALARM[0].ACTIVE) ,AlarmControl(InputPower.AOI.AlarmControl[0],InputPower.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(InputPower.STAT.FAULT) OTE(InputPower.ALARM[1].ACTIVE) ,AlarmControl(InputPower.AOI.AlarmControl[1],InputPower.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE OutputPower 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'SYSTEMESTOP.01.Alarm.SafetyMainCabinet$'$N"
+				    "ControlModule=$'Alarm.OutputPowerOn$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(0,OutputPower.TYPE)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [[XIC(SafetyCabinetA_OutputPower.STAT.ON) ,XIC(SafetyCabinetB_OutputPower.STAT.ON) ,XIC(SafetyCabinetC_OutputPower.STAT.ON) ,XIC(SafetyCabinetD_OutputPower.STAT.ON) ,XIC(SafetyCabinetE_OutputPower.STAT.ON) ] XIO(cCOMMON.FirstScan.AlarmInhibit) OTE(OutputPower.STAT.ENERGIZED) ,XIC(OutputPower.STAT.ENERGIZED) [XIC(OutputPower.DELAY.ON.DN) OTL(OutputPower.STAT.ON) OTU(OutputPower.STAT.OFF) ,TON(OutputPower.DELAY.ON,?,?) ] ,XIO(OutputPower.STAT.ENERGIZED) [XIC(OutputPower.DELAY.OFF.DN) OTU(OutputPower.STAT.ON) OTL(OutputPower.STAT.OFF) ,TON(OutputPower.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.FAULT$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.FAULT$'$N"
+				    "";
+				N: XIC(OutputPower.STAT.ON)[XIC(OutputPower.DELAY.FAULT.DN) OTE(OutputPower.STAT.FAULT) ,TON(OutputPower.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.ON$'$N"
+				    "";
+				N: [XIC(OutputPower.STAT.ON) OTE(OutputPower.ALARM[0].ACTIVE) ,AlarmControl(OutputPower.AOI.AlarmControl[0],OutputPower.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(OutputPower.STAT.FAULT) OTE(OutputPower.ALARM[1].ACTIVE) ,AlarmControl(OutputPower.AOI.AlarmControl[1],OutputPower.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE SafetyPower 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'SYSTEMESTOP.01.Alarm.SafetyMainCabinet$'$N"
+				    "ControlModule=$'Alarm.SafetyPowerOn$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(0,SafetyPower.TYPE)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [[XIC(SafetyCabinetA_SafetyPower.STAT.ON) ,XIC(SafetyCabinetB_SafetyPower.STAT.ON) ,XIC(SafetyCabinetC_SafetyPower.STAT.ON) ,XIC(SafetyCabinetD_SafetyPower.STAT.ON) ,XIC(SafetyCabinetE_SafetyPower.STAT.ON) ] XIO(cCOMMON.FirstScan.AlarmInhibit) OTE(SafetyPower.STAT.ENERGIZED) ,XIO(SafetyPower.STAT.ENERGIZED) [XIC(SafetyPower.DELAY.ON.DN) OTL(SafetyPower.STAT.ON) OTU(SafetyPower.STAT.OFF) ,TON(SafetyPower.DELAY.ON,?,?) ] ,XIC(SafetyPower.STAT.ENERGIZED) [XIC(SafetyPower.DELAY.OFF.DN) OTU(SafetyPower.STAT.ON) OTL(SafetyPower.STAT.OFF) ,TON(SafetyPower.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.FAULT$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.FAULT$'$N"
+				    "";
+				N: XIC(SafetyPower.STAT.ON)[XIC(SafetyPower.DELAY.FAULT.DN) OTE(SafetyPower.STAT.FAULT) ,TON(SafetyPower.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.ON$'$N"
+				    "";
+				N: [XIC(SafetyPower.STAT.ON) OTE(SafetyPower.ALARM[0].ACTIVE) ,AlarmControl(SafetyPower.AOI.AlarmControl[0],SafetyPower.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(SafetyPower.STAT.FAULT) OTE(SafetyPower.ALARM[1].ACTIVE) ,AlarmControl(SafetyPower.AOI.AlarmControl[1],SafetyPower.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'SYSTEMESTOP.01$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'SYSTEMESTOP.01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'ALARM$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'EStop$'$N"
+				    "[Description]:E Stop$N"
+				    "";
+				N: JSR(EStop,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'ALARM$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'Input Power On$'$N"
+				    "[Description]:Input Power On$N"
+				    "";
+				N: JSR(InputPower,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'ALARM$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'Output Power On$'$N"
+				    "[Description]:Output Power On$N"
+				    "";
+				N: JSR(OutputPower,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'ALARM$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'Safety Power On$'$N"
+				    "[Description]:Safety Power On$N"
+				    "";
+				N: JSR(SafetyPower,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

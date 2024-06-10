@@ -1,0 +1,295 @@
+	PROGRAM BlowerMinorsDonutMixer (Description := "$NProgram=$'EM$'$NClass=$'BLOWER.03.01$'$N",
+	                                MAIN := "_Main",
+	                                MODE := 0,
+	                                DisableFlag := 0,
+	                                UseAsFolder := 0)
+		TAG
+			AirInlet OF cDO[243] ;
+			CabinetAvailablePower OF cAI[3] ;
+			EStop OF cDI[5] ;
+			Feeder OF cDO[239] ;
+			HighVacuumSwitch OF cDI[178] ;
+			HighVacuumSwitch_IO_Input OF iRack3:3:I.Data.18 (RADIX := Decimal);
+			Motor OF cDO[256] ;
+			Motor_IO_Output OF iRack3:5:O.Data.18 (RADIX := Decimal);
+			Motor_IO_Running OF iRack3:3:I.Data.4 (RADIX := Decimal);
+			Null : CB_NULL  := [[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0
+					],[0,0,0,0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1],[1],[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1],[1,0,0,0],[[1],[1],[1]],[1,0,0,[0,0
+					,0]]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[0],[[0,0,0],[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[[[0,0,0],[0,0,0]],[[0,0,0,0],[0,0
+					,0,0]],[[0,0,0,0],[0,0,0,0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000
+					,[0,0,0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0
+					,0,0,0],[0,0,0,0,0,0],0.00000000e+000,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0
+					],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1
+					],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000
+					,0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0
+					,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0,0],[0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,[[0,0.00000000e+000,0.00000000e+000,0,[0,0,0],[0,0,0]],[0,0.00000000e+000,0.00000000e+000
+					,0,[0,0,0],[0,0,0]],[0,[0,0,0]]],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0],[[1],[1]]],[0,0,0,0,0,0,0,0,[[0,0,0,0
+					,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0]],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[0,[0,0],0],[0],0,0,0,0,0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0]],0,0,0,0,[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000],[0,0,0,0,0],0,0,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,0,0,0,0,0,0,0,0
+					,[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					]],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0],[0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0],[[1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0]]]];
+			OIT OF dOIT[1] ;
+			ph_Mixer04HopperAddGEMConcentrate OF cPHZ[72] ;
+			PowerInput OF cDI[27] ;
+			PowerOutput OF cDI[28] ;
+			PowerSafety OF cDI[29] ;
+			Pressure OF cAI[80] ;
+			Pressure_IO_Fault OF iRack3:1:I.Ch8Fault (RADIX := Decimal);
+			Pressure_IO_Value OF iRack3:1:I.Ch8Data (RADIX := Float);
+			Pressure_SIM_Enable : BOOL (RADIX := Decimal) := 0;
+			Unit OF cUNIT[25] ;
+			ValidPath01 OF cPHZ[72].USER.STAT.1 (RADIX := Decimal);
+		END_TAG
+
+		ROUTINE HighVacuumSwitch 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'BLOWER.03.01.Vacuum Switch.BlowerMinorsDonutMixer$'$N"
+				    "ControlModule=$'Vacuum Switch.HighVacuumSwitch$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: MOV(0,HighVacuumSwitch.TYPE)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(HighVacuumSwitch_IO_Input) OTE(HighVacuumSwitch.STAT.ENERGIZED) ,XIC(HighVacuumSwitch.STAT.ENERGIZED) [XIC(HighVacuumSwitch.DELAY.ON.DN) OTL(HighVacuumSwitch.STAT.ON) OTU(HighVacuumSwitch.STAT.OFF) ,TON(HighVacuumSwitch.DELAY.ON,?,?) ] ,XIO(HighVacuumSwitch.STAT.ENERGIZED) [XIC(HighVacuumSwitch.DELAY.OFF.DN) OTU(HighVacuumSwitch.STAT.ON) OTL(HighVacuumSwitch.STAT.OFF) ,TON(HighVacuumSwitch.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.ON$'$N"
+				    "";
+				N: [XIC(HighVacuumSwitch.STAT.ON) XIC(PowerInput.STAT.ON) OTE(HighVacuumSwitch.ALARM[0].ACTIVE) ,AlarmControl(HighVacuumSwitch.AOI.AlarmControl[0],HighVacuumSwitch.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Motor 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'BLOWER.03.01.Motor.BlowerMinorsDonutMixer$'$N"
+				    "ControlModule=$'Motor.Motor$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_Mixer04HopperAddGEMConcentrate.CM.AutoRun[10])OTE(Motor.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,Motor.MSG.PERM) ,EQU(Motor.MSG.PERM,0) OTE(Motor.STAT.PERMISSIVE) ];
+				RC: "Run a timer when there is no valid path for blower$N"
+				    "when timer is done, then interlock blower$N"
+				    "$N"
+				    "";
+				N: XIO(ValidPath01)TON(Motor.TMR[2],?,?);
+				RC: "$N"
+				    "";
+				N: [MOV(0,Motor.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,Motor.MSG.INTRLK) ,XIC(HighVacuumSwitch.STAT.ON) MOV(22,Motor.MSG.INTRLK) ,XIC(Pressure.HiHi.ACTIVE) MOV(23,Motor.MSG.INTRLK) ,XIO(AirInlet.STAT.ON_OPEN_DELAY) MOV(24,Motor.MSG.INTRLK) ,XIC(Motor.TMR[2].DN) MOV(25,Motor.MSG.INTRLK) ,NEQ(Motor.MSG.INTRLK,0) OTE(Motor.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.MOTOR.FAULT$'$N"
+				    "Function=$'MOTOR.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Motor.STAT.ENERGIZE) [XIO(Motor.STAT.ON_OPEN) ,XIC(Motor.STAT.OFF_CLOSED) ] ,XIC(Motor.STAT.FAULT) ]XIO(Motor.CMD.RESET)[XIC(Motor.DELAY.FAULT.DN) OTE(Motor.STAT.FAULT) ,TON(Motor.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.MOTOR$'$N"
+				    "Function=$'STATUS.MESSAGE.MOTOR$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,Motor.MSG.MSG) ,XIC(Motor.STAT.ENERGIZE) XIO(Motor.STAT.ON_OPEN) MOV(61,Motor.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Motor.STAT.AUTO_RUN) NEQ(Motor.MSG.PERM,0) MOV(Motor.MSG.PERM,Motor.MSG.MSG) ,NEQ(Motor.MSG.INTRLK,0) MOV(Motor.MSG.INTRLK,Motor.MSG.MSG) ,NEQ(Motor.MSG.FAULT,0) MOV(Motor.MSG.FAULT,Motor.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(Motor.AOI.Message,Motor.ID,Motor.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(Motor.AOI.Control,Motor.CMD,Motor.STAT);
+				N: [XIC(Motor.STAT.ENERGIZE) EQU(CabinetAvailablePower.ARB.RQ,0) ONS(Motor.OS[7]) XIO(Motor.STAT.BITS.7) MOV(Motor.ID,CabinetAvailablePower.ARB.RQ) ,XIC(Motor.STAT.ENERGIZE) [EQU(CabinetAvailablePower.ARB.OWNER,Motor.ID) ,XIC(Motor.STAT.BITS.7) ] OTE(Motor.STAT.BITS.7) ,[XIC(Motor.DELAY.ON.DN) ,XIO(Motor.STAT.ENERGIZE) ] EQU(CabinetAvailablePower.ARB.OWNER,Motor.ID) MOV(Motor.ID,CabinetAvailablePower.ARB.RELEASE) ,XIC(Motor.STAT.ENERGIZE) XIO(Motor.STAT.BITS.7) OTE(Motor.STAT.BITS.29) OTU(Motor.STAT.ENERGIZE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.MOTOR.IO.OUTPUT$'$N"
+				    "Function=$'MOTOR.IO.CONTROL$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Motor.STAT.ENERGIZE) OTE(Motor_IO_Output) ,XIC(Motor_IO_Running) [OTE(Motor.STAT.ON_OPEN) ,XIC(Motor.DELAY.ON.DN) OTE(Motor.STAT.ON_OPEN_DELAY) ,TON(Motor.DELAY.ON,?,?) ] ,XIO(Motor.STAT.ON_OPEN) [OTE(Motor.STAT.OFF_CLOSED) ,XIC(Motor.DELAY.OFF.DN) OTE(Motor.STAT.OFF_CLOSED_DELAY) ,TON(Motor.DELAY.OFF,?,?) ] ,OTE(Motor.STAT.DISCONNECT) ,XIC(PowerInput.STAT.ON) XIC(PowerOutput.STAT.ON) XIC(PowerSafety.STAT.ON) OTE(Motor.STAT.ControlPowerOn) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(Motor.STAT.ControlPowerOn) XIC(Motor.STAT.FAULT) OTE(Motor.ALARM[0].ACTIVE) ,AlarmControl(Motor.AOI.AlarmControl[0],Motor.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.DISCONNECT$'$N"
+				    "";
+				N: [XIC(Motor.STAT.ControlPowerOn) XIO(Motor.STAT.DISCONNECT) OTE(Motor.ALARM[1].ACTIVE) ,AlarmControl(Motor.AOI.AlarmControl[1],Motor.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: Arbitration(Motor.AOI.Arbitration,Motor.ARB,Motor.INDEX,1);
+		END_ROUTINE
+
+		ROUTINE Pressure 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'BLOWER.03.01.Pressure.BlowerMinorsDonutMixer$'$N"
+				    "ControlModule=$'Pressure.Pressure$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(Pressure_IO_Value,Pressure.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(Pressure.AOI.Scaling,Pressure.RAW,Pressure.RAW_LO,Pressure.RAW_HI,Pressure.SCALE_LO,Pressure.SCALE_HI,Pressure.SCALED);
+				N: XIC(Pressure_SIM_Enable)MOV(Pressure.SIMULATION_AMOUNT,Pressure.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Pressure_IO_Fault) ,XIC(Pressure.STAT.FAULT) ]XIO(Pressure.CMD.RESET)OTE(Pressure.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Motor.STAT.ON_OPEN)[LES(Pressure.SCALED,Pressure.LoLo.LIM) ,XIC(Pressure.LoLo.ACTIVE) ]CMP(Pressure.SCALED<=(Pressure.LoLo.LIM+Pressure.LoLo.DEADBAND))[XIC(Pressure.LoLo.DELAY.DN) OTE(Pressure.LoLo.ACTIVE) ,TON(Pressure.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Motor.STAT.ON_OPEN)[LES(Pressure.SCALED,Pressure.Lo.LIM) ,XIC(Pressure.Lo.ACTIVE) ]CMP(Pressure.SCALED<=(Pressure.Lo.LIM+Pressure.Lo.DEADBAND))[XIC(Pressure.Lo.DELAY.DN) OTE(Pressure.Lo.ACTIVE) ,TON(Pressure.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Motor.STAT.ON_OPEN)[GRT(Pressure.SCALED,Pressure.Hi.LIM) ,XIC(Pressure.Hi.ACTIVE) ]CMP(Pressure.SCALED>=(Pressure.Hi.LIM-Pressure.Hi.DEADBAND))[XIC(Pressure.Hi.DELAY.DN) OTE(Pressure.Hi.ACTIVE) ,TON(Pressure.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Motor.STAT.ON_OPEN) GRT(Pressure.SCALED,Pressure.HiHi.LIM) ,XIC(Pressure.HiHi.ACTIVE) ]CMP(Pressure.SCALED>=(Pressure.HiHi.LIM-Pressure.HiHi.DEADBAND))[XIC(Pressure.HiHi.DELAY.DN) OTE(Pressure.HiHi.ACTIVE) ,TON(Pressure.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(Pressure.STAT.FAULT)[XIC(Pressure.Fault.DELAY.DN) OTE(Pressure.Fault.ACTIVE) ,MOV(10000,Pressure.Fault.DELAY.PRE) TON(Pressure.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(Pressure.AOI.Mode,Pressure.CMD,Pressure.STAT,Pressure.MAN_SP,Pressure.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(Pressure.LoLo.ACTIVE) XIO(Pressure.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(Pressure.ALARM[0].ACTIVE) ,AlarmControl(Pressure.AOI.AlarmControl[0],Pressure.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Blower and Feeder are running and no pressure$N"
+				    "";
+				N: [XIO(Pressure.Lo.DISABLED) XIC(Feeder.STAT.ENERGIZE) XIC(Pressure.Lo.ACTIVE) [XIC(Pressure.ALARM[1].DWELL.DN) XIC(PowerInput.STAT.ON) OTE(Pressure.ALARM[1].ACTIVE) ,TON(Pressure.ALARM[1].DWELL,?,?) ] ,AlarmControl(Pressure.AOI.AlarmControl[1],Pressure.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(Pressure.Hi.ACTIVE) XIO(Pressure.Hi.DISABLED) XIC(PowerInput.STAT.ON) OTE(Pressure.ALARM[2].ACTIVE) ,AlarmControl(Pressure.AOI.AlarmControl[2],Pressure.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(Pressure.HiHi.ACTIVE) XIO(Pressure.HiHi.DISABLED) XIC(PowerInput.STAT.ON) OTE(Pressure.ALARM[3].ACTIVE) ,AlarmControl(Pressure.AOI.AlarmControl[3],Pressure.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(Pressure.Fault.ACTIVE) XIO(Pressure.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(Pressure.ALARM[6].ACTIVE) ,AlarmControl(Pressure.AOI.AlarmControl[6],Pressure.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'BLOWER.03.01$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'BLOWER.03.01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VACUUMSWITCH$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'VS319$'$N"
+				    "[Description]:High Vacuum Switch$N"
+				    "";
+				N: JSR(HighVacuumSwitch,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'PRESSURE$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'PT319$'$N"
+				    "[Description]:Pressure$N"
+				    "";
+				N: JSR(Pressure,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'MOTOR$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'M319$'$N"
+				    "[Description]:Motor$N"
+				    "";
+				N: JSR(Motor,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

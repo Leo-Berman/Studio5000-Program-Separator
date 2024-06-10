@@ -1,0 +1,214 @@
+	PROGRAM Mixer11_SugarHopperDump (Description := "$NProgram=$'PH$'$NClass=$'HOPPER.DUMP:01.01.01$'$N",
+	                                 MAIN := "_000_Main",
+	                                 MODE := 0,
+	                                 DisableFlag := 0,
+	                                 UseAsFolder := 0)
+		TAG
+			ActualAmount OF Phase.ACTUAL[1] (RADIX := Float);
+			ActualAmountAccumulator OF Phase.ACTUAL[0] (RADIX := Float);
+			ActualAmountAdjustment : REAL (RADIX := Float) := 0.00000000e+000;
+			ActualAmountError OF Phase.ACTUAL[2] (RADIX := Float);
+			ActualAmountTare OF Phase.ACTUAL[4] (RADIX := Float);
+			AOI : CB_PHASE_AOI  := [[3],[3,10920000],[3,[0,1092]],[3],[1,0.00000000e+000],[3],[3,0.00000000e+000,3.38700012e+002],[3],[3,1092,109200,109199
+					],[[3],[1],[1],[1],[1],[1],[1],[1]],[3,16,15,15],[1,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],0,0]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,[1,0.00000000e+000,0.00000000e+000],0.00000000e+000
+					],[1,0.00000000e+000,0.00000000e+000]];
+			AutoRunCloseDischargeValve OF Phase.CM.AutoRun[12] (RADIX := Decimal);
+			AutoRunCloseMixerInletGate OF Phase.CM.AutoRun[13] (RADIX := Decimal);
+			AutoRunDischargeValve OF Phase.CM.AutoRun[10] (RADIX := Decimal);
+			AutoRunMixerInletGate OF Phase.CM.AutoRun[14] (RADIX := Decimal);
+			AutoRunMonitorFlowrate OF Phase.CM.AutoRun[20] (RADIX := Decimal);
+			AutoRunReliefValve OF Phase.CM.AutoRun[11] (RADIX := Decimal);
+			BatchA OF cLINE[9] ;
+			BatchB OF cLINE[10] ;
+			DischargeValve OF cDO[608] ;
+			DischargeValveClosedDelay OF Phase.TMR[2] ;
+			EStop OF cDI[5] ;
+			HopperCleanedDelay : TIMER  := [412608,30000,0];
+			HopperDumpTimeout OF Phase.TMR[1] ;
+			HopperEmptyDelay OF Phase.TMR[0] ;
+			HopperReadyPhase OF cPHZ[93] ;
+			HopperWeight OF cAI[246] ;
+			LastEmptyWeight : REAL (RADIX := Float) := 7.80000019e+000;
+			MixerCommOk OF cDI[375] ;
+			MixerInletGate OF cDO[595] ;
+			MixerInterlocked OF cDI[372] ;
+			MixerMotorSweep OF cDO[596] ;
+			MixerRemoteLocal OF cDI[371] ;
+			OIT : CB_OIT  := [[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0,0,0,49006179,0,0,[0,0,0,0,0,0,0,0,0,0],[0,0,0,0],0,[0,[0,0,0]],[0,[0,0,0]],0,0,0];
+			Phase OF cPHZ[92] (Usage := Public);
+			PhaseClass OF cPHZ_CLASS[6] (Usage := Public);
+			ReliefValve OF cDO[607] ;
+			SourceUnit OF cUNIT[61] ;
+			TargetAmount OF Phase.SPT[0] (RADIX := Float);
+			TargetAmountAdjustmentLimit : REAL (RADIX := Float) := 0.00000000e+000;
+			TargetAmountSetpoint OF Phase.SPT[1] (RADIX := Float);
+			Unit OF cUNIT[60] ;
+		END_TAG
+
+		ROUTINE _000_FirstScan 
+				N: NOP();
+				N: MOV(6,PhaseClass.TYPE);
+				N: MOV(Unit.ARRAY_INDEX,Phase.INDEX)MOV(PhaseClass.TYPE,Phase.TYPE)MOV(PhaseClass.ID,Phase.CLASS)COP(PhaseClass.NAME,Phase.CLASS_NAME,1)COP(PhaseClass.TYPE_NAME,Phase.TYPE_NAME,1);
+				N: PhaseClassParameter(AOI.PhaseClassParameter,PhaseClass,Phase.USER,Phase.DISPLAY_MASK,Phase.TYPE_MASK);
+		END_ROUTINE
+
+		ROUTINE _000_Main 
+				N: NOP();
+				N: XIC(S:FS)JSR(_000_FirstScan,0);
+				N: XIC(Phase.STATE.IDLE)XIC(Phase.STATE.RUNNING)XIC(Phase.STATE.HELD)XIC(Phase.STATE.COMPLETE)XIC(Phase.STATE.ABORTED)XIC(Phase.STATE.STOPPED)NOP();
+				N: XIC(Phase.STATE.HOLDING)XIC(Phase.STATE.RESTARTING)XIC(Phase.STATE.ABORTING)XIC(Phase.STATE.STOPPING)NOP();
+				N: [XIC(Phase.CMD.START) XIC(Phase.CMD.HOLD) XIC(Phase.CMD.RESTART) XIC(Phase.CMD.STOP) XIC(Phase.CMD.ABORT) XIC(Phase.CMD.RESET) ,MOV(Phase.STATE_NO,Phase.STATE_NO) MOV(Phase.STEP_INDEX,Phase.STEP_INDEX) MOV(Phase.MSG.FAULT,Phase.MSG.FAULT) ]NOP();
+				N: JSR(_120_PermissiveFaultAndMessaging,0);
+				N: PhaseMode(AOI.Mode,Phase,cPHZ[0].MSG)PhaseCommon(AOI.Common,Phase)PhaseStepIndex(AOI.StepIndex,Phase)PhaseStateTransition(AOI.StateTransition,Phase.CMD,Phase.STAT,Phase.STATE,Phase.STATE_NO);
+				N: JSR(_050_StepControl,0);
+				N: JSR(_110_ControlModule,0);
+				N: JSR(_130_Alarming,0);
+				N: PhaseStepMapping(AOI.StepMapping,Phase);
+				N: PhaseBypass(AOI.Bypass,Phase);
+				N: JSR(_100_Arbitration,0);
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _050_StepControl 
+				N: NOP();
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.DUMP$'$N"
+				    "Function=$'RUNG.STEPCONTROL.RECIPE.SETPOINTS$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)LIM(2000,Phase.STEP_INDEX,4000)JSR(_200_RecipeSetpoints,0);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,1)MOV(2000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,2000)FLL(0,Phase.ACTUAL[0],5)MOV(3000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,3000)XIC(Phase.STAT.PERMISSIVE)[XIO(Phase.STAT.ACTIVE_ONCE) SUB(HopperWeight.SCALED,LastEmptyWeight,TargetAmountSetpoint) ,MOV(4000,Phase.STEP_INDEX_GOTO) ];
+				N: NOP();
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4000)MOV(ActualAmount,ActualAmountAccumulator)MOV(HopperWeight.SCALED,ActualAmountTare)MOV(4010,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4010)XIC(ReliefValve.STAT.ON_OPEN)MOV(4020,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4020)XIC(MixerInletGate.STAT.ON_OPEN)MOV(4030,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4030)XIC(DischargeValve.STAT.ON_OPEN)MOV(5000,Phase.STEP_INDEX_GOTO);
+				N: PhaseTargetAdjustLimit(AOI.TargetAdjustLimit,TargetAmountAdjustmentLimit,ActualAmountAdjustment,TargetAmount,TargetAmountSetpoint,Phase.STAT.MAN);
+				N: XIC(Phase.STAT.ACTIVE_ONCE)[XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.HOLDING) ]LIM(4010,Phase.STEP_INDEX,6999)CPT(ActualAmount,ActualAmountTare-HopperWeight.SCALED+ActualAmountAccumulator)SUB(ActualAmount,TargetAmount,ActualAmountError);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5000)[[XIC(HopperEmptyDelay.DN) ,XIC(HopperDumpTimeout.DN) ] MOV(5010,Phase.STEP_INDEX_GOTO) ,CMP(ActualAmount>(TargetAmount-Phase.PREACT.ACTUAL)) TON(HopperEmptyDelay,?,?) ,TON(HopperDumpTimeout,?,?) ];
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5010)XIC(DischargeValve.STAT.OFF_CLOSED)[XIC(DischargeValveClosedDelay.DN) MOV(6000,Phase.STEP_INDEX_GOTO) ,TON(DischargeValveClosedDelay,?,?) ];
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,6000)GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.SETTLE.PRE)MOV(HopperWeight.SCALED,LastEmptyWeight)MOV(10000,Phase.STEP_INDEX_GOTO);
+				RC: "If buildup in the hopper gets cleaned out, decrease the LastEmptyWeight. $N"
+				    "If we don$'t do this, we will underdeliver on our next dump phase ";
+				N: XIC(Phase.STATE.IDLE)LES(HopperWeight.SCALED,LastEmptyWeight)[XIC(HopperCleanedDelay.DN) MOV(HopperWeight.SCALED,LastEmptyWeight) ,TON(HopperCleanedDelay,?,?) ];
+				N: NOP();
+				N: NOP();
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.RUNNING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.HOLDING)LES(Phase.STEP_INDEX,3000)[XIC(Phase.STAT.ACTIVE_ONCE) SUB(HopperWeight.SCALED,LastEmptyWeight,TargetAmountSetpoint) ,JSR(_200_RecipeSetpoints,0) FLL(0,Phase.ACTUAL[0],5) MOV(3000,Phase.STEP_INDEX_GOTO) ];
+				N: XIC(Phase.STATE.HOLDING)[XIC(Phase.STEP_TMR.HOLDING.DN) OTE(Phase.STAT.HOLDING_COMPLETE) ,TON(Phase.STEP_TMR.HOLDING,?,?) ];
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Restarting)[LIM(3000,Phase.STEP_INDEX,5999) MOV(3000,Phase.STEP_INDEX_GOTO) ,LIM(6000,Phase.STEP_INDEX,6999) MOV(10000,Phase.STEP_INDEX_GOTO) ];
+				N: XIC(Phase.STATE.RESTARTING)[XIC(Phase.STEP_TMR.RESTARTING.DN) OTE(Phase.STAT.RESTARTING_COMPLETE) ,TON(Phase.STEP_TMR.RESTARTING,?,?) ];
+				N: NOP();
+				N: XIC(Phase.STATE.STOPPING)LES(Phase.STEP_INDEX,6000)MOV(6000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,6000)GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.SETTLE.PRE)MOV(10000,Phase.STEP_INDEX_GOTO);
+				N: NOP();
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.STOPPING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Aborting)MOV(10000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.ABORTING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.ABORTING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Idle)MOV(0,Phase.STEP_INDEX_GOTO_ON_RESTART)OTU(Phase.STAT.OUT_TOL)OTU(Phase.PREACT.PreactOutOfLimitHigh)OTU(Phase.PREACT.PreactOutOfLimitLow);
+		END_ROUTINE
+
+		ROUTINE _100_Arbitration 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'HOPPER.DUMP:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ARBITRATION.STATUS$'$N"
+				    "Function=$'ARBITRATION.STATUS$'$N"
+				    "";
+				N: [XIC(Phase.NEEDS.LIST[0].ACQUIRED) ,EQU(Phase.NEEDS.LIST[0].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[1].ACQUIRED) ,EQU(Phase.NEEDS.LIST[1].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[2].ACQUIRED) ,EQU(Phase.NEEDS.LIST[2].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[3].ACQUIRED) ,EQU(Phase.NEEDS.LIST[3].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[4].ACQUIRED) ,EQU(Phase.NEEDS.LIST[4].OBJECT_INDEX,0) ]OTE(Phase.NEEDS.OWNS_ALL_REQUIRED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ARBITRATION.START$'$N"
+				    "Function=$'ARBITRATION.START$'$N"
+				    "";
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.STEP_INDEX,3000)XIC(Phase.STEP.FirstScanInStepIndex)OTL(Phase.NEEDS.StartArbitration);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ARBITRATION.RELEASE$'$N"
+				    "Function=$'ARBITRATION.RELEASE$'$N"
+				    "";
+				N: [XIC(Phase.STATE.IDLE) ,XIC(Phase.STATE.RUNNING) EQU(Phase.STEP_INDEX,8000) ,XIC(Phase.STATE.DONE) ,XIC(Phase.STATE.HELD) ]OTE(Phase.NEEDS.Release);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ARBITRATION.INITIALIZE$'$N"
+				    "Function=$'ARBITRATION.INITIALIZE$'$N"
+				    "";
+				N: [XIC(Phase.NEEDS.StartArbitration) MOV(0,Phase.NEEDS.LIST_INDEX) OTL(Phase.NEEDS.Arbitrating) OTU(Phase.NEEDS.StartArbitration) ,XIC(Phase.NEEDS.Arbitrating) XIC(Phase.NEEDS.OWNS_ALL_REQUIRED) OTU(Phase.NEEDS.Arbitrating) ];
+		END_ROUTINE
+
+		ROUTINE _110_ControlModule 
+				N: NOP();
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				N: XIC(Phase.STATE.RUNNING)LIM(4010,Phase.STEP_INDEX,5999)OTE(AutoRunReliefValve);
+				N: XIC(Phase.STATE.RUNNING)LIM(4020,Phase.STEP_INDEX,5999)OTE(AutoRunMixerInletGate);
+				N: XIC(Phase.STATE.RUNNING)LIM(4030,Phase.STEP_INDEX,5009)OTE(AutoRunDischargeValve);
+				N: XIO(Phase.STATE.RUNNING)MOV(4,Phase.USER.IPAR[0]);
+				RC: "ICRiley 20240528 Logic which causes this to cycle the dump for the first 20 seconds of the phase has been removed at Andrew Daigle (CF)$'s request$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)LIM(4030,Phase.STEP_INDEX,5999)[AFI() EQU(Phase.STEP_INDEX,5000) LES(Phase.STEP_TMR.CurrentStepIndexSeconds,20) ,XIC(HopperWeight.RATE.Lo.ACTIVE) ,CMP(ActualAmount>(TargetAmount-Phase.PREACT.ACTUAL)) ]XIC(MixerInletGate.STAT.ON_OPEN)XIC(DischargeValve.STAT.ON_OPEN)EQU(Phase.USER.IPAR[0],0)MOV(1,Phase.USER.IPAR[0]);
+				RC: "0 = Check if shakeoff required$N"
+				    "1 = Close Discharge Valve$N"
+				    "2 = Close Inlet Valve$N"
+				    "3 = Open Inlet Valve$N"
+				    "4 = Open Discharge Valve$N"
+				    "$N"
+				    "Using standard ON_OPEN rather than ON_OPEN_DELAY because we$'re doing our own debouncing here$N"
+				    "$N"
+				    "ICRiley 20240528 Updated timings from 1000/500/250/8250 to 5000/500/1250/20000";
+				N: XIC(Phase.STATE.RUNNING)[EQU(Phase.USER.IPAR[0],1) XIC(DischargeValve.STAT.OFF_CLOSED) MOV(5000,Phase.TMR[3].PRE) ,EQU(Phase.USER.IPAR[0],2) XIC(MixerInletGate.STAT.OFF_CLOSED) MOV(500,Phase.TMR[3].PRE) ,EQU(Phase.USER.IPAR[0],3) XIC(MixerInletGate.STAT.ON_OPEN) MOV(1250,Phase.TMR[3].PRE) ,EQU(Phase.USER.IPAR[0],4) XIC(DischargeValve.STAT.ON_OPEN) MOV(20000,Phase.TMR[3].PRE) ]TON(Phase.TMR[3],?,?)XIC(Phase.TMR[3].DN)[ADD(Phase.USER.IPAR[0],1,Phase.USER.IPAR[0]) ,EQU(Phase.USER.IPAR[0],5) MOV(0,Phase.USER.IPAR[0]) ];
+				N: LIM(1,Phase.USER.IPAR[0],3)OTE(AutoRunCloseDischargeValve);
+				N: EQU(Phase.USER.IPAR[0],2)OTE(AutoRunCloseMixerInletGate);
+				N: XIC(Phase.STATE.RUNNING)XIO(HopperWeight.LoLo.ACTIVE)LIM(4030,Phase.STEP_INDEX,5999)OTE(AutoRunMonitorFlowrate);
+				N: [XIC(Phase.CMD.START) ,XIC(Phase.CMD.RESTART) ]OTL(DischargeValve.CMD.RESET)OTL(MixerInletGate.CMD.RESET);
+		END_ROUTINE
+
+		ROUTINE _120_PermissiveFaultAndMessaging 
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: [MOV(0,Phase.MSG.PERM) ,XIO(DischargeValve.STAT.AUTO) MOV(1,Phase.MSG.PERM) ,XIO(ReliefValve.STAT.AUTO) MOV(2,Phase.MSG.PERM) ,XIO(MixerInletGate.STAT.AUTO) MOV(3,Phase.MSG.PERM) ,XIO(MixerRemoteLocal.STAT.ON) MOV(4,Phase.MSG.PERM) ,XIC(MixerInterlocked.STAT.ON) MOV(6,Phase.MSG.PERM) ,XIO(MixerCommOk.STAT.ON) MOV(7,Phase.MSG.PERM) ,XIC(Phase.STAT.AUTO) XIO(HopperReadyPhase.STEP.ACTIVE) MOV(8,Phase.MSG.PERM) ,XIC(Phase.STAT.AUTO) NEQ(Unit.INDEX,0) NEQ(Unit.INDEX,SourceUnit.INDEX) MOV(9,Phase.MSG.PERM) ,XIC(Phase.STAT.AUTO) NEQ(Unit.INDEX,0) EQU(SourceUnit.INDEX,0) MOV(10,Phase.MSG.PERM) ,XIO(MixerMotorSweep.STAT.AUTO) MOV(11,Phase.MSG.PERM) ,EQU(Phase.MSG.PERM,0) OTE(Phase.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.MSG.FAULT,0)[XIC(EStop.STAT.FAULT) MOV(21,Phase.MSG.FAULT) ,XIC(HopperWeight.STAT.FAULT) MOV(22,Phase.MSG.FAULT) ,XIC(HopperWeight.RATE.LoLo.ACTIVE) MOV(23,Phase.MSG.FAULT) ,XIC(DischargeValve.STAT.FAULT) MOV(24,Phase.MSG.FAULT) ,XIC(ReliefValve.STAT.FAULT) MOV(25,Phase.MSG.FAULT) ,XIC(MixerInletGate.STAT.FAULT) MOV(26,Phase.MSG.FAULT) ,LIM(4000,Phase.STEP_INDEX,6999) XIO(MixerRemoteLocal.STAT.ON) MOV(27,Phase.MSG.FAULT) ,LIM(4000,Phase.STEP_INDEX,6999) XIC(MixerInterlocked.STAT.ON) MOV(29,Phase.MSG.FAULT) ,XIO(MixerCommOk.STAT.ON) MOV(30,Phase.MSG.FAULT) ,XIC(MixerMotorSweep.STAT.FAULT) MOV(31,Phase.MSG.FAULT) ,XIC(cSETUP.SIMULATION.Enabled) XIC(cSETUP.SIMULATION.PHASE) MOV(0,Phase.MSG.FAULT) ];
+				N: [MOV(0,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIO(Phase.STEP.RECORD) MOV(61,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIC(Phase.STEP.RECORD) MOV(62,Phase.MSG.MSG) ,XIC(Phase.STATE.HELD) XIO(Phase.STAT.FAULTED) MOV(63,Phase.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(AOI.Message,Phase.ID,Phase.MSG);
+				N: [LIM(2000,Phase.STEP_INDEX,3000) NEQ(Phase.MSG.PERM,0) MOV(Phase.MSG.PERM,Phase.MSG.MSG) ,GEQ(Phase.STEP_INDEX,3000) NEQ(Phase.MSG.FAULT,0) MOV(Phase.MSG.FAULT,Phase.MSG.MSG) ,EQU(Phase.MSG.FAULT,0) EQU(Phase.MSG.PERM,0) ONS(Phase.MSG.OS.1) CLR(Phase.MSG.MSG) ];
+		END_ROUTINE
+
+		ROUTINE _130_Alarming 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'HOPPER.DUMP:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ALARM.FAULT$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(Phase.STAT.FAULTED) OTE(Phase.ALARM[0].ACTIVE) ,AlarmControl(AOI.AlarmControl[0],Phase.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE _200_RecipeSetpoints 
+				N: NOP();
+				RC: "Template=$'PHASE.PHASE.MIXER.HOPPER.DUMP$'$N"
+				    "Function=$'PHASE.ROUTINE.RECIPESETPOINT.GET.INDICES$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [MOV(0,V) LIM(1,Unit.RECIPE.INSTANCE,cSETUP.NO_STEPS_UNIT) MOV(Unit.RECIPE.INSTANCE,V) ,MOV(0,W) LIM(1,Phase.RECIPE.INSTANCE,cSETUP.NO_STEPS_PHASE) MOV(Phase.RECIPE.INSTANCE,W) ];
+				RC: "DumpReview: write SPT[1] up to the line level.$N"
+				    "During a recipe, in Auto mode, the targets will be written down from cLINE, through cUNIT down to cPHZ.SPT[]$N"
+				    "which would have overwritten this$N"
+				    "The trick is to write it UP$N"
+				    "";
+				N: GRT(V,0)GRT(W,0)[EQU(Unit.INDEX,BatchA.ARRAY_INDEX) MOV(Phase.SPT[1],BatchA.RECIPE.STEP[V].STEP[W].SPT[0]) MOV(Phase.SPT[1],BatchA.RECIPE.STEP[V].STEP[W].SPT[1]) ,EQU(Unit.INDEX,BatchB.ARRAY_INDEX) MOV(Phase.SPT[1],BatchB.RECIPE.STEP[V].STEP[W].SPT[0]) MOV(Phase.SPT[1],BatchB.RECIPE.STEP[V].STEP[W].SPT[1]) ];
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

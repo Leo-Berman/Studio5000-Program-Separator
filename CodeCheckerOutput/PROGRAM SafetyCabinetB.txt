@@ -1,0 +1,154 @@
+	PROGRAM SafetyCabinetB (Description := "$NProgram=$'EM$'$NClass=$'SYSTEMESTOP.01$'$N",
+	                        MAIN := "_Main",
+	                        MODE := 0,
+	                        DisableFlag := 0,
+	                        UseAsFolder := 0)
+		TAG
+			AvailableCurrent OF cAI[2] ;
+			EStop OF cDI[18] ;
+			Estop_IO_Fault OF iRack2:3:I.Pt03.Fault (RADIX := Decimal);
+			EStop_IO_Input OF iRack2:3:I.Pt03.Data (RADIX := Decimal);
+			InputPower OF cDI[19] ;
+			InputPower_IO_Fault OF iRack2:3:I.Pt00.Fault (RADIX := Decimal);
+			InputPower_IO_Input OF iRack2:3:I.Pt00.Data (RADIX := Decimal);
+			OIT OF dOIT[1] ;
+			OutputPower OF cDI[20] ;
+			OutputPower_IO_Fault OF iRack2:3:I.Pt02.Fault (RADIX := Decimal);
+			OutputPower_IO_Input OF iRack2:3:I.Pt02.Data (RADIX := Decimal);
+			ResetLight OF cDO[15] ;
+			ResetLight_IO_Output OF iRack2:6:O.Pt00.Data (RADIX := Decimal);
+			SafetyPower OF cDI[21] ;
+			SafetyPower_IO_Fault OF iRack2:3:I.Pt01.Fault (RADIX := Decimal);
+			SafetyPower_IO_Input OF iRack2:3:I.Pt01.Data (RADIX := Decimal);
+		END_TAG
+
+		ROUTINE AvailableCurrent (Description := "AI to model available load")
+				RC: "This AI models the current available from this panel.$N"
+				    "If sized properly there is no need to track the usage of current.$N"
+				    "if this is done, then use the SCALED to represent current draw estimated based on active loads.$N"
+				    "Use Lo, Hi, HiHi to alarm and interlock$N"
+				    "$N"
+				    "Use Arbitration to make it so that only one of the major current loads starts up at a time.$N"
+				    "Examples of this are high horsepower motors.$N"
+				    "This needs to be programmed as an interlock at the device level.$N"
+				    "The device will arbitrate this AI, and will be interlocked until it owns it, then it releases once it is started up$N"
+				    "$N"
+				    "$N"
+				    "";
+				N: NOP();
+				N: Arbitration(AvailableCurrent.AOI.Arbitration,AvailableCurrent.ARB,AvailableCurrent.INDEX,1);
+		END_ROUTINE
+
+		ROUTINE EStop 
+				N: NOP();
+				N: [[XIC(EStop_IO_Input) ,XIC(EStop.STAT.FAULT) ] OTE(EStop.STAT.ENERGIZED) ,XIC(EStop.STAT.ENERGIZED) [XIC(EStop.DELAY.ON.DN) OTL(EStop.STAT.ON) OTU(EStop.STAT.OFF) ,TON(EStop.DELAY.ON,?,?) ] ,XIO(EStop.STAT.ENERGIZED) [XIC(EStop.DELAY.OFF.DN) OTU(EStop.STAT.ON) OTL(EStop.STAT.OFF) ,TON(EStop.DELAY.OFF,?,?) ] ];
+				RC: "IO Channel is faulted$N"
+				    "";
+				N: XIC(Estop_IO_Fault)[XIC(EStop.DELAY.FAULT.DN) OTE(EStop.STAT.FAULT) ,TON(EStop.DELAY.FAULT,?,?) ];
+				RC: "Cabinet B Estop IS PRESSED$N"
+				    "";
+				N: [XIC(EStop.STAT.ON) OTE(EStop.ALARM[0].ACTIVE) ,AlarmControl(EStop.AOI.AlarmControl[0],EStop.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Cabinet B Estop IO Fault (comm/power lost)$N"
+				    "";
+				N: [XIC(EStop.STAT.FAULT) OTE(EStop.ALARM[1].ACTIVE) ,AlarmControl(EStop.AOI.AlarmControl[1],EStop.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE InputPower 
+				N: NOP();
+				RC: "drop the ON if there is an IO afault$N"
+				    "";
+				N: [XIC(InputPower_IO_Input) XIO(InputPower.STAT.FAULT) OTE(InputPower.STAT.ENERGIZED) ,XIC(InputPower.STAT.ENERGIZED) [XIC(InputPower.DELAY.ON.DN) OTL(InputPower.STAT.ON) OTU(InputPower.STAT.OFF) ,TON(InputPower.DELAY.ON,?,?) ] ,XIO(InputPower.STAT.ENERGIZED) [XIC(InputPower.DELAY.OFF.DN) OTU(InputPower.STAT.ON) OTL(InputPower.STAT.OFF) ,TON(InputPower.DELAY.OFF,?,?) ] ];
+				N: XIC(InputPower_IO_Fault)[XIC(InputPower.DELAY.FAULT.DN) OTE(InputPower.STAT.FAULT) ,TON(InputPower.DELAY.FAULT,?,?) ];
+				RC: "Cabinet B Input Power Lost!!$N"
+				    "";
+				N: [XIO(InputPower.STAT.ON) OTE(InputPower.ALARM[0].ACTIVE) ,AlarmControl(InputPower.AOI.AlarmControl[0],InputPower.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Cabinet B Input Power IO Fault (Comm/Power lost) !!!$N"
+				    "";
+				N: [XIC(InputPower.STAT.FAULT) OTE(InputPower.ALARM[1].ACTIVE) ,AlarmControl(InputPower.AOI.AlarmControl[1],InputPower.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE OutputPower 
+				N: NOP();
+				RC: "Drop the ON if the channel is faulted$N"
+				    "";
+				N: [XIC(OutputPower_IO_Input) XIO(OutputPower.STAT.FAULT) OTE(OutputPower.STAT.ENERGIZED) ,XIC(OutputPower.STAT.ENERGIZED) [XIC(OutputPower.DELAY.ON.DN) OTL(OutputPower.STAT.ON) OTU(OutputPower.STAT.OFF) ,TON(OutputPower.DELAY.ON,?,?) ] ,XIO(OutputPower.STAT.ENERGIZED) [XIC(OutputPower.DELAY.OFF.DN) OTU(OutputPower.STAT.ON) OTL(OutputPower.STAT.OFF) ,TON(OutputPower.DELAY.OFF,?,?) ] ];
+				RC: "IO fault from channel$N"
+				    "";
+				N: XIC(OutputPower_IO_Fault)[XIC(OutputPower.DELAY.FAULT.DN) OTE(OutputPower.STAT.FAULT) ,TON(OutputPower.DELAY.FAULT,?,?) ];
+				RC: "Cabinet B Output Power is OFF !!$N"
+				    "";
+				N: [XIO(OutputPower.STAT.ON) OTE(OutputPower.ALARM[0].ACTIVE) ,AlarmControl(OutputPower.AOI.AlarmControl[0],OutputPower.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Cabinet B Output Power IO Fault (Comm/Power lost) !!!$N"
+				    "";
+				N: [XIC(OutputPower.STAT.FAULT) OTE(OutputPower.ALARM[1].ACTIVE) ,AlarmControl(OutputPower.AOI.AlarmControl[1],OutputPower.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE ResetLight 
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: [[XIC(EStop.STAT.ON) CMP(ResetLight.TMR[0].ACC<=(ResetLight.TMR[0].PRE/2)) ,XIO(EStop.STAT.ON) XIC(SafetyPower.STAT.OFF) ] OTE(ResetLight.STAT.AUTO_RUN) ,XIC(EStop.STAT.ON) XIO(ResetLight.TMR[0].DN) MOV(3000,ResetLight.TMR[0].PRE) TON(ResetLight.TMR[0],?,?) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,ResetLight.MSG.PERM) ,EQU(ResetLight.MSG.PERM,0) OTE(ResetLight.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,ResetLight.MSG.INTRLK) ,NEQ(ResetLight.MSG.INTRLK,0) OTE(ResetLight.STAT.INTERLOCK) ];
+				N: NOP();
+				N: MOV(0,ResetLight.MSG.MSG);
+				N: [XIC(ResetLight.STAT.AUTO_RUN) NEQ(ResetLight.MSG.PERM,0) MOV(ResetLight.MSG.PERM,ResetLight.MSG.MSG) ,NEQ(ResetLight.MSG.INTRLK,0) MOV(ResetLight.MSG.INTRLK,ResetLight.MSG.MSG) ,NEQ(ResetLight.MSG.FAULT,0) MOV(ResetLight.MSG.FAULT,ResetLight.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(ResetLight.AOI.Message,ResetLight.ID,ResetLight.MSG);
+				N: DiscreteOutputControl(ResetLight.AOI.Control,ResetLight.CMD,ResetLight.STAT);
+				N: [XIC(ResetLight.STAT.ENERGIZE) OTE(ResetLight_IO_Output) ,XIC(ResetLight.STAT.ENERGIZE) OTE(ResetLight.STAT.ON_OPEN) ,XIO(ResetLight.STAT.ENERGIZE) OTE(ResetLight.STAT.OFF_CLOSED) ];
+				N: [XIC(ResetLight.STAT.FAULT) OTE(ResetLight.ALARM[0].ACTIVE) ,AlarmControl(ResetLight.AOI.AlarmControl[0],ResetLight.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE SafetyPower 
+				N: NOP();
+				RC: "Drop the ON if the channel is faulted$N"
+				    "";
+				N: [XIC(SafetyPower_IO_Input) XIO(SafetyPower.STAT.FAULT) OTE(SafetyPower.STAT.ENERGIZED) ,XIC(SafetyPower.STAT.ENERGIZED) XIC(SafetyPower.DELAY.ON.DN) OTL(SafetyPower.STAT.ON) OTU(SafetyPower.STAT.OFF) ,XIO(SafetyPower.STAT.ENERGIZED) [XIC(SafetyPower.DELAY.OFF.DN) OTU(SafetyPower.STAT.ON) OTL(SafetyPower.STAT.OFF) ,TON(SafetyPower.DELAY.OFF,?,?) ] ];
+				RC: "This timer is used to rest faults on IO and Drives related to this cabinet. $N"
+				    "It also keeps alarms suppressed for 60 seconds following an e-stop clearing so there$'s time for faults to clear.";
+				N: XIC(cCOMMON.FirstScan.Delay.DN)XIC(EStop.STAT.OFF)XIC(SafetyPower.STAT.ENERGIZED)XIC(OutputPower.STAT.ON)XIC(InputPower.STAT.ON)TON(SafetyPower.DELAY.ON,?,?);
+				RC: "Each EM program will reference the cabinet that powers the IO and drives and monitor this reset command$N"
+				    "";
+				N: [LIM(10000,SafetyPower.DELAY.ON.ACC,13000) ,LIM(30000,SafetyPower.DELAY.ON.ACC,33000) ,LIM(50000,SafetyPower.DELAY.ON.ACC,53000) ]OTL(cDI[0].CMD.RESET)OTL(cDO[0].CMD.RESET)OTL(cAI[0].CMD.RESET)OTE(SafetyPower.CMD.RESET);
+				RC: "Cabinet B Safety Power IO Channel Fault$N"
+				    "";
+				N: XIC(SafetyPower_IO_Fault)[XIC(SafetyPower.DELAY.FAULT.DN) OTE(SafetyPower.STAT.FAULT) ,TON(SafetyPower.DELAY.FAULT,?,?) ];
+				RC: "Cabinet B Safety Power IS OFF!!";
+				N: [XIO(SafetyPower.STAT.ON) OTE(SafetyPower.ALARM[0].ACTIVE) ,AlarmControl(SafetyPower.AOI.AlarmControl[0],SafetyPower.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Cabinet B Safety Power IO Channel Fault (Comm/Power Loss) !!!";
+				N: [XIC(SafetyPower.STAT.FAULT) OTE(SafetyPower.ALARM[1].ACTIVE) ,AlarmControl(SafetyPower.AOI.AlarmControl[1],SafetyPower.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'SYSTEMESTOP.01$'$N"
+				    "";
+				N: NOP();
+				N: MOV(100,EStop.DELAY.ON.PRE)MOV(5000,EStop.DELAY.OFF.PRE)MOV(1000,EStop.DELAY.FAULT.PRE);
+				N: MOV(500,InputPower.DELAY.ON.PRE)MOV(5000,InputPower.DELAY.OFF.PRE)MOV(1000,InputPower.DELAY.FAULT.PRE);
+				N: MOV(500,OutputPower.DELAY.ON.PRE)MOV(5000,OutputPower.DELAY.OFF.PRE)MOV(1000,OutputPower.DELAY.FAULT.PRE);
+				N: MOV(3000,ResetLight.TMR[0].PRE);
+				N: MOV(60000,SafetyPower.DELAY.ON.PRE)MOV(1000,SafetyPower.DELAY.OFF.PRE)MOV(1000,SafetyPower.DELAY.FAULT.PRE);
+		END_ROUTINE
+
+		ROUTINE _Main 
+				N: NOP();
+				N: XIC(S:FS)JSR(_FirstScan,0);
+				N: JSR(AvailableCurrent,0);
+				N: JSR(EStop,0);
+				N: JSR(ResetLight,0);
+				RC: "$007F";
+				N: JSR(InputPower,0);
+				N: JSR(OutputPower,0);
+				N: JSR(SafetyPower,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

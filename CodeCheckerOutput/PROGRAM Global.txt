@@ -1,0 +1,422 @@
+	PROGRAM Global (Description := "Contains first scan, simulation, common logic, scada communication logic.  place communication logic with external systems here.",
+	                MAIN := "Main",
+	                MODE := 0,
+	                DisableFlag := 0,
+	                UseAsFolder := 0)
+		TAG
+			ALARM_INDEX_TEMP : DINT (RADIX := Decimal) := 200200000;
+			AnalogInputFaulted : DINT (RADIX := Decimal) := 182;
+			AnalogInputsInitialized : BOOL (RADIX := Decimal) := 1;
+			cDate_Time_String : DateTimeString  := [3,2024,6,4,15,35,0,372139,372];
+			cDay_of_Week : DayOfWeek  := [3,2024,6,4,2,[4,24,4,20,10,40,6,5,0,0],[2.02399998e+001,1.03999996e+001,1.02000008e+001,6.00000000e+000
+					,5.00000000e+000,1.40000000e+001,-2.60000000e+001,-2.00000000e+000,4.00000000e+000,9.00000000e+000
+					,2.00000000e+000,2.00000000e+000]];
+			cFIRST_SCAN_DELAY : TIMER  := [-1608760597,60000,60024];
+			ClockCheck : DINT[10] (RADIX := Decimal) := [903357145,398500,903358205,398500,1079,903313311,43834,0,0,0];
+			ClockCheck_Real : REAL (RADIX := Float) := 2.46155951e-002;
+			cMessage_Toggle : MessageToggle  := [0,1542];
+			DeviceFaulted : DINT (RADIX := Decimal) := 86;
+			DeviceInManual : DINT (RADIX := Decimal) := 9;
+			NegativePresetProtection : DINT (RADIX := Decimal) := 32;
+			OffClosedBypass : DINT (RADIX := Decimal) := 533;
+			OnOpenBypass : DINT (RADIX := Decimal) := 533;
+			SCP : AnalogInputScaling  := [0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,1.04999962e+001
+					,0.00000000e+000,1.00000000e+000];
+			TestProductCodeArray : CB_PRODUCT_CODE[10]  := [[8,'30053124$00$00$00$00$00$00$00$00'],[8,'30053125$00$00$00$00$00$00$00$00'],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00']];
+			TestProductCodeCompare : BOOL (RADIX := Decimal) := 0;
+			TypeCount : DINT (RADIX := Decimal) := 0;
+		END_TAG
+
+		ROUTINE AnalogInputs (Description := "Loop for all AI$NGlobal / Common Logic")
+				RC: "GLOBAL ANALOG INPUT PROCESSING$N"
+				    " $N"
+				    "";
+				N: MOV(0,AnalogInputFaulted)MOV(-1,X)OTU(cAI[0].STAT.FAULT);
+				RC: "Increment Loop Index$N"
+				    " $N"
+				    "";
+				N: LBL(AI)ADD(X,1,X);
+				N: AFI()EQU(cAI[X].TYPE,0)JMP(SKIP_AI);
+				RC: "Setup History Configuration for all AI$N"
+				    "";
+				N: [XIC(cCOMMON.ALWAYS_OFF) OTL(cAI[X].HISTORY.Enabled) ,MOV(1,cAI[X].HISTORY.Deadband) ];
+				N: [EQU(cAI[X].LoLo.DELAY.PRE,0) MOV(2000,cAI[X].LoLo.DELAY.PRE) ,EQU(cAI[X].Lo.DELAY.PRE,0) MOV(2000,cAI[X].Lo.DELAY.PRE) ,EQU(cAI[X].Hi.DELAY.PRE,0) MOV(2000,cAI[X].Hi.DELAY.PRE) ,EQU(cAI[X].HiHi.DELAY.PRE,0) MOV(2000,cAI[X].HiHi.DELAY.PRE) ];
+				N: [EQU(cAI[X].LoLo.DEADBAND,0) MOV(1,cAI[X].LoLo.DEADBAND) ,EQU(cAI[X].Lo.DEADBAND,0) MOV(1,cAI[X].Lo.DEADBAND) ,EQU(cAI[X].Hi.DEADBAND,0) MOV(1,cAI[X].Hi.DEADBAND) ,EQU(cAI[X].HiHi.DEADBAND,0) MOV(1,cAI[X].HiHi.DEADBAND) ];
+				N: XIC(cAI[X].STAT.FAULT)MOV(X,AnalogInputFaulted);
+				N: XIC(cAI[X].Fault.ACTIVE)[MOV(10000,cAI[X].TMR[5].PRE) TON(cAI[X].TMR[5],10000,0) ,XIC(cAI[X].TMR[5].DN) OTL(cAI[X].CMD.RESET) ];
+				RC: "RESET ALL$N"
+				    "When global commands are set in AI[0], then latch the associated command for ALL AI$'s$N"
+				    "$N"
+				    " - Reset Fault$N"
+				    " $N"
+				    "$N"
+				    "";
+				N: [XIC(cAI[0].CMD.RESET) ,XIC(cCOMMON.FirstScan.ResetFaultToVFD) ]OTL(cAI[X].CMD.RESET);
+				RC: "GLOBAL STATUS$N"
+				    "Indicate if ANY AI in the system is:$N"
+				    "$N"
+				    " - Faulted$N"
+				    " - Open Feedback Bypassed$N"
+				    " - Closed Feedback Bypassed$N"
+				    " $N"
+				    "";
+				N: XIC(cAI[X].STAT.FAULT)OTL(cAI[0].STAT.FAULT);
+				RC: "Scale the raw into a raw signal.  Typically this is scaling the raw value to a 4-20mA signal.  If the raw signal low and high are zero, then simply mov the raw into the raw signal scaled";
+				N: [NEQ(cAI[X].RAW_SIGNAL_LO,0) NEQ(cAI[X].RAW_SIGNAL_HI,0) AnalogInputScaling(SCP,cAI[X].RAW,cAI[X].RAW_LO,cAI[X].RAW_HI,cAI[X].RAW_SIGNAL_LO,cAI[X].RAW_SIGNAL_HI,cAI[X].RAW_SIGNAL_SCALED) ,EQU(cAI[X].RAW_SIGNAL_LO,0) EQU(cAI[X].RAW_SIGNAL_HI,0) MOV(cAI[X].RAW,cAI[X].RAW_SIGNAL_SCALED) ];
+				RC: "Loop Back to Label$N"
+				    "";
+				N: LBL(SKIP_AI)LES(X,cSETUP.NO_AI)JMP(AI);
+				RC: "COMMAND MASK --- Bit-Wise AND with the remembered MASK word.$N"
+				    "$N"
+				    "take current command word and do bit-wise mask on the remembered mask.$N"
+				    "this results in any bit that had been set last scan being cleared on this scan.$N"
+				    " $N"
+				    "COMMAND MASK --- Take the NOT of command word, remember as MASK for next scan.$N"
+				    " $N"
+				    "perform bit-wise NOT on the command word.$N"
+				    "Any bit set this scan will be written into mask as a 0.$N"
+				    "On next scan, the above AND will cancel out the same bit in command word.$N"
+				    " $N"
+				    "";
+				N: AND(cAI[0].CMD.BITS,cAI[0].CMD.MASK,cAI[0].CMD.BITS)NOT(cAI[0].CMD.BITS,cAI[0].CMD.MASK);
+		END_ROUTINE
+
+		ROUTINE AnalogInputsInitialize 
+				RC: "============================================================================$N"
+				    "ANALOG INITIALZIATION$N"
+				    "============================================================================$N"
+				    "$N"
+				    "";
+				N: ControlBuilder_Insert(EZSoft.ControlBuilder.Insert,EZSoft.ControlBuilder.Types.AnalogInput._01_AI_INITIALIZATION,EZSoft.ControlBuilder.Options.Code.Instanced,0);
+				RC: "GLOBAL ANALOG INPUT PROCESSING$N"
+				    " $N"
+				    "";
+				N: MOV(-1,X);
+				RC: "Increment Loop Index$N"
+				    " $N"
+				    "";
+				N: LBL(AI)[ADD(X,1,X) ,EQU(cAI[X].TYPE,0) JMP(SKIP_AI) ];
+				N: OTL(cAI[X].DISPLAY_MASK.LOLO)OTL(cAI[X].DISPLAY_MASK.LO)OTL(cAI[X].DISPLAY_MASK.HI)OTL(cAI[X].DISPLAY_MASK.HIHI)OTU(cAI[X].DISPLAY_MASK.RATE_LO)OTL(cAI[X].DISPLAY_MASK.RATE_LOLO);
+				N: MOV(0,cAI[X].ARB.CNTRL.LEN);
+				RC: "Loop Back to Label$N"
+				    "";
+				N: LBL(SKIP_AI)LES(X,cSETUP.NO_AI)JMP(AI);
+		END_ROUTINE
+
+		ROUTINE AnalogOutputs (Description := "Loop for all AO$NGlobal / Common Logic")
+				RC: "ANALOG OUTPUT CONTROL ALGORITHM$N"
+				    "$N"
+				    "Loop Mode Logic.$N"
+				    "Note: See _49_AO_PID for the PID Control Algorithm.$N"
+				    "$N"
+				    "DO NOT DELETE THIS RUNG!$N"
+				    "";
+				N: NOP();
+				N: MOV(-1,X);
+				N: LBL(AO)[ADD(X,1,X) ,AFI() EQU(cAO[X].TYPE,0) JMP(SKIP_AO) ];
+				RC: "If this AO is about to change modes and activate its PID loop take the current CV and IN HOLD this value for one scan of the PID loop";
+				N: XIC(cAO[X].STAT.ENERGIZE)[XIC(cAO[X].CMD.AUTO) XIO(cAO[X].STAT.AUTO) ,XIC(cAO[X].CMD.MAN) XIO(cAO[X].STAT.MAN) ]MOV(cAO[X].CV,cAO[X].InHoldValue)OTL(cAO[X].CMD.InHold);
+				RC: "Set the INHOLD bit when a command is received. Reset the INHOLD bit the next time the PID loop is enabled.$N"
+				    "A Latch/UnLatch is used to allow OTEs to be used elsewhere for custom code.";
+				N: [XIC(cAO[X].STAT.ENERGIZE) XIC(cAO[X].CMD.InHold) OTL(cAO[X].STAT.INHOLD) ,[XIC(cAO[X].PID.EN) ,XIO(cAO[X].STAT.ENERGIZE) ] OTU(cAO[X].STAT.INHOLD) ];
+				RC: "If cAO[0] has any commands, pass them through to all Loops";
+				N: [XIC(cAO[0].CMD.AUTO) NEQ(X,0) OTL(cAO[X].CMD.AUTO) ,XIC(cAO[0].CMD.MAN) NEQ(X,0) OTL(cAO[X].CMD.MAN) ,XIC(cAO[0].CMD.OFF) NEQ(X,0) OTL(cAO[X].CMD.OFF) ];
+				N: [XIC(cAO[X].CMD.AUTO) OTL(cAO[X].STAT.AUTO) OTU(cAO[X].STAT.MAN) OTU(cAO[X].STAT.OFF) ,XIC(cAO[X].CMD.MAN) OTU(cAO[X].STAT.AUTO) OTL(cAO[X].STAT.MAN) OTU(cAO[X].STAT.OFF) ,XIC(cAO[X].CMD.OFF) OTU(cAO[X].STAT.AUTO) OTU(cAO[X].STAT.MAN) OTL(cAO[X].STAT.OFF) ];
+				N: XIO(cAO[X].STAT.AUTO)XIO(cAO[X].STAT.MAN)XIO(cAO[X].STAT.OFF)OTL(cAO[X].CMD.AUTO);
+				N: LBL(SKIP_AO)LES(X,cSETUP.NO_AO)JMP(AO);
+		END_ROUTINE
+
+		ROUTINE Common (Description := "common logic sets up bits and timers used throughout the program.")
+				RC: "==============================================================================$N"
+				    "COMMON LOGIC$N"
+				    "==============================================================================$N"
+				    "$N"
+				    "The purpose of this routine is to setup bits and timers that are used throughout the program.$N"
+				    "Examples of this are the common always on and always off bits.  These bits are used where the programmer$N"
+				    "intends to explicity indicate that a rung is to be held true or false respectively, rather than using the AFI which$N"
+				    "usually are artifacts of past debugging efforts.$N"
+				    "$N"
+				    "The watchdog bit is set on every other scan and can be useful where a false-to-true transition is required$N"
+				    "for instruction execution, but the condition enabling the rung is always true.  Pulse timers paired self-resetting$N"
+				    "timers that setup square waves and one-shot pulses.  These are useful for pulsing horns, beacons, and messages.";
+				N: NOP();
+				RC: "Setup a bit that is always true$N"
+				    " $N"
+				    "";
+				N: OTE(cCOMMON.ALWAYS_ON);
+				RC: "Setup a bit that is always false.  Logically, a bit can not be both false and true, so the result of this $N"
+				    " rung is always false.$N"
+				    " $N"
+				    "";
+				N: XIC(cCOMMON.ALWAYS_OFF)XIO(cCOMMON.ALWAYS_OFF)OTE(cCOMMON.ALWAYS_OFF);
+				RC: "This bit will be true every other scan of the logic.$N"
+				    " $N"
+				    "";
+				N: XIO(cCOMMON.WATCH_DOG)OTE(cCOMMON.WATCH_DOG);
+				RC: "This and the following rung setup a pulse-timer.$N"
+				    "The enable bit of each timer will be a square wave.$N"
+				    "The done bits can be used as pulsing one-shots$N"
+				    " $N"
+				    "";
+				N: XIO(cCOMMON.PULSE_TIMER[0].DN)XIO(cCOMMON.PULSE_TIMER[1].EN)TON(cCOMMON.PULSE_TIMER[0],?,?);
+				RC: "Setup a pulse timer$N"
+				    "";
+				N: XIO(cCOMMON.PULSE_TIMER[1].DN)XIO(cCOMMON.PULSE_TIMER[0].EN)TON(cCOMMON.PULSE_TIMER[1],?,?);
+				RC: "This and the following rung setup a pulse-timer.$N"
+				    "The enable bit of each timer will be a square wave.$N"
+				    "The done bits can be used as pulsing one-shots$N"
+				    " $N"
+				    "";
+				N: XIO(cCOMMON.PULSE_TIMER[2].DN)XIO(cCOMMON.PULSE_TIMER[3].EN)TON(cCOMMON.PULSE_TIMER[2],?,?);
+				RC: "Setup a pulse timer$N"
+				    "";
+				N: XIO(cCOMMON.PULSE_TIMER[3].DN)XIO(cCOMMON.PULSE_TIMER[2].EN)TON(cCOMMON.PULSE_TIMER[3],?,?);
+				RC: "Setup a pulse timer $N"
+				    "USED FOR MESSAGING";
+				N: XIO(cCOMMON.PULSE_TIMER[4].DN)TON(cCOMMON.PULSE_TIMER[4],?,?);
+				RC: "Setup  5 second self-resetting pulse-timer.$N"
+				    "";
+				N: XIO(cCOMMON.PULSE_TIMER[5].DN)MOV(5000,cCOMMON.PULSE_TIMER[5].PRE)TON(cCOMMON.PULSE_TIMER[5],?,?);
+				RC: "Sets a bit that is true for one scan every one second exactly averaged over time.  The error of the timer is subtracted out each time it is set so that over time this bit is true every second.$N"
+				    "$N"
+				    "This has been tested to be accurate over long periods of time and can be used in place of timers with accurate results";
+				N: XIO(cCOMMON.PULSE_TIMER[10].DN)[MOV(60000,cCOMMON.PULSE_TIMER[10].PRE) TON(cCOMMON.PULSE_TIMER[10],?,?) ,GRT(cCOMMON.PULSE_TIMER[10].ACC,1000) [OTE(cCOMMON.ONE_SECOND_PULSE) ,SUB(cCOMMON.PULSE_TIMER[10].ACC,1000,NegativePresetProtection) GEQ(NegativePresetProtection,0) MOV(NegativePresetProtection,cCOMMON.PULSE_TIMER[10].ACC) ] ];
+				RC: "***********************************************$N"
+				    "****************HEARTBEAT TIMER USED FOR***************$N"
+				    "**********PLC TO PLC COMMS********$N"
+				    "***********************************************";
+				N: XIO(cCOMMON.PULSE_TIMER[11].DN)MOV(60000,cCOMMON.PULSE_TIMER[11].PRE)TON(cCOMMON.PULSE_TIMER[11],?,?);
+				RC: "Start a timer that only times on power up once.";
+				N: [XIC(cCOMMON.ALWAYS_ON) ,XIC(cFIRST_SCAN_DELAY.TT) ]TON(cFIRST_SCAN_DELAY,?,?);
+				RC: "=========================================$N"
+				    "$N"
+				    "TIME CALCULATIONS$N"
+				    "$N"
+				    "===========================================";
+				N: NOP();
+				RC: "Get the LocalDateTime from the PLC clock and place its elements into an array";
+				N: GSV(WallClockTime,?,LocalDateTime,cCOMMON.DATETIME[0]);
+				RC: "Calculate the Day off the week where$N"
+				    "Day of Week 1 = Sun, 7 = Saturday";
+				N: DayOfWeek(cDay_of_Week,cCOMMON.DATETIME[0],cCOMMON.DATETIME[1],cCOMMON.DATETIME[2],cCOMMON.DATETIME[7]);
+				RC: "Concatenate a VARCHAR25 DATE TIME STRING that is compatibile with database CAST for a DATETIME data type";
+				N: DateTimeString(cDate_Time_String,cCOMMON.DATETIME[0],cCOMMON.DATETIME[1],cCOMMON.DATETIME[2],cCOMMON.DATETIME[3],cCOMMON.DATETIME[4],cCOMMON.DATETIME[5],cCOMMON.DATETIME[6],cCOMMON.DATE_TIME_STRING);
+				RC: "Create a Time based ID based on the number of sec since Jan 1st 2006";
+				N: CPT(cCOMMON.TIME_BASED_ID,(cCOMMON.DATETIME[0]-2006)*31622400+(cCOMMON.DATETIME[1]*2678400)+(cCOMMON.DATETIME[2]*86400)+(cCOMMON.DATETIME[3]*3600)+(cCOMMON.DATETIME[4]*60)+cCOMMON.DATETIME[5]);
+				N: DIV(cCOMMON.PULSE_TIMER[11].ACC,1000,cCOMMON.HEARTBEAT);
+		END_ROUTINE
+
+		ROUTINE DiscreteInputs (Description := "Loop for all DI$NGlobal / Common Logic")
+				N: MOV(-1,X);
+				RC: "Increment Loop Index";
+				N: LBL(DI)[ADD(X,1,X) ,XIO(cDI[0].CMD.RESET) AFI() EQU(cDI[X].TYPE,0) JMP(SKIP_DI) ];
+				N: XIC(cDI[0].CMD.RESET)OTE(cDI[X].CMD.RESET);
+				N: [XIC(cDI[X].CMD.AUTO) OTL(cDI[X].STAT.AUTO) OTU(cDI[X].STAT.MAN) ,XIC(cDI[X].CMD.MAN) OTU(cDI[X].STAT.AUTO) OTL(cDI[X].STAT.MAN) ];
+				N: XIO(cDI[X].STAT.AUTO)XIO(cDI[X].STAT.MAN)OTL(cDI[X].CMD.AUTO);
+				RC: "Loop Back to Label$N"
+				    "";
+				N: LBL(SKIP_DI)LES(X,cSETUP.NO_DI)JMP(DI);
+				N: OTU(cDI[0].CMD.RESET);
+		END_ROUTINE
+
+		ROUTINE DiscreteOutputs (Description := "Loop for all DO$NGlobal / Common Logic")
+				RC: "DISCRETE OUTPUT COMMON$N"
+				    " $N"
+				    "";
+				N: NOP();
+				RC: "Initialize Loop Index$N"
+				    "Initialize variables that are used inside the loop$N"
+				    " $N"
+				    "";
+				N: MOV(0,OnOpenBypass)MOV(0,OffClosedBypass)MOV(0,DeviceFaulted)MOV(0,DeviceInManual)MOV(0,TypeCount)MOV(-1,X)OTU(cDO[0].STAT.MAN)OTU(cDO[0].STAT.OFF_CLOSED_BYPASS)OTU(cDO[0].STAT.ON_OPEN_BYPASS)OTU(cDO[0].STAT.FAULT);
+				RC: "Loop for all devices$N"
+				    "Skip over devices that are not used";
+				N: LBL(DEV)ADD(X,1,X);
+				RC: "Need to OTU this today we can do a download because faults are being unlatched in the DiscreteOutputControl AOI. This will prevent that from happening until we can do a download$N"
+				    "(Ron code was using this as $QOutputPowerOff$Q and also was overly eager in suppressing .FAULT when it shouldn$'t be. Devices without power are still faulted)$N"
+				    "$N"
+				    "Each PLC Scan:$N"
+				    "This rung OTUs the bit$N"
+				    "each CM$'s DiscreteOutputControl checks this bit (and it needs to be OFF)$N"
+				    "each CM$'s ladder logic properly sets the bit$N"
+				    "each CM$'s ladder logic checks the bit and suppresses alarms if necessary$N"
+				    "$N"
+				    "ICRiley 20240318";
+				N: OTU(cDO[X].STAT.ControlPowerOn);
+				RC: "ProjectSpecific$N"
+				    "Setup warning and alarm limits for runtime hours for specific types$N"
+				    "98 - Sifter Motor$N"
+				    "99 - Blower Motor (positive displacement)$N"
+				    "100 - Mill Drive$N"
+				    "";
+				N: [EQU(cDO[X].TYPE,98) [MOV(175,cDO[X].STATISTICS.EnergizeHoursWarningLimit) ,MOV(200,cDO[X].STATISTICS.EnergizeHoursAlarmLimit) ] ,EQU(cDO[X].TYPE,99) [MOV(4500,cDO[X].STATISTICS.EnergizeHoursWarningLimit) ,MOV(5000,cDO[X].STATISTICS.EnergizeHoursAlarmLimit) ] ,EQU(cDO[X].TYPE,100) [MOV(7500,cDO[X].STATISTICS.EnergizeHoursWarningLimit) ,MOV(8000,cDO[X].STATISTICS.EnergizeHoursAlarmLimit) ] ];
+				RC: "scan all devices until TYPE are setup properly";
+				N: AFI()EQU(cDO[X].TYPE,0)JMP(SKIP_DEV);
+				N: [XIC(cDO[X].STAT.ON_OPEN_BYPASS) MOV(X,OnOpenBypass) ,XIC(cDO[X].STAT.OFF_CLOSED_BYPASS) MOV(X,OffClosedBypass) ];
+				N: [EQU(cDO[X].TYPE,97) ADD(TypeCount,1,TypeCount) ,XIO(cDO[X].STAT.AUTO) MOV(X,DeviceInManual) ];
+				N: XIC(cDO[X].STAT.FAULT)MOV(X,DeviceFaulted);
+				RC: "On First Scan, Set DO Alarm Object Type Values.$N"
+				    "$N"
+				    "";
+				N: CPT(ALARM_INDEX_TEMP,10000000*cCOMMON.DO_OBJECT_NUMBER+100*cDO[X].ID)ADD(ALARM_INDEX_TEMP,0,cDO[X].ALARM[0].INDEX)ADD(ALARM_INDEX_TEMP,1,cDO[X].ALARM[1].INDEX)ADD(ALARM_INDEX_TEMP,2,cDO[X].ALARM[2].INDEX);
+				RC: "RESET ALL$N"
+				    "When global commands are set in DO[0], then latch the associated command for ALL DO$'s$N"
+				    "$N"
+				    " - Reset Fault$N"
+				    " - Auto Mode$N"
+				    " - Manual Mode$N"
+				    " $N"
+				    "$N"
+				    "";
+				N: [[XIC(cDO[0].CMD.RESET) ,XIC(cCOMMON.FirstScan.ResetFaultToVFD) ] OTL(cDO[X].CMD.RESET) ,XIC(cDO[0].CMD.AUTO) OTL(cDO[X].CMD.AUTO) ,XIC(cDO[0].CMD.MAN) OTL(cDO[X].CMD.MAN) ];
+				RC: "GLOBAL MESSAGING$N"
+				    "For each device that is in manual mode trigger a message to tell the user which device is in manual mode";
+				N: NEQ(cDO[X].TYPE,27)[CPT(cDO[0].MSG.PERM,cSETUP.PLC_ID*1000+X) [EQU(cDO[0].MSG.PERM,cDO[0].MSG.MSG) MOV(0,cDO[0].MSG.MSG) ,EQU(cDO[0].MSG.PERM,cDO[0].MSG.FAULT) MOV(0,cDO[0].MSG.FAULT) ] ,XIC(cDO[X].STAT.MAN) MessageToggle(cMessage_Toggle,cDO[0].MSG.PERM,cDO[0].MSG.MSG,cDO[0].MSG.Toggle.0) ,[XIC(cDO[X].STAT.ON_OPEN_BYPASS) ,XIC(cDO[X].STAT.OFF_CLOSED_BYPASS) ] MessageToggle(cMessage_Toggle,cDO[0].MSG.PERM,cDO[0].MSG.FAULT,cDO[0].MSG.Toggle.1) ,MOV(cDO[0].MSG.MSG,cDO[0].MSG.MSG) MOV(cDO[0].MSG.FAULT,cDO[0].MSG.FAULT) ];
+				RC: "GLOBAL STATUS$N"
+				    "Indicate if ANY DO in the system is:$N"
+				    "$N"
+				    " - Faulted$N"
+				    " - Open Feedback Bypassed$N"
+				    " - Closed Feedback Bypassed$N"
+				    " $N"
+				    "";
+				N: NEQ(cDO[X].TYPE,27)[XIC(cDO[X].STAT.FAULT) OTL(cDO[0].STAT.FAULT) ,XIC(cDO[X].STAT.MAN) OTL(cDO[0].STAT.MAN) ,XIC(cDO[X].STAT.ON_OPEN_BYPASS) OTL(cDO[0].STAT.ON_OPEN_BYPASS) ,XIC(cDO[X].STAT.OFF_CLOSED_BYPASS) OTL(cDO[0].STAT.OFF_CLOSED_BYPASS) ];
+				RC: "SELF RELEASE$N"
+				    "$N"
+				    "Look at my owner.  If my owner is IDLE then release myself$N"
+				    "$N"
+				    "STATE_1 and STATE_2 are used for DO99 and DO409 to arbitrate them to only allow one at a time to run$N"
+				    "These are types 99$N"
+				    "$N"
+				    "Type 2 is DO 120. This is used for an arbtitration to prevent DO 99 and DO 409 from starting$N"
+				    " $N"
+				    " $N"
+				    "TODO: decide if Self-Release is desired/required, evaluate the Type numbers listed here, they are project-specific$N"
+				    " $N"
+				    "AFI for Carolina Foods, remove AFI if there are issues., but all phases set release on IDLE unless otherwise needed.$N"
+				    "$N"
+				    "$N"
+				    "$N"
+				    "";
+				N: AFI()MOV(0,Y)MOV(cDO[X].INDEX,Y)NEQ(Y,0)XIC(cPHZ[Y].STATE.IDLE)XIC(cPHZ[Y].STEP.IDLE)MOV(0,cDO[X].ARB.OWNER);
+				N: DiscreteOutputStatistics(cDO[X].AOI.Statistics,cDO[X].STAT,cDO[X].STATISTICS);
+				N: LBL(SKIP_DEV)LES(X,cSETUP.NO_DO)JMP(DEV);
+				RC: "MESSAGE TOGGLING$N"
+				    "This rung causes all bits in the toggle word to be set.$N"
+				    "Any message toggling logic is going to toggle to the next message in the scan$N"
+				    "whenever this tag is set to -1$N"
+				    "";
+				N: XIC(cCOMMON.PULSE_TIMER[1].DN)MOV(-1,cDO[0].MSG.Toggle);
+				RC: "DEVICE IN MANUAL TOO LONG ALARM$N"
+				    "";
+				N: XIC(cDO[0].STAT.MAN)[MUL(60,60000,cDO[0].TMR[0].PRE) TON(cDO[0].TMR[0],?,?) ,XIC(cDO[0].TMR[0].DN) OTE(cCOMMON.ALARM[25].ACTIVE) ];
+				RC: "COMMAND MASK --- Bit-Wise AND with the remembered MASK word.$N"
+				    "$N"
+				    "take current command word and do bit-wise mask on the remembered mask.$N"
+				    "this results in any bit that had been set last scan being cleared on this scan.$N"
+				    " $N"
+				    "COMMAND MASK --- Take the NOT of command word, remember as MASK for next scan.$N"
+				    " $N"
+				    "perform bit-wise NOT on the command word.$N"
+				    "Any bit set this scan will be written into mask as a 0.$N"
+				    "On next scan, the above AND will cancel out the same bit in command word.$N"
+				    " $N"
+				    "";
+				N: AND(cDO[0].CMD.BITS,cDO[0].CMD.MASK,cDO[0].CMD.BITS)NOT(cDO[0].CMD.BITS,cDO[0].CMD.MASK);
+		END_ROUTINE
+
+		ROUTINE Main (Description := "Main subroutine, contains JSR$'s to other routines in the program, typically in order of appearance in tree.")
+				N: NOP();
+				N: [JSR(AnalogInputs,0) ,XIO(AnalogInputsInitialized) JSR(AnalogInputsInitialize,0) OTL(AnalogInputsInitialized) ,JSR(AnalogOutputs,0) ,JSR(Common,0) ,JSR(DiscreteInputs,0) ,JSR(DiscreteOutputs,0) ,JSR(Phase,0) ,JSR(PhaseProjectSpecific,0) ];
+				N: GSV(Task,Main,LastScanTime,cCOMMON.SCAN_TIMES[0])GSV(Program,Global,LastScanTime,cCOMMON.SCAN_TIMES[1]);
+				N: [MOV(8,TestProductCodeArray[0].LEN) ,MOV(51,TestProductCodeArray[0].DATA[0]) ,MOV(48,TestProductCodeArray[0].DATA[1]) ,MOV(48,TestProductCodeArray[0].DATA[2]) ,MOV(53,TestProductCodeArray[0].DATA[3]) ,MOV(51,TestProductCodeArray[0].DATA[4]) ,MOV(49,TestProductCodeArray[0].DATA[5]) ,MOV(50,TestProductCodeArray[0].DATA[6]) ,MOV(52,TestProductCodeArray[0].DATA[7]) ];
+				N: [MOV(8,TestProductCodeArray[1].LEN) ,MOV(51,TestProductCodeArray[1].DATA[0]) ,MOV(48,TestProductCodeArray[1].DATA[1]) ,MOV(48,TestProductCodeArray[1].DATA[2]) ,MOV(53,TestProductCodeArray[1].DATA[3]) ,MOV(51,TestProductCodeArray[1].DATA[4]) ,MOV(49,TestProductCodeArray[1].DATA[5]) ,MOV(50,TestProductCodeArray[1].DATA[6]) ,MOV(53,TestProductCodeArray[1].DATA[7]) ];
+				N: EQU(TestProductCodeArray[0],TestProductCodeArray[1])OTE(TestProductCodeCompare);
+				N: OTU(cSETUP.SIMULATION.Enabled);
+				N: OTL(EZSC_DisableAlarmUntilInstalled);
+		END_ROUTINE
+
+		ROUTINE Phase (Description := "Loop for all Phase$NGlobal / Common$NLogic")
+				RC: "PHASE COMMON LOGIC$N"
+				    "$N"
+				    "Command Processing that is command to all phases is handled in the loop in this routine.$N"
+				    "Also, any other type of commonlogic that applies to all phases or certain types of phase may be placed here.$N"
+				    "$N"
+				    "Differentiate phases of different types with the member .TYPE of the phase datastructure.$N"
+				    " $N"
+				    "";
+				N: NOP();
+				RC: "Initialize the loop variable Y";
+				N: MOV(-1,Y);
+				RC: "LOOP FOR ALL PHASES IN SYSTEM$N"
+				    "Skip over phases that are not used";
+				N: LBL(PHZ)ADD(Y,1,Y);
+				N: AFI()EQU(cPHZ[Y].TYPE,0)JMP(SKIP_PHZ);
+				N: EQU(cPHZ[Y].PREACT.LIM,0)MOV(20,cPHZ[Y].PREACT.LIM);
+				N: XIC(cCOMMON.ALWAYS_OFF)OTE(cPHZ[Y].STAT.LOCAL);
+				N: LEQ(cPHZ[Y].STEP_TMR.RECORD.PRE,0)MOV(1000,cPHZ[Y].STEP_TMR.RECORD.PRE);
+				RC: "Command all phases to AUTO when phase 0 auto command is set$N"
+				    "";
+				N: XIC(cPHZ[0].CMD.AUTO)[OTL(cPHZ[Y].STAT.AUTO) ,OTU(cPHZ[Y].STAT.MAN) ,OTU(cPHZ[Y].STAT.MODE_3) ]OTU(cPHZ[0].CMD.AUTO);
+				RC: "Command all phases to MANUAL";
+				N: XIO(cPHZ[Y].STAT.MAN_MODE_INHIBIT)XIC(cPHZ[0].CMD.MAN)XIC(cPHZ[Y].STATE.IDLE)[OTU(cPHZ[Y].STAT.AUTO) ,OTL(cPHZ[Y].STAT.MAN) ,OTU(cPHZ[Y].STAT.MODE_3) ];
+				RC: "When the phase needs is in release state, unlatch all requests.";
+				N: XIC(cPHZ[Y].NEEDS.Release)OTU(cPHZ[Y].NEEDS.Arbitrating)OTU(cPHZ[Y].NEEDS.LIST[0].REQUESTED)OTU(cPHZ[Y].NEEDS.LIST[1].REQUESTED)OTU(cPHZ[Y].NEEDS.LIST[2].REQUESTED)OTU(cPHZ[Y].NEEDS.LIST[3].REQUESTED)OTU(cPHZ[Y].NEEDS.LIST[4].REQUESTED);
+				RC: "Toggle Phase Messages";
+				N: XIC(cCOMMON.PULSE_TIMER[2].DN)MOV(-1,cPHZ[Y].MSG.Toggle);
+				RC: "If the phase is not doing anything skip over the next section of code to save on scan time";
+				N: XIC(cPHZ[Y].STATE.IDLE)EQU(cPHZ[Y].STATE_NO,100)XIC(cPHZ[Y].STEP.IDLE)EQU(cPHZ[Y].STEP_NO,1)XIO(cPHZ[Y].CMD.START)JMP(SKIP_PHZ);
+				N: XIC(cPHZ[Y].STATE.Oneshot.Running)MOV(-1,cPHZ[Y].STEP_INDEX_GOTO_ON_RESTART);
+				RC: "Loop Back to the rung with PHZ label$N"
+				    "if Y = cSETUP.NO_PHASE then break out of loop.";
+				N: LBL(SKIP_PHZ)LES(Y,cSETUP.NO_PHASE)JMP(PHZ);
+		END_ROUTINE
+
+		ROUTINE PhaseProjectSpecific (Description := "Logic added for this specific project that is best placed inside a loop for all phases.")
+				RC: "PROJECT SPECIFIC PHASE COMMON LOGIC$N"
+				    "$N"
+				    "";
+				N: NOP();
+				RC: "Initialize the loop variable Y";
+				N: MOV(-1,Y);
+				RC: "LOOP FOR ALL PHASES IN SYSTEM$N"
+				    "Skip over phases that are not used";
+				N: LBL(PHZ)[ADD(Y,1,Y) ,AFI() EQU(cPHZ[Y].TYPE,0) JMP(SKIP_PHZ) ];
+				RC: "TODO: decide what phases are to be set back to AUTO afer they are run in manual.  This is done for batching phases.$N"
+				    "";
+				N: AFI()XIC(cPHZ[Y].STATE.Oneshot.Idle)XIC(cPHZ[Y].STAT.MAN)OTL(cPHZ[Y].CMD.AUTO);
+				RC: "TODO: decide what phases are to be set back to AUTO afer they are run in manual.  This is done for batching phases.$N"
+				    "";
+				N: XIC(cPHZ[Y].STATE.DONE)XIC(cPHZ[Y].STAT.MAN)OTL(cPHZ[Y].CMD.RESET);
+				N: XIC(cPHZ[Y].STEP.IDLE)MOV(10000,cPHZ[Y].STEP_TMR.IDLE.PRE)TON(cPHZ[Y].STEP_TMR.IDLE,?,?);
+				RC: "PHASE INTERLOCK PROCESSING$N"
+				    "===================================================================$N"
+				    "Issue HOLD command to any phase that is interlocked on an $'active$' step$N"
+				    "$N"
+				    "TODO: decide if this should apply to all phases or if this should be explicitly called out per cPHZ[Y].$N"
+				    " $N"
+				    "";
+				N: XIC(cPHZ[Y].STAT.FAULTED)[XIC(cPHZ[Y].STEP.PERMISSIVE) ,XIC(cPHZ[Y].STEP.INITIALIZE) ,XIC(cPHZ[Y].STEP.ACTIVE) ]OTL(cPHZ[Y].CMD.HOLD);
+				RC: "Loop Back to the rung with PHZ label$N"
+				    "if Y = cSETUP.NO_PHASE then break out of loop.";
+				N: LBL(SKIP_PHZ)LES(Y,cSETUP.NO_PHASE)JMP(PHZ);
+				RC: "=====================================================================$N"
+				    "PHASE COMMON USER LOGIC$N"
+				    "=====================================================================$N"
+				    "$N"
+				    "this rung class gets assigned to a dummy phase (Phase000) which is always the only one of its type.$N"
+				    "then, the particular set of user common logic is stored as a rung template and selected as the template for this rung class$N"
+				    "controlBuilder outputs this set of rungs.$N"
+				    "The template is setup to reference cPHZ[Y] with no other replacements, and so its a valid rung inside the loop$N"
+				    "";
+				N: ControlBuilder_Insert(EZSoft.ControlBuilder.Insert,EZSoft.ControlBuilder.Types.Phase._60_PHZ_COMMON,EZSoft.ControlBuilder.Options.Code.Instanced,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

@@ -1,0 +1,220 @@
+	PROGRAM FacilityCompressedAir (Description := "$NProgram=$'EM$'$NClass=$'COMPRESSEDAIRSYSTEM.01$'$N",
+	                               MAIN := "_Main",
+	                               MODE := 0,
+	                               DisableFlag := 0,
+	                               UseAsFolder := 0)
+		TAG
+			EStop OF cDI[5] ;
+			Null : CB_NULL  := [[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0
+					],[0,0,0,0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1],[1],[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1],[1,0,0,0],[[1],[1],[1]],[1,0,0,[0,0
+					,0]]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[0],[[0,0,0],[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[[[0,0,0],[0,0,0]],[[0,0,0,0],[0,0
+					,0,0]],[[0,0,0,0],[0,0,0,0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000
+					,[0,0,0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0
+					,0,0,0],[0,0,0,0,0,0],0.00000000e+000,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0
+					],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1
+					],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000
+					,0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0
+					,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0,0],[0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,[[0,0.00000000e+000,0.00000000e+000,0,[0,0,0],[0,0,0]],[0,0.00000000e+000,0.00000000e+000
+					,0,[0,0,0],[0,0,0]],[0,[0,0,0]]],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0],[[1],[1]]],[0,0,0,0,0,0,0,0,[[0,0,0,0
+					,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0]],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[0,[0,0],0],[0],0,0,0,0,0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0]],0,0,0,0,[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000],[0,0,0,0,0],0,0,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,0,0,0,0,0,0,0,0
+					,[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					]],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0],[0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0],[[1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0]]]];
+			OIT OF dOIT[1] ;
+			ph_AddChillWater01 OF cPHZ[18] ;
+			ph_AddChillWater02 OF cPHZ[36] ;
+			ph_AddEmulsifier01 OF cPHZ[19] ;
+			ph_AddEmulsifier02 OF cPHZ[37] ;
+			ph_AddHFCS01 OF cPHZ[20] ;
+			ph_AddHFCS02 OF cPHZ[38] ;
+			ph_AddLiquidBrew01 OF cPHZ[21] ;
+			ph_AddLiquidBrew02 OF cPHZ[39] ;
+			ph_AddShortening01 OF cPHZ[22] ;
+			ph_AddShortening02 OF cPHZ[40] ;
+			PowerInput OF cDI[442] ;
+			PowerOutput OF cDI[443] ;
+			PowerSafety OF cDI[444] ;
+			SupplyValve01 OF cDO[429] ;
+			SupplyValve01_IO_Output OF iRack5:11:O.Data.0 (RADIX := Decimal);
+			SupplyValve02 OF cDO[430] ;
+			SupplyValve02_IO_Output OF iRack5:11:O.Data.1 (RADIX := Decimal);
+			Unit OF cUNIT[44] ;
+			ValveAirToMixer04 OF cDO[533] ;
+		END_TAG
+
+		ROUTINE SupplyValve01 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'COMPRESSEDAIRSYSTEM.01.Valve.FacilityCompressedAir$'$N"
+				    "ControlModule=$'Valve.SupplyValve01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ValveAirToMixer04.STAT.ENERGIZE)OTE(SupplyValve01.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,SupplyValve01.MSG.PERM) ,EQU(SupplyValve01.MSG.PERM,0) OTE(SupplyValve01.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,SupplyValve01.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,SupplyValve01.MSG.INTRLK) ,NEQ(SupplyValve01.MSG.INTRLK,0) OTE(SupplyValve01.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VALVE.FAULT$'$N"
+				    "Function=$'VALVE.FAULT$'$N"
+				    "[Description]";
+				N: [XIC(SupplyValve01.STAT.ENERGIZE) [XIO(SupplyValve01.STAT.ON_OPEN) ,XIC(SupplyValve01.STAT.OFF_CLOSED) ] ,XIO(SupplyValve01.STAT.ENERGIZE) [XIC(SupplyValve01.STAT.ON_OPEN) ,XIO(SupplyValve01.STAT.OFF_CLOSED) ] ,XIC(SupplyValve01.STAT.FAULT) ]XIO(SupplyValve01.CMD.RESET)[XIC(SupplyValve01.DELAY.FAULT.DN) OTE(SupplyValve01.STAT.FAULT) ,TON(SupplyValve01.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VALVE$'$N"
+				    "Function=$'STATUS.MESSAGE.VALVE$'$N"
+				    "[Description]";
+				N: [MOV(0,SupplyValve01.MSG.MSG) ,XIC(SupplyValve01.STAT.ENERGIZE) XIC(SupplyValve01.STAT.OFF_CLOSED) MOV(61,SupplyValve01.MSG.MSG) ,XIO(SupplyValve01.STAT.ENERGIZE) XIO(SupplyValve01.STAT.OFF_CLOSED) MOV(62,SupplyValve01.MSG.MSG) ,XIC(SupplyValve01.STAT.ENERGIZE) XIO(SupplyValve01.STAT.ON_OPEN) MOV(63,SupplyValve01.MSG.MSG) ,XIO(SupplyValve01.STAT.ENERGIZE) XIC(SupplyValve01.STAT.ON_OPEN) MOV(64,SupplyValve01.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(SupplyValve01.STAT.AUTO_RUN) NEQ(SupplyValve01.MSG.PERM,0) MOV(SupplyValve01.MSG.PERM,SupplyValve01.MSG.MSG) ,NEQ(SupplyValve01.MSG.INTRLK,0) MOV(SupplyValve01.MSG.INTRLK,SupplyValve01.MSG.MSG) ,NEQ(SupplyValve01.MSG.FAULT,0) MOV(SupplyValve01.MSG.FAULT,SupplyValve01.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(SupplyValve01.AOI.Message,SupplyValve01.ID,SupplyValve01.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(SupplyValve01.AOI.Control,SupplyValve01.CMD,SupplyValve01.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.VALVE.NO.FEEDBACK$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.VALVE$'$N"
+				    "";
+				N: [XIC(SupplyValve01.STAT.ENERGIZE) OTE(SupplyValve01_IO_Output) ,XIC(SupplyValve01.STAT.ENERGIZE) [OTE(SupplyValve01.STAT.ON_OPEN) ,XIC(SupplyValve01.DELAY.ON.DN) OTE(SupplyValve01.STAT.ON_OPEN_DELAY) ,TON(SupplyValve01.DELAY.ON,?,?) ] ,XIO(SupplyValve01.STAT.ENERGIZE) OTE(SupplyValve01.STAT.OFF_CLOSED) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'";
+				N: [XIC(SupplyValve01.STAT.FAULT) OTE(SupplyValve01.ALARM[0].ACTIVE) ,AlarmControl(SupplyValve01.AOI.AlarmControl[0],SupplyValve01.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE SupplyValve02 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'COMPRESSEDAIRSYSTEM.01.Valve.FacilityCompressedAir$'$N"
+				    "ControlModule=$'Valve.SupplyValve02$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: [XIC(ph_AddChillWater01.CM.AutoRun[11]) ,XIC(ph_AddEmulsifier01.CM.AutoRun[11]) ,XIC(ph_AddHFCS01.CM.AutoRun[11]) ,XIC(ph_AddLiquidBrew01.CM.AutoRun[11]) ,XIC(ph_AddShortening01.CM.AutoRun[11]) ,XIC(ph_AddChillWater02.CM.AutoRun[11]) ,XIC(ph_AddEmulsifier02.CM.AutoRun[11]) ,XIC(ph_AddHFCS02.CM.AutoRun[11]) ,XIC(ph_AddLiquidBrew02.CM.AutoRun[11]) ,XIC(ph_AddShortening02.CM.AutoRun[11]) ]OTE(SupplyValve02.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,SupplyValve02.MSG.PERM) ,EQU(SupplyValve02.MSG.PERM,0) OTE(SupplyValve02.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,SupplyValve02.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,SupplyValve02.MSG.INTRLK) ,NEQ(SupplyValve02.MSG.INTRLK,0) OTE(SupplyValve02.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VALVE.FAULT$'$N"
+				    "Function=$'VALVE.FAULT$'$N"
+				    "[Description]";
+				N: [XIC(SupplyValve02.STAT.ENERGIZE) [XIO(SupplyValve02.STAT.ON_OPEN) ,XIC(SupplyValve02.STAT.OFF_CLOSED) ] ,XIO(SupplyValve02.STAT.ENERGIZE) [XIC(SupplyValve02.STAT.ON_OPEN) ,XIO(SupplyValve02.STAT.OFF_CLOSED) ] ,XIC(SupplyValve02.STAT.FAULT) ]XIO(SupplyValve02.CMD.RESET)[XIC(SupplyValve02.DELAY.FAULT.DN) OTE(SupplyValve02.STAT.FAULT) ,TON(SupplyValve02.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VALVE$'$N"
+				    "Function=$'STATUS.MESSAGE.VALVE$'$N"
+				    "[Description]";
+				N: [MOV(0,SupplyValve02.MSG.MSG) ,XIC(SupplyValve02.STAT.ENERGIZE) XIC(SupplyValve02.STAT.OFF_CLOSED) MOV(61,SupplyValve02.MSG.MSG) ,XIO(SupplyValve02.STAT.ENERGIZE) XIO(SupplyValve02.STAT.OFF_CLOSED) MOV(62,SupplyValve02.MSG.MSG) ,XIC(SupplyValve02.STAT.ENERGIZE) XIO(SupplyValve02.STAT.ON_OPEN) MOV(63,SupplyValve02.MSG.MSG) ,XIO(SupplyValve02.STAT.ENERGIZE) XIC(SupplyValve02.STAT.ON_OPEN) MOV(64,SupplyValve02.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(SupplyValve02.STAT.AUTO_RUN) NEQ(SupplyValve02.MSG.PERM,0) MOV(SupplyValve02.MSG.PERM,SupplyValve02.MSG.MSG) ,NEQ(SupplyValve02.MSG.INTRLK,0) MOV(SupplyValve02.MSG.INTRLK,SupplyValve02.MSG.MSG) ,NEQ(SupplyValve02.MSG.FAULT,0) MOV(SupplyValve02.MSG.FAULT,SupplyValve02.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(SupplyValve02.AOI.Message,SupplyValve02.ID,SupplyValve02.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(SupplyValve02.AOI.Control,SupplyValve02.CMD,SupplyValve02.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.VALVE.NO.FEEDBACK$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.VALVE$'$N"
+				    "";
+				N: [XIC(SupplyValve02.STAT.ENERGIZE) OTE(SupplyValve02_IO_Output) ,XIC(SupplyValve02.STAT.ENERGIZE) [OTE(SupplyValve02.STAT.ON_OPEN) ,XIC(SupplyValve02.DELAY.ON.DN) OTE(SupplyValve02.STAT.ON_OPEN_DELAY) ,TON(SupplyValve02.DELAY.ON,?,?) ] ,XIO(SupplyValve02.STAT.ENERGIZE) OTE(SupplyValve02.STAT.OFF_CLOSED) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'";
+				N: [XIC(SupplyValve02.STAT.FAULT) OTE(SupplyValve02.ALARM[0].ACTIVE) ,AlarmControl(SupplyValve02.AOI.AlarmControl[0],SupplyValve02.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'COMPRESSEDAIRSYSTEM.01$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'COMPRESSEDAIRSYSTEM.01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'SOL_$'$N"
+				    "[Description]:Supply Valve 01$N"
+				    "";
+				N: JSR(SupplyValve01,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'SOL_$'$N"
+				    "[Description]:Supply Valve 02$N"
+				    "";
+				N: JSR(SupplyValve02,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

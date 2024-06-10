@@ -1,0 +1,351 @@
+	PROGRAM Tote02_SoyOil (Description := "$NProgram=$'EM$'$NClass=$'TOTE.01.02$'$N",
+	                       MAIN := "_Main",
+	                       MODE := 0,
+	                       DisableFlag := 0,
+	                       UseAsFolder := 0)
+		TAG
+			DischargePressure OF cAI[159] ;
+			DischargePressure_IO_Fault OF iRack5:1:I.Ch1Fault (RADIX := Decimal);
+			DischargePressure_IO_Value OF iRack5:1:I.Ch1Data (RADIX := Float);
+			DischargeValve OF cDO[362] ;
+			DischargeValve_IO_Closed OF iRack5:4:I.Data.6 (RADIX := Decimal);
+			DischargeValve_IO_Opened OF iRack5:4:I.Data.5 (RADIX := Decimal);
+			DischargeValve_IO_Output OF iRack5:9:O.Data.1 (RADIX := Decimal);
+			EStop OF cDI[5] ;
+			Flowmeter01 OF cAI[160] ;
+			Flowmeter01_IO_Fault : DINT (RADIX := Decimal) := 0;
+			Flowmeter01_IO_Reset OF iRack5:2:O.Counter[2].ResetCount (RADIX := Decimal);
+			Flowmeter01_IO_Value OF iRack5:2:I.Counter[2].Count (RADIX := Decimal);
+			HighLevel OF cDI[246] ;
+			HighLevel_IO_Fault : DINT (RADIX := Decimal) := 0;
+			HighLevel_IO_Input OF iRack5:7:I.Data.10 (RADIX := Decimal);
+			LowLevel OF cDI[247] ;
+			LowLevel_IO_Fault : DINT (RADIX := Decimal) := 0;
+			LowLevel_IO_Input OF iRack5:7:I.Data.11 (RADIX := Decimal);
+			Null : CB_NULL  := [[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0
+					],[0,0,0,0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1],[1],[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1],[1,0,0,0],[[1],[1],[1]],[1,0,0,[0,0
+					,0]]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[0],[[0,0,0],[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[[[0,0,0],[0,0,0]],[[0,0,0,0],[0,0
+					,0,0]],[[0,0,0,0],[0,0,0,0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000
+					,[0,0,0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0
+					,0,0,0],[0,0,0,0,0,0],0.00000000e+000,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0
+					],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1
+					],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000
+					,0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0
+					,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0,0],[0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,[[0,0.00000000e+000,0.00000000e+000,0,[0,0,0],[0,0,0]],[0,0.00000000e+000,0.00000000e+000
+					,0,[0,0,0],[0,0,0]],[0,[0,0,0]]],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0],[[1],[1]]],[0,0,0,0,0,0,0,0,[[0,0,0,0
+					,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0]],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[0,[0,0],0],[0],0,0,0,0,0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0]],0,0,0,0,[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000],[0,0,0,0,0],0,0,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,0,0,0,0,0,0,0,0
+					,[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					]],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0],[0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0],[[1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0]]]];
+			OIT OF dOIT[1] ;
+			ph_AddToMixer01 OF cPHZ[57] ;
+			ph_Tote02SoyOilRefill OF cPHZ[118] ;
+			ph_Tote02SoyOilRefill_Delete OF cPHZ[117] ;
+			PowerInput OF cDI[442] ;
+			PowerOutput OF cDI[443] ;
+			PowerSafety OF cDI[444] ;
+			Pump OF cDO[363] ;
+			PumpSpeedReference OF cAO[87] ;
+			Pump_IO_ClearFaults OF iDrive_M504:O.ClearFaults (RADIX := Decimal);
+			Pump_IO_Faulted OF iDrive_M504:I.Faulted (RADIX := Decimal);
+			Pump_IO_Running OF iDrive_M504:I.Active (RADIX := Decimal);
+			Pump_IO_Setpoint OF iDrive_M504:O.FreqCommand (RADIX := Decimal);
+			Pump_IO_Speed OF iDrive_M504:I.OutputFreq (RADIX := Decimal);
+			Pump_IO_Start OF iDrive_M504:O.Start (RADIX := Decimal);
+			Pump_IO_Stop OF iDrive_M504:O.Stop (RADIX := Decimal);
+			Sim_Enabled : BOOL (RADIX := Decimal) := 0;
+			Sim_HighLevel : BOOL (RADIX := Decimal) := 0;
+			Sim_LowLevel : BOOL (RADIX := Decimal) := 0;
+			StatusLight01 OF cDO[364] ;
+			StatusLight01_IO_Output OF iRack5:13:O.Data.3 (RADIX := Decimal);
+			StatusLight02 OF cDO[365] ;
+			StatusLight02_IO_Output OF iRack5:13:O.Data.4 (RADIX := Decimal);
+			Unit OF cUNIT[37] ;
+		END_TAG
+
+		ROUTINE DischargePressure 
+				N: NOP();
+				N: MOV(DischargePressure_IO_Value,DischargePressure.RAW);
+				RC: "$007F";
+				N: AnalogInputScaling(DischargePressure.AOI.Scaling,DischargePressure.RAW,DischargePressure.RAW_LO,DischargePressure.RAW_HI,DischargePressure.SCALE_LO,DischargePressure.SCALE_HI,DischargePressure.SCALED);
+				N: [XIC(DischargePressure_IO_Fault) ,LES(DischargePressure.SCALED,-15) ,XIC(DischargePressure.STAT.FAULT) ]XIO(DischargePressure.CMD.RESET)OTE(DischargePressure.STAT.FAULT);
+				N: XIC(Pump.STAT.ON_OPEN_DELAY)[LES(DischargePressure.SCALED,DischargePressure.LoLo.LIM) ,XIC(DischargePressure.LoLo.ACTIVE) ]CMP(DischargePressure.SCALED<=(DischargePressure.LoLo.LIM+DischargePressure.LoLo.DEADBAND))[XIC(DischargePressure.LoLo.DELAY.DN) OTE(DischargePressure.LoLo.ACTIVE) ,TON(DischargePressure.LoLo.DELAY,?,?) ];
+				N: [LES(DischargePressure.SCALED,DischargePressure.Lo.LIM) ,XIC(DischargePressure.Lo.ACTIVE) ]CMP(DischargePressure.SCALED<=(DischargePressure.Lo.LIM+DischargePressure.Lo.DEADBAND))[XIC(DischargePressure.Lo.DELAY.DN) OTE(DischargePressure.Lo.ACTIVE) ,TON(DischargePressure.Lo.DELAY,?,?) ];
+				N: [GRT(DischargePressure.SCALED,DischargePressure.Hi.LIM) ,XIC(DischargePressure.Hi.ACTIVE) ]CMP(DischargePressure.SCALED>=(DischargePressure.Hi.LIM-DischargePressure.Hi.DEADBAND))[XIC(DischargePressure.Hi.DELAY.DN) OTE(DischargePressure.Hi.ACTIVE) ,TON(DischargePressure.Hi.DELAY,?,?) ];
+				N: [GRT(DischargePressure.SCALED,DischargePressure.HiHi.LIM) ,XIC(DischargePressure.HiHi.ACTIVE) ]CMP(DischargePressure.SCALED>=(DischargePressure.HiHi.LIM-DischargePressure.HiHi.DEADBAND))[XIC(DischargePressure.HiHi.DELAY.DN) OTE(DischargePressure.HiHi.ACTIVE) ,TON(DischargePressure.HiHi.DELAY,?,?) ];
+				N: XIC(DischargePressure.STAT.FAULT)[XIC(DischargePressure.Fault.DELAY.DN) OTE(DischargePressure.Fault.ACTIVE) ,MOV(10000,DischargePressure.Fault.DELAY.PRE) TON(DischargePressure.Fault.DELAY,?,?) ];
+				N: AnalogInputMode(DischargePressure.AOI.Mode,DischargePressure.CMD,DischargePressure.STAT,DischargePressure.MAN_SP,DischargePressure.SCALED);
+				N: [XIC(DischargePressure.LoLo.ACTIVE) XIO(DischargePressure.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(DischargePressure.ALARM[0].ACTIVE) ,AlarmControl(DischargePressure.AOI.AlarmControl[0],DischargePressure.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(DischargePressure.Lo.ACTIVE) XIO(DischargePressure.Lo.DISABLED) XIC(PowerInput.STAT.ON) OTE(DischargePressure.ALARM[1].ACTIVE) ,AlarmControl(DischargePressure.AOI.AlarmControl[1],DischargePressure.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(DischargePressure.Hi.ACTIVE) XIO(DischargePressure.Hi.DISABLED) XIC(PowerInput.STAT.ON) OTE(DischargePressure.ALARM[2].ACTIVE) ,AlarmControl(DischargePressure.AOI.AlarmControl[2],DischargePressure.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(DischargePressure.HiHi.ACTIVE) XIO(DischargePressure.HiHi.DISABLED) XIC(PowerInput.STAT.ON) OTE(DischargePressure.ALARM[3].ACTIVE) ,AlarmControl(DischargePressure.AOI.AlarmControl[3],DischargePressure.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(DischargePressure.Fault.ACTIVE) XIO(DischargePressure.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(DischargePressure.ALARM[6].ACTIVE) ,AlarmControl(DischargePressure.AOI.AlarmControl[6],DischargePressure.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE DischargeValve 
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: [AFI() [XIC(LowLevel.STAT.ON) ,XIC(DischargeValve.STAT.AUTO_RUN) ] XIO(HighLevel.STAT.ON) ,XIC(ph_Tote02SoyOilRefill.CM.AutoRun[3]) ]OTE(DischargeValve.STAT.AUTO_RUN);
+				RC: "Fill timer$N"
+				    "";
+				N: XIC(DischargeValve.STAT.AUTO_RUN)XIC(DischargeValve.STAT.ENERGIZE)TON(DischargeValve.TMR[0],?,?);
+				RC: "$N"
+				    "";
+				N: [MOV(0,DischargeValve.MSG.PERM) ,[XIC(HighLevel.STAT.FAULT) ,XIC(HighLevel.STAT.ON) ] MOV(1,DischargeValve.MSG.PERM) ,EQU(DischargeValve.MSG.PERM,0) OTE(DischargeValve.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,DischargeValve.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,DischargeValve.MSG.INTRLK) ,AFI() [XIC(HighLevel.STAT.ON) ,XIC(HighLevel.STAT.FAULT) ] MOV(22,DischargeValve.MSG.INTRLK) ,NEQ(DischargeValve.MSG.INTRLK,0) OTE(DischargeValve.STAT.INTERLOCK) ];
+				N: [XIC(DischargeValve.STAT.ENERGIZE) [XIO(DischargeValve.STAT.ON_OPEN) ,XIC(DischargeValve.STAT.OFF_CLOSED) ] ,XIO(DischargeValve.STAT.ENERGIZE) [XIC(DischargeValve.STAT.ON_OPEN) ,XIO(DischargeValve.STAT.OFF_CLOSED) ] ,XIC(DischargeValve.STAT.FAULT) ]XIO(DischargeValve.CMD.RESET)[XIC(DischargeValve.DELAY.FAULT.DN) OTE(DischargeValve.STAT.FAULT) ,TON(DischargeValve.DELAY.FAULT,?,?) ];
+				N: [MOV(0,DischargeValve.MSG.MSG) ,XIC(DischargeValve.STAT.ENERGIZE) XIC(DischargeValve.STAT.OFF_CLOSED) MOV(61,DischargeValve.MSG.MSG) ,XIO(DischargeValve.STAT.ENERGIZE) XIO(DischargeValve.STAT.OFF_CLOSED) MOV(62,DischargeValve.MSG.MSG) ,XIC(DischargeValve.STAT.ENERGIZE) XIO(DischargeValve.STAT.ON_OPEN) MOV(63,DischargeValve.MSG.MSG) ,XIO(DischargeValve.STAT.ENERGIZE) XIC(DischargeValve.STAT.ON_OPEN) MOV(64,DischargeValve.MSG.MSG) ,XIC(DischargeValve.TMR[0].DN) MOV(71,DischargeValve.MSG.MSG) ];
+				N: [XIC(DischargeValve.STAT.AUTO_RUN) NEQ(DischargeValve.MSG.PERM,0) MOV(DischargeValve.MSG.PERM,DischargeValve.MSG.MSG) ,NEQ(DischargeValve.MSG.INTRLK,0) MOV(DischargeValve.MSG.INTRLK,DischargeValve.MSG.MSG) ,NEQ(DischargeValve.MSG.FAULT,0) MOV(DischargeValve.MSG.FAULT,DischargeValve.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(DischargeValve.AOI.Message,DischargeValve.ID,DischargeValve.MSG);
+				N: DiscreteOutputControl(DischargeValve.AOI.Control,DischargeValve.CMD,DischargeValve.STAT);
+				N: [XIC(DischargeValve.STAT.ENERGIZE) OTE(DischargeValve_IO_Output) ,[XIO(DischargeValve.STAT.ON_OPEN_BYPASS) XIC(DischargeValve_IO_Opened) ,XIC(DischargeValve.STAT.ON_OPEN_BYPASS) XIC(DischargeValve.STAT.ENERGIZE) ] [OTE(DischargeValve.STAT.ON_OPEN) ,XIC(DischargeValve.DELAY.ON.DN) OTE(DischargeValve.STAT.ON_OPEN_DELAY) ,TON(DischargeValve.DELAY.ON,?,?) ] ,[XIO(DischargeValve.STAT.OFF_CLOSED_BYPASS) XIC(DischargeValve_IO_Closed) ,XIC(DischargeValve.STAT.OFF_CLOSED_BYPASS) XIO(DischargeValve.STAT.ENERGIZE) ] [OTE(DischargeValve.STAT.OFF_CLOSED) ,XIC(DischargeValve.DELAY.OFF.DN) OTE(DischargeValve.STAT.OFF_CLOSED_DELAY) ,TON(DischargeValve.DELAY.OFF,?,?) ] ,XIC(PowerInput.STAT.ON) XIC(PowerOutput.STAT.ON) XIC(PowerSafety.STAT.ON) OTE(DischargeValve.STAT.ControlPowerOn) ];
+				N: [XIC(DischargeValve.STAT.ControlPowerOn) XIC(DischargeValve.STAT.FAULT) OTE(DischargeValve.ALARM[0].ACTIVE) ,AlarmControl(DischargeValve.AOI.AlarmControl[0],DischargeValve.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Flowmeter01 
+				N: NOP();
+				N: [MOV(Flowmeter01_IO_Value,Flowmeter01.RAW) ,EQU(Flowmeter01_IO_Fault,0) OTE(Flowmeter01.STAT.DATA_OK) ];
+				N: MUL(Flowmeter01.RAW,Flowmeter01.SCALE_FACTOR,Flowmeter01.SCALED);
+				N: XIC(ph_AddToMixer01.CM.AutoRun[2])OTE(Flowmeter01.TOTALIZER.RESET);
+				N: XIC(Flowmeter01.TOTALIZER.RESET)OTE(Flowmeter01_IO_Reset);
+				N: AnalogInputRate(Flowmeter01.AOI.Rate,Flowmeter01.SCALED,Flowmeter01.RATE);
+				RC: "$N"
+				    "";
+				N: XIC(ph_AddToMixer01.CM.AutoRun[20])[LES(Flowmeter01.RATE.CHANGE,Flowmeter01.RATE.Lo.LIM) ,XIC(Flowmeter01.RATE.Lo.ACTIVE) ]CMP(Flowmeter01.RATE.CHANGE<=(Flowmeter01.RATE.Lo.LIM+Flowmeter01.RATE.Lo.DEADBAND))[XIC(Flowmeter01.RATE.Lo.DELAY.DN) OTE(Flowmeter01.RATE.Lo.ACTIVE) ,TON(Flowmeter01.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: XIC(ph_AddToMixer01.CM.AutoRun[20])[LES(Flowmeter01.RATE.CHANGE,Flowmeter01.RATE.LoLo.LIM) ,XIC(Flowmeter01.RATE.LoLo.ACTIVE) ]CMP(Flowmeter01.RATE.CHANGE<=(Flowmeter01.RATE.LoLo.LIM+Flowmeter01.RATE.LoLo.DEADBAND))[XIC(Flowmeter01.RATE.LoLo.DELAY.DN) OTE(Flowmeter01.RATE.LoLo.ACTIVE) ,TON(Flowmeter01.RATE.LoLo.DELAY,?,?) ];
+				N: XIC(Flowmeter01.STAT.FAULT)[XIC(Flowmeter01.Fault.DELAY.DN) OTE(Flowmeter01.Fault.ACTIVE) ,MOV(10000,Flowmeter01.Fault.DELAY.PRE) TON(Flowmeter01.Fault.DELAY,?,?) ];
+				N: AnalogInputMode(Flowmeter01.AOI.Mode,Flowmeter01.CMD,Flowmeter01.STAT,Flowmeter01.MAN_SP,Flowmeter01.SCALED);
+				N: [XIC(Flowmeter01.RATE.Lo.ACTIVE) XIO(Flowmeter01.RATE.Lo.DISABLED) XIC(PowerInput.STAT.ON) OTE(Flowmeter01.ALARM[4].ACTIVE) ,AlarmControl(Flowmeter01.AOI.AlarmControl[4],Flowmeter01.ALARM[4],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(Flowmeter01.RATE.LoLo.ACTIVE) XIO(Flowmeter01.RATE.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(Flowmeter01.ALARM[5].ACTIVE) ,AlarmControl(Flowmeter01.AOI.AlarmControl[5],Flowmeter01.ALARM[5],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(Flowmeter01.Fault.ACTIVE) XIO(Flowmeter01.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(Flowmeter01.ALARM[6].ACTIVE) ,AlarmControl(Flowmeter01.AOI.AlarmControl[6],Flowmeter01.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: Arbitration(Flowmeter01.AOI.Arbitration,Flowmeter01.ARB,Flowmeter01.INDEX,1);
+		END_ROUTINE
+
+		ROUTINE HighLevel 
+				N: NOP();
+				N: [[XIO(HighLevel_IO_Input) ,XIC(Sim_Enabled) XIC(Sim_HighLevel) ] OTE(HighLevel.STAT.ENERGIZED) ,XIC(HighLevel.STAT.ENERGIZED) [XIC(HighLevel.DELAY.ON.DN) OTL(HighLevel.STAT.ON) OTU(HighLevel.STAT.OFF) ,TON(HighLevel.DELAY.ON,?,?) ] ,XIO(HighLevel.STAT.ENERGIZED) [XIC(HighLevel.DELAY.OFF.DN) OTU(HighLevel.STAT.ON) OTL(HighLevel.STAT.OFF) ,TON(HighLevel.DELAY.OFF,?,?) ] ];
+				RC: "Glycerin Pump Running still High Level$N"
+				    "";
+				N: [XIC(HighLevel.STAT.FAULT) XIC(PowerInput.STAT.ON) OTE(HighLevel.ALARM[0].ACTIVE) ,AlarmControl(HighLevel.AOI.AlarmControl[0],HighLevel.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE LowLevel 
+				N: NOP();
+				N: [[XIC(LowLevel_IO_Input) ,XIC(Sim_Enabled) XIC(Sim_LowLevel) ] OTE(LowLevel.STAT.ENERGIZED) ,XIC(LowLevel.STAT.ENERGIZED) [XIC(LowLevel.DELAY.ON.DN) OTL(LowLevel.STAT.ON) OTU(LowLevel.STAT.OFF) ,TON(LowLevel.DELAY.ON,?,?) ] ,XIO(LowLevel.STAT.ENERGIZED) [XIC(LowLevel.DELAY.OFF.DN) OTU(LowLevel.STAT.ON) OTL(LowLevel.STAT.OFF) ,TON(LowLevel.DELAY.OFF,?,?) ] ];
+				N: AFI()XIC(LowLevel.STAT.ON)[XIC(LowLevel.DELAY.FAULT.DN) OTE(LowLevel.STAT.FAULT) ,TON(LowLevel.DELAY.FAULT,?,?) ];
+				RC: "Low for a Delay$N"
+				    "";
+				N: [XIC(LowLevel.DELAY.FAULT.DN) XIC(PowerInput.STAT.ON) OTE(LowLevel.ALARM[0].ACTIVE) ,AlarmControl(LowLevel.AOI.AlarmControl[0],LowLevel.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Pump 
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_AddToMixer01.CM.AutoRun[10])OTE(Pump.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,Pump.MSG.PERM) ,EQU(Pump.MSG.PERM,0) OTE(Pump.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,Pump.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,Pump.MSG.INTRLK) ,XIC(DischargePressure.HiHi.ACTIVE) MOV(22,Pump.MSG.INTRLK) ,NEQ(Pump.MSG.INTRLK,0) OTE(Pump.STAT.INTERLOCK) ];
+				N: [XIC(Pump.STAT.ENERGIZE) [XIO(Pump.STAT.ON_OPEN) ,XIC(Pump.STAT.OFF_CLOSED) ] ,XIO(Pump.STAT.ENERGIZE) [XIC(Pump.STAT.ON_OPEN) ,XIO(Pump.STAT.OFF_CLOSED) ] ,XIC(Pump.STAT.VFD_FAULT) ,XIC(Pump.STAT.FAULT) ]XIO(Pump.CMD.RESET)[XIC(Pump.DELAY.FAULT.DN) OTE(Pump.STAT.FAULT) ,TON(Pump.DELAY.FAULT,?,?) ];
+				N: [MOV(0,Pump.MSG.MSG) ,XIC(Pump.STAT.ENERGIZE) XIO(Pump.STAT.ON_OPEN) MOV(61,Pump.MSG.MSG) ];
+				N: [XIC(Pump.STAT.AUTO_RUN) NEQ(Pump.MSG.PERM,0) MOV(Pump.MSG.PERM,Pump.MSG.MSG) ,NEQ(Pump.MSG.INTRLK,0) MOV(Pump.MSG.INTRLK,Pump.MSG.MSG) ,NEQ(Pump.MSG.FAULT,0) MOV(Pump.MSG.FAULT,Pump.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(Pump.AOI.Message,Pump.ID,Pump.MSG);
+				N: DiscreteOutputControl(Pump.AOI.Control,Pump.CMD,Pump.STAT);
+				N: MOV(PumpSpeedReference.SP_MAN,PumpSpeedReference.SP);
+				N: XIC(ph_AddToMixer01.CM.AutoRun[10])[MOV(ph_AddToMixer01.USER.SETTINGS[0],PumpSpeedReference.SP) ,XIC(ph_AddToMixer01.PREACT.DRIBBLING) MOV(ph_AddToMixer01.USER.SETTINGS[1],PumpSpeedReference.SP) ];
+				N: [MOV(0,PumpSpeedReference.CV) ,XIC(Pump.STAT.AUTO) XIC(Pump.STAT.ENERGIZE) MOV(PumpSpeedReference.SP,PumpSpeedReference.CV) ,XIC(Pump.STAT.MAN) XIC(Pump.STAT.ENERGIZE) MOV(PumpSpeedReference.CV_MAN,PumpSpeedReference.CV) ];
+				N: [XIC(Pump.STAT.ENERGIZE) OTE(Pump_IO_Start) ,XIO(Pump.STAT.ENERGIZE) OTE(Pump_IO_Stop) ,XIC(Pump_IO_Running) [OTE(Pump.STAT.ON_OPEN) ,XIC(Pump.DELAY.ON.DN) OTE(Pump.STAT.ON_OPEN_DELAY) ,TON(Pump.DELAY.ON,?,?) ] ,XIO(Pump.STAT.ON_OPEN) [OTE(Pump.STAT.OFF_CLOSED) ,XIC(Pump.DELAY.OFF.DN) OTE(Pump.STAT.OFF_CLOSED_DELAY) ,TON(Pump.DELAY.OFF,?,?) ] ,XIC(Pump_IO_Faulted) XIO(cCOMMON.FirstScan.AlarmInhibit) OTE(Pump.STAT.VFD_FAULT) ,[XIC(Pump.CMD.RESET) ,XIC(cCOMMON.FirstScan.ResetFaultToVFD) ,XIC(Pump_IO_ClearFaults) ] XIC(Pump_IO_Faulted) OTE(Pump_IO_ClearFaults) ];
+				N: [MUL(PumpSpeedReference.CV,100,Pump_IO_Setpoint) ,DIV(Pump_IO_Speed,100,PumpSpeedReference.CV_ACTUAL) ];
+				N: [XIC(Pump.STAT.FAULT) OTE(Pump.ALARM[0].ACTIVE) ,AlarmControl(Pump.AOI.AlarmControl[0],Pump.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIO(Pump.STAT.DISCONNECT) OTE(Pump.ALARM[1].ACTIVE) ,AlarmControl(Pump.AOI.AlarmControl[1],Pump.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(PowerSafety.STAT.ON) XIC(Pump.STAT.VFD_FAULT) OTE(Pump.ALARM[2].ACTIVE) ,AlarmControl(Pump.AOI.AlarmControl[2],Pump.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: Arbitration(Pump.AOI.Arbitration,Pump.ARB,Pump.INDEX,1);
+		END_ROUTINE
+
+		ROUTINE StatusLight01 
+				RC: "RED$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_Tote02SoyOilRefill.CM.AutoRun[2])OTE(StatusLight01.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,StatusLight01.MSG.PERM) ,EQU(StatusLight01.MSG.PERM,0) OTE(StatusLight01.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,StatusLight01.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,StatusLight01.MSG.INTRLK) ,NEQ(StatusLight01.MSG.INTRLK,0) OTE(StatusLight01.STAT.INTERLOCK) ];
+				N: NOP();
+				N: MOV(0,StatusLight01.MSG.MSG);
+				N: [XIC(StatusLight01.STAT.AUTO_RUN) NEQ(StatusLight01.MSG.PERM,0) MOV(StatusLight01.MSG.PERM,StatusLight01.MSG.MSG) ,NEQ(StatusLight01.MSG.INTRLK,0) MOV(StatusLight01.MSG.INTRLK,StatusLight01.MSG.MSG) ,NEQ(StatusLight01.MSG.FAULT,0) MOV(StatusLight01.MSG.FAULT,StatusLight01.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(StatusLight01.AOI.Message,StatusLight01.ID,StatusLight01.MSG);
+				N: DiscreteOutputControl(StatusLight01.AOI.Control,StatusLight01.CMD,StatusLight01.STAT);
+				N: [XIC(StatusLight01.STAT.ENERGIZE) OTE(StatusLight01_IO_Output) ,XIC(StatusLight01.STAT.ENERGIZE) OTE(StatusLight01.STAT.ON_OPEN) ,XIO(StatusLight01.STAT.ENERGIZE) OTE(StatusLight01.STAT.OFF_CLOSED) ];
+				N: [XIC(StatusLight01.STAT.FAULT) OTE(StatusLight01.ALARM[0].ACTIVE) ,AlarmControl(StatusLight01.AOI.AlarmControl[0],StatusLight01.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE StatusLight02 
+				RC: "GREEN$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_Tote02SoyOilRefill.CM.AutoRun[1])OTE(StatusLight02.STAT.AUTO_RUN);
+				N: [XIC(DischargePressure.STAT.FAULT) ,XIC(Flowmeter01.STAT.FAULT) ]TOF(StatusLight02.TMR[0],?,?);
+				RC: "$N"
+				    "";
+				N: [MOV(0,StatusLight02.MSG.PERM) ,EQU(StatusLight02.MSG.PERM,0) OTE(StatusLight02.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,StatusLight02.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,StatusLight02.MSG.INTRLK) ,NEQ(StatusLight02.MSG.INTRLK,0) OTE(StatusLight02.STAT.INTERLOCK) ];
+				N: NOP();
+				N: MOV(0,StatusLight02.MSG.MSG);
+				N: [XIC(StatusLight02.STAT.AUTO_RUN) NEQ(StatusLight02.MSG.PERM,0) MOV(StatusLight02.MSG.PERM,StatusLight02.MSG.MSG) ,NEQ(StatusLight02.MSG.INTRLK,0) MOV(StatusLight02.MSG.INTRLK,StatusLight02.MSG.MSG) ,NEQ(StatusLight02.MSG.FAULT,0) MOV(StatusLight02.MSG.FAULT,StatusLight02.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(StatusLight02.AOI.Message,StatusLight02.ID,StatusLight02.MSG);
+				N: DiscreteOutputControl(StatusLight02.AOI.Control,StatusLight02.CMD,StatusLight02.STAT);
+				N: [XIC(StatusLight02.STAT.ENERGIZE) OTE(StatusLight02_IO_Output) ,XIC(StatusLight02.STAT.ENERGIZE) OTE(StatusLight02.STAT.ON_OPEN) ,XIO(StatusLight02.STAT.ENERGIZE) OTE(StatusLight02.STAT.OFF_CLOSED) ];
+				N: [XIC(StatusLight02.STAT.FAULT) OTE(StatusLight02.ALARM[0].ACTIVE) ,AlarmControl(StatusLight02.AOI.AlarmControl[0],StatusLight02.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'TOTE.01.02$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'TOTE.01.02$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'AV501$'$N"
+				    "[Description]:Discharge Valve$N"
+				    "";
+				N: JSR(DischargeValve,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VFD$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'M504$'$N"
+				    "[Description]:Pump$N"
+				    "";
+				N: JSR(Pump,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LEVELSWITCH$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'LI502$'$N"
+				    "[Description]:High Level$N"
+				    "";
+				N: JSR(HighLevel,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LEVELSWITCH$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'LI503$'$N"
+				    "[Description]:Low Level$N"
+				    "";
+				N: JSR(LowLevel,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LIGHT$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'PL502$'$N"
+				    "[Description]:Status Light 01$N"
+				    "";
+				N: JSR(StatusLight01,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LIGHT$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'PL503$'$N"
+				    "[Description]:Status Light 02$N"
+				    "";
+				N: JSR(StatusLight02,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'PRESSURE$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'PT504$'$N"
+				    "[Description]:Discharge Pressure$N"
+				    "";
+				N: JSR(DischargePressure,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'FLOWMETER$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'LMS502$'$N"
+				    "[Description]:Flowmeter 01$N"
+				    "";
+				N: JSR(Flowmeter01,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

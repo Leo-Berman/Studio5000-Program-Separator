@@ -13,7 +13,7 @@ def separate(output_folder,content,Verbose = False):
     for i,x in enumerate(content):
         
         # perform regex
-        tmp_program = re.search(r'(PROGRAM \w+)(?= \(MODE := .+,|\(Description := .+,)',x)
+        tmp_program = re.search(r'(PROGRAM \w+)((?= \((Description) := .+,)|(?= \((MODE) := .+,)|(?= \((MAIN) := .+,))',x)
 
         if tmp_program != None:
             print("Temp = ",tmp_program.group())

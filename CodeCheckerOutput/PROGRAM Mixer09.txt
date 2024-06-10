@@ -1,0 +1,952 @@
+	PROGRAM Mixer09 (Description := "$NProgram=$'EM$'$NClass=$'MIXER.01.01$'$N",
+	                 MAIN := "_Main",
+	                 MODE := 0,
+	                 DisableFlag := 0,
+	                 UseAsFolder := 0)
+		TAG
+			BatchA OF cLINE[7] ;
+			BatchB OF cLINE[8] ;
+			BatchReady OF cDI[366] ;
+			CityWaterFlowmeter OF cAI[236] ;
+			CityWaterFlowmeter_IO_Fault OF iRack4:3:I.Counter01.Fault (RADIX := Decimal);
+			CityWaterFlowmeter_IO_Reset OF iRack4:3:O.Counter01.Reset (RADIX := Decimal);
+			CityWaterFlowmeter_IO_Value OF iRack4:3:I.Counter01.Count (RADIX := Decimal);
+			CityWaterTemperature OF cAI[235] ;
+			CityWaterTemperature_IO_Fault OF iRack4:1:I.Ch05.Fault (RADIX := Decimal);
+			CityWaterTemperature_IO_Value OF iRack4:1:I.Ch05.Data (RADIX := Float);
+			Discharging_IO_Input : BOOL (RADIX := Decimal) := 0;
+			EStop OF cDI[5] ;
+			ForceStop OF cDI[369] ;
+			HandAdd OF cDO[577] ;
+			HandAddComplete_Delete OF cDI[366] ;
+			HandAddComplete_IO_Input : BOOL (RADIX := Decimal) := 0;
+			HandAddRequest OF cDO[578] ;
+			HandAddRequest_IO_Output : BOOL (RADIX := Decimal) := 0;
+			HandAdd_IO_Output : BOOL (RADIX := Decimal) := 0;
+			Interface OF eInterfaceMixer[9] ;
+			MinutesRemaining : REAL (RADIX := Float) := 0.00000000e+000;
+			MixerBowlLevel OF cAI[238] ;
+			MixerBowlLevel_IO OF Interface.ToBatch[3] (RADIX := Decimal);
+			MixerBowlLevel_IO_Fault : BOOL (RADIX := Decimal) := 0;
+			MixerBowlTemperature OF cAI[234] ;
+			MixerBowlTemperature_IO_Fault : BOOL (RADIX := Decimal) := 0;
+			MixerBowlTemperature_IO_Value OF Interface.ToBatch[9] (RADIX := Decimal);
+			MixerClosed OF cDI[363] ;
+			MixerClosed_IO_Input : BOOL (RADIX := Decimal) := 0;
+			MixerCommunicationOK OF cDI[364] ;
+			MixerCommunicationOK_IO_Fault : BOOL (RADIX := Decimal) := 0;
+			MixerCommunicationOK_IO_Input : BOOL (RADIX := Decimal) := 0;
+			MixerHeatingValve OF cDO[575] ;
+			MixerHeatingValve_IO_Input OF Interface.ToBatch[8].0 (RADIX := Decimal);
+			MixerHeatingValve_IO_Output OF Interface.FromBatch[8].0 (RADIX := Decimal);
+			MixerInlet01 OF cDO[573] ;
+			MixerInlet01_IO_Closed OF iRack4:5:I.Pt02.Data (RADIX := Decimal);
+			MixerInlet01_IO_Opened OF iRack4:5:I.Pt01.Data (RADIX := Decimal);
+			MixerInlet01_IO_Output OF iRack4:9:O.Pt14.Data (RADIX := Decimal);
+			MixerInterlocked OF cDI[361] ;
+			MixerInterlocked_IO_Input : BOOL (RADIX := Decimal) := 0;
+			MixerMotorHighSheer OF cDO[581] ;
+			MixerMotorHighSheerInterlock_IO OF Interface.ToBatch[6].2 (RADIX := Decimal);
+			MixerMotorHighSheerPower OF cAI[237] ;
+			MixerMotorHighSheerSpeedReference OF cAO[122] ;
+			MixerMotorHighSheer_IO_Fault : BOOL (RADIX := Decimal) := 0;
+			MixerMotorHighSheer_IO_Output : BOOL (RADIX := Decimal) := 0;
+			MixerMotorHighSheer_IO_Value : REAL (RADIX := Float) := 0.00000000e+000;
+			MixerMotorSweep OF cDO[574] ;
+			MixerMotorSweepInterlock_IO OF Interface.ToBatch[4].2 (RADIX := Decimal);
+			MixerMotorSweepPower OF cAI[233] ;
+			MixerMotorSweepSpeedReference OF cAO[121] ;
+			MixerMotorSweep_IO_Fault : BOOL (RADIX := Decimal) := 0;
+			MixerMotorSweep_IO_Output : BOOL (RADIX := Decimal) := 0;
+			MixerMotorSweep_IO_Value : REAL (RADIX := Float) := 0.00000000e+000;
+			MixerOpened OF cDI[362] ;
+			MixerOpened_IO_Input : BOOL (RADIX := Decimal) := 0;
+			MixerRemoteMode OF cDI[360] ;
+			MixerRemoteMode_IO_Input : BOOL (RADIX := Decimal) := 0;
+			MixerSpeed_IO_Fault : BOOL (RADIX := Decimal) := 0;
+			MixerSpeed_IO_Output : BOOL (RADIX := Decimal) := 0;
+			Null : CB_NULL  := [[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0
+					],[0,0,0,0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1],[1],[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1],[1,0,0,0],[[1],[1],[1]],[1,0,0,[0,0
+					,0]]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[0],[[0,0,0],[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[[[0,0,0],[0,0,0]],[[0,0,0,0],[0,0
+					,0,0]],[[0,0,0,0],[0,0,0,0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000
+					,[0,0,0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0
+					,0,0,0],[0,0,0,0,0,0],0.00000000e+000,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0
+					],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1
+					],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000
+					,0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0
+					,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0,0],[0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,[[0,0.00000000e+000,0.00000000e+000,0,[0,0,0],[0,0,0]],[0,0.00000000e+000,0.00000000e+000
+					,0,[0,0,0],[0,0,0]],[0,[0,0,0]]],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0],[[1],[1]]],[0,0,0,0,0,0,0,0,[[0,0,0,0
+					,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0]],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[0,[0,0],0],[0],0,0,0,0,0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0]],0,0,0,0,[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000],[0,0,0,0,0],0,0,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,0,0,0,0,0,0,0,0
+					,[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					]],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0],[0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0],[[1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0]]]];
+			OIT OF dOIT[1] ;
+			ph_AddCityWater OF cPHZ[76] ;
+			ph_AddShortening OF cPHZ[77] ;
+			ph_HandAdd OF cPHZ[79] ;
+			ph_Heater OF cPHZ[96] ;
+			ph_HighSheerMotor OF cPHZ[80] ;
+			ph_SugarHopperDump OF cPHZ[82] ;
+			ph_SweepMotor OF cPHZ[81] ;
+			ph_TimeDelay OF cPHZ[84] ;
+			ph_Transfer OF cPHZ[78] ;
+			PowerInput OF cDI[434] ;
+			PowerOutput OF cDI[435] ;
+			PowerSafety OF cDI[436] ;
+			TransferComplete OF cDI[368] ;
+			TransferComplete_IO_Input OF Interface.ToBatch[10].1 (RADIX := Decimal);
+			TransferReady OF cDI[365] ;
+			TransferRequest OF cDO[576] ;
+			TransferRequest_IO_Output OF Interface.FromBatch[10].0 (RADIX := Decimal);
+			TransferRunning OF cDI[367] ;
+			TransferRunning_IO_Input OF Interface.ToBatch[10].0 (RADIX := Decimal);
+			Unit OF cUNIT[58] ;
+			ValveCityWater OF cDO[579] ;
+			ValveCityWater_IO_Output OF iRack4:9:O.Pt11.Data (RADIX := Decimal);
+			ValveShortening OF cDO[580] ;
+			ValveShortening_IO_Closed OF iRack4:4:I.Pt04.Data (RADIX := Decimal);
+			ValveShortening_IO_Opened OF iRack4:4:I.Pt03.Data (RADIX := Decimal);
+			ValveShortening_IO_Output OF iRack4:8:O.Pt00.Data (RADIX := Decimal);
+			fMSG_MIXER09 : MESSAGE (MessageType := Unconfigured,
+			                      RequestedLength := 1,
+			                      CommTypeCode := 0,
+			                      LocalIndex := 0);
+		END_TAG
+
+		ROUTINE BatchReady 
+				N: NOP();
+				N: [XIC(Interface.ToBatch[10].2) OTE(BatchReady.STAT.ENERGIZED) ,XIC(BatchReady.STAT.ENERGIZED) [XIC(BatchReady.DELAY.ON.DN) OTL(BatchReady.STAT.ON) OTU(BatchReady.STAT.OFF) ,TON(BatchReady.DELAY.ON,?,?) ] ,XIO(BatchReady.STAT.ENERGIZED) [XIC(BatchReady.DELAY.OFF.DN) OTU(BatchReady.STAT.ON) OTL(BatchReady.STAT.OFF) ,TON(BatchReady.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE CityWaterFlowmeter 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MIXER.01.01.Flowmeter.Mixer09$'$N"
+				    "ControlModule=$'Flowmeter.CityWaterFlowmeter$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'MIXER.01.01.FLOWMETER.CITYWATERFLOWMETER$'$N"
+				    "Function=$'ANALOG.COUNTER$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(CityWaterFlowmeter_IO_Value,CityWaterFlowmeter.RAW) ,XIO(CityWaterFlowmeter_IO_Fault) OTE(CityWaterFlowmeter.STAT.DATA_OK) ];
+				RC: "Template=$'MIXER.01.01.FLOWMETER.CITYWATERFLOWMETER$'$N"
+				    "Function=$'ANALOG.COUNTER.SCALE$'$N"
+				    "[Description]$N"
+				    "";
+				N: MUL(CityWaterFlowmeter.RAW,CityWaterFlowmeter.SCALE_FACTOR,CityWaterFlowmeter.SCALED);
+				N: XIC(\Mixer09_AddCityWater.Phase.CM.AutoRun[2])OTE(CityWaterFlowmeter.TOTALIZER.RESET);
+				RC: "Template=$'MIXER.01.01.FLOWMETER.CITYWATERFLOWMETER$'$N"
+				    "Function=$'ANALOG.COUNTER.RESET$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(CityWaterFlowmeter.TOTALIZER.RESET)OTE(CityWaterFlowmeter_IO_Reset);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(CityWaterFlowmeter.AOI.Rate,CityWaterFlowmeter.SCALED,CityWaterFlowmeter.RATE);
+				RC: "$N"
+				    "";
+				N: XIC(\Mixer09_AddCityWater.Phase.CM.AutoRun[20])[LES(CityWaterFlowmeter.RATE.CHANGE,CityWaterFlowmeter.RATE.Lo.LIM) ,XIC(CityWaterFlowmeter.RATE.Lo.ACTIVE) ]CMP(CityWaterFlowmeter.RATE.CHANGE<=(CityWaterFlowmeter.RATE.Lo.LIM+CityWaterFlowmeter.RATE.Lo.DEADBAND))[XIC(CityWaterFlowmeter.RATE.Lo.DELAY.DN) OTE(CityWaterFlowmeter.RATE.Lo.ACTIVE) ,TON(CityWaterFlowmeter.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: XIC(\Mixer09_AddCityWater.Phase.CM.AutoRun[20])[LES(CityWaterFlowmeter.RATE.CHANGE,CityWaterFlowmeter.RATE.LoLo.LIM) ,XIC(CityWaterFlowmeter.RATE.LoLo.ACTIVE) ]CMP(CityWaterFlowmeter.RATE.CHANGE<=(CityWaterFlowmeter.RATE.LoLo.LIM+CityWaterFlowmeter.RATE.LoLo.DEADBAND))[XIC(CityWaterFlowmeter.RATE.LoLo.DELAY.DN) OTE(CityWaterFlowmeter.RATE.LoLo.ACTIVE) ,TON(CityWaterFlowmeter.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(CityWaterFlowmeter.STAT.FAULT)[XIC(CityWaterFlowmeter.Fault.DELAY.DN) OTE(CityWaterFlowmeter.Fault.ACTIVE) ,MOV(10000,CityWaterFlowmeter.Fault.DELAY.PRE) TON(CityWaterFlowmeter.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(CityWaterFlowmeter.AOI.Mode,CityWaterFlowmeter.CMD,CityWaterFlowmeter.STAT,CityWaterFlowmeter.MAN_SP,CityWaterFlowmeter.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LO$'$N"
+				    "";
+				N: [XIC(CityWaterFlowmeter.RATE.Lo.ACTIVE) XIO(CityWaterFlowmeter.RATE.Lo.DISABLED) XIC(PowerInput.STAT.ON) OTE(CityWaterFlowmeter.ALARM[4].ACTIVE) ,AlarmControl(CityWaterFlowmeter.AOI.AlarmControl[4],CityWaterFlowmeter.ALARM[4],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LOLO$'$N"
+				    "";
+				N: [XIC(CityWaterFlowmeter.RATE.LoLo.ACTIVE) XIO(CityWaterFlowmeter.RATE.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(CityWaterFlowmeter.ALARM[5].ACTIVE) ,AlarmControl(CityWaterFlowmeter.AOI.AlarmControl[5],CityWaterFlowmeter.ALARM[5],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(CityWaterFlowmeter.Fault.ACTIVE) XIO(CityWaterFlowmeter.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(CityWaterFlowmeter.ALARM[6].ACTIVE) ,AlarmControl(CityWaterFlowmeter.AOI.AlarmControl[6],CityWaterFlowmeter.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE CityWaterTemperature 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MIXER.01.01.Temperature.Mixer09$'$N"
+				    "ControlModule=$'Temperature.CityWaterTemperature$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(CityWaterTemperature_IO_Value,CityWaterTemperature.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(CityWaterTemperature.AOI.Scaling,CityWaterTemperature.RAW,CityWaterTemperature.RAW_LO,CityWaterTemperature.RAW_HI,CityWaterTemperature.SCALE_LO,CityWaterTemperature.SCALE_HI,CityWaterTemperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(CityWaterTemperature_IO_Fault) ,XIC(CityWaterTemperature.STAT.FAULT) ]XIO(CityWaterTemperature.CMD.RESET)OTE(CityWaterTemperature.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(CityWaterTemperature.SCALED,CityWaterTemperature.LoLo.LIM) ,XIC(CityWaterTemperature.LoLo.ACTIVE) ]CMP(CityWaterTemperature.SCALED<=(CityWaterTemperature.LoLo.LIM+CityWaterTemperature.LoLo.DEADBAND))[XIC(CityWaterTemperature.LoLo.DELAY.DN) OTE(CityWaterTemperature.LoLo.ACTIVE) ,TON(CityWaterTemperature.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(CityWaterTemperature.SCALED,CityWaterTemperature.Lo.LIM) ,XIC(CityWaterTemperature.Lo.ACTIVE) ]CMP(CityWaterTemperature.SCALED<=(CityWaterTemperature.Lo.LIM+CityWaterTemperature.Lo.DEADBAND))[XIC(CityWaterTemperature.Lo.DELAY.DN) OTE(CityWaterTemperature.Lo.ACTIVE) ,TON(CityWaterTemperature.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(CityWaterTemperature.SCALED,CityWaterTemperature.Hi.LIM) ,XIC(CityWaterTemperature.Hi.ACTIVE) ]CMP(CityWaterTemperature.SCALED>=(CityWaterTemperature.Hi.LIM-CityWaterTemperature.Hi.DEADBAND))[XIC(CityWaterTemperature.Hi.DELAY.DN) OTE(CityWaterTemperature.Hi.ACTIVE) ,TON(CityWaterTemperature.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(CityWaterTemperature.SCALED,CityWaterTemperature.HiHi.LIM) ,XIC(CityWaterTemperature.HiHi.ACTIVE) ]CMP(CityWaterTemperature.SCALED>=(CityWaterTemperature.HiHi.LIM-CityWaterTemperature.HiHi.DEADBAND))[XIC(CityWaterTemperature.HiHi.DELAY.DN) OTE(CityWaterTemperature.HiHi.ACTIVE) ,TON(CityWaterTemperature.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(CityWaterTemperature.AOI.Rate,CityWaterTemperature.SCALED,CityWaterTemperature.RATE);
+				RC: "$N"
+				    "";
+				N: [LES(CityWaterTemperature.RATE.CHANGE,CityWaterTemperature.RATE.Lo.LIM) ,XIC(CityWaterTemperature.RATE.Lo.ACTIVE) ]CMP(CityWaterTemperature.RATE.CHANGE<=(CityWaterTemperature.RATE.Lo.LIM+CityWaterTemperature.RATE.Lo.DEADBAND))[XIC(CityWaterTemperature.RATE.Lo.DELAY.DN) OTE(CityWaterTemperature.RATE.Lo.ACTIVE) ,TON(CityWaterTemperature.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [LES(CityWaterTemperature.RATE.CHANGE,CityWaterTemperature.RATE.LoLo.LIM) ,XIC(CityWaterTemperature.RATE.LoLo.ACTIVE) ]CMP(CityWaterTemperature.RATE.CHANGE<=(CityWaterTemperature.RATE.LoLo.LIM+CityWaterTemperature.RATE.LoLo.DEADBAND))[XIC(CityWaterTemperature.RATE.LoLo.DELAY.DN) OTE(CityWaterTemperature.RATE.LoLo.ACTIVE) ,TON(CityWaterTemperature.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(CityWaterTemperature.STAT.FAULT)[XIC(CityWaterTemperature.Fault.DELAY.DN) OTE(CityWaterTemperature.Fault.ACTIVE) ,MOV(10000,CityWaterTemperature.Fault.DELAY.PRE) TON(CityWaterTemperature.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(CityWaterTemperature.AOI.Mode,CityWaterTemperature.CMD,CityWaterTemperature.STAT,CityWaterTemperature.MAN_SP,CityWaterTemperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(CityWaterTemperature.LoLo.ACTIVE) XIO(CityWaterTemperature.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(CityWaterTemperature.ALARM[0].ACTIVE) ,AlarmControl(CityWaterTemperature.AOI.AlarmControl[0],CityWaterTemperature.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(CityWaterTemperature.Lo.ACTIVE) XIO(CityWaterTemperature.Lo.DISABLED) XIC(PowerInput.STAT.ON) OTE(CityWaterTemperature.ALARM[1].ACTIVE) ,AlarmControl(CityWaterTemperature.AOI.AlarmControl[1],CityWaterTemperature.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(CityWaterTemperature.Hi.ACTIVE) XIO(CityWaterTemperature.Hi.DISABLED) XIC(PowerInput.STAT.ON) OTE(CityWaterTemperature.ALARM[2].ACTIVE) ,AlarmControl(CityWaterTemperature.AOI.AlarmControl[2],CityWaterTemperature.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(CityWaterTemperature.HiHi.ACTIVE) XIO(CityWaterTemperature.HiHi.DISABLED) XIC(PowerInput.STAT.ON) OTE(CityWaterTemperature.ALARM[3].ACTIVE) ,AlarmControl(CityWaterTemperature.AOI.AlarmControl[3],CityWaterTemperature.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(CityWaterTemperature.Fault.ACTIVE) XIO(CityWaterTemperature.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(CityWaterTemperature.ALARM[6].ACTIVE) ,AlarmControl(CityWaterTemperature.AOI.AlarmControl[6],CityWaterTemperature.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Interface 
+				N: NOP();
+				RC: "MESSAGING PULSE TIMER$N"
+				    "When messaging is enabled for this interface, run a self-resetting timer.$N"
+				    "The DN bit is used to trigger the MSG read.$N"
+				    "The host on the other end of this interface is responsible for reading from the DataWrite[] array.$N"
+				    " $N"
+				    "";
+				N: XIC(Interface.Control.MessagingEnabled)XIO(Interface.Control.MessageTimer.DN)TON(Interface.Control.MessageTimer,?,?);
+				RC: "MESSAGE$N"
+				    "Trigger the message instruction to read the data$N"
+				    " $N"
+				    "";
+				N: [XIC(Interface.Control.MessageTimer.DN) MSG(eInterfaceMixer09_MSG) ,XIC(eInterfaceMixer09_MSG.ER) OTE(Interface.Control.MessageError) ];
+				RC: "COMMUNICATIONS WATCHDOG$N"
+				    "send heartbeat signal to batch.$N"
+				    "";
+				N: MOV(Interface.Control.HeartbeatTimer.ACC,Interface.FromBatch[1])MOV(60000,Interface.Control.HeartbeatTimer.PRE)XIO(Interface.Control.HeartbeatTimer.DN)TON(Interface.Control.HeartbeatTimer,?,?);
+				RC: "COMMUNICATIONS WATCHDOG$N"
+				    "check on the heartbeat from batch, if the tag is not changing, set an alarm$N"
+				    "";
+				N: [XIO(Interface.Control.CommunicationAlarm) OTE(Interface.Control.CommunicationOK) ,XIC(Interface.Control.WatchdogTimer.DN) OTE(Interface.Control.CommunicationAlarm) ,[EQU(Interface.ToBatch[1],Interface.Control.HeartbeatLastScan) ,XIC(Interface.Control.MessageError) ] TON(Interface.Control.WatchdogTimer,?,?) ,MOV(10000,Interface.Control.WatchdogTimer.PRE) MOV(Interface.ToBatch[1],Interface.Control.HeartbeatLastScan) ];
+		END_ROUTINE
+
+		ROUTINE MixerBowlLevel 
+				N: NOP();
+				N: MOV(MixerBowlLevel_IO,MixerBowlLevel.RAW);
+				N: AnalogInputScaling(MixerBowlLevel.AOI.Scaling,MixerBowlLevel.RAW,MixerBowlLevel.RAW_LO,MixerBowlLevel.RAW_HI,MixerBowlLevel.SCALE_LO,MixerBowlLevel.SCALE_HI,MixerBowlLevel.SCALED);
+				N: [XIC(MixerBowlLevel_IO_Fault) ,XIC(MixerBowlLevel.STAT.FAULT) ]XIO(MixerBowlLevel.CMD.RESET)OTE(MixerBowlLevel.STAT.FAULT);
+				N: [LES(MixerBowlLevel.SCALED,MixerBowlLevel.LoLo.LIM) ,XIC(MixerBowlLevel.LoLo.ACTIVE) ]CMP(MixerBowlLevel.SCALED<=(MixerBowlLevel.LoLo.LIM+MixerBowlLevel.LoLo.DEADBAND))[XIC(MixerBowlLevel.LoLo.DELAY.DN) OTE(MixerBowlLevel.LoLo.ACTIVE) ,TON(MixerBowlLevel.LoLo.DELAY,?,?) ];
+				N: [LES(MixerBowlLevel.SCALED,MixerBowlLevel.Lo.LIM) ,XIC(MixerBowlLevel.Lo.ACTIVE) ]CMP(MixerBowlLevel.SCALED<=(MixerBowlLevel.Lo.LIM+MixerBowlLevel.Lo.DEADBAND))[XIC(MixerBowlLevel.Lo.DELAY.DN) OTE(MixerBowlLevel.Lo.ACTIVE) ,TON(MixerBowlLevel.Lo.DELAY,?,?) ];
+				N: [GRT(MixerBowlLevel.SCALED,MixerBowlLevel.Hi.LIM) ,XIC(MixerBowlLevel.Hi.ACTIVE) ]CMP(MixerBowlLevel.SCALED>=(MixerBowlLevel.Hi.LIM-MixerBowlLevel.Hi.DEADBAND))[XIC(MixerBowlLevel.Hi.DELAY.DN) OTE(MixerBowlLevel.Hi.ACTIVE) ,TON(MixerBowlLevel.Hi.DELAY,?,?) ];
+				N: [GRT(MixerBowlLevel.SCALED,MixerBowlLevel.HiHi.LIM) ,XIC(MixerBowlLevel.HiHi.ACTIVE) ]CMP(MixerBowlLevel.SCALED>=(MixerBowlLevel.HiHi.LIM-MixerBowlLevel.HiHi.DEADBAND))[XIC(MixerBowlLevel.HiHi.DELAY.DN) OTE(MixerBowlLevel.HiHi.ACTIVE) ,TON(MixerBowlLevel.HiHi.DELAY,?,?) ];
+				N: AnalogInputRate(MixerBowlLevel.AOI.Rate,MixerBowlLevel.SCALED,MixerBowlLevel.RATE);
+				N: [LES(MixerBowlLevel.RATE.CHANGE,MixerBowlLevel.RATE.Lo.LIM) ,XIC(MixerBowlLevel.RATE.Lo.ACTIVE) ]CMP(MixerBowlLevel.RATE.CHANGE<=(MixerBowlLevel.RATE.Lo.LIM+MixerBowlLevel.RATE.Lo.DEADBAND))[XIC(MixerBowlLevel.RATE.Lo.DELAY.DN) OTE(MixerBowlLevel.RATE.Lo.ACTIVE) ,TON(MixerBowlLevel.RATE.Lo.DELAY,?,?) ];
+				N: [LES(MixerBowlLevel.RATE.CHANGE,MixerBowlLevel.RATE.LoLo.LIM) ,XIC(MixerBowlLevel.RATE.LoLo.ACTIVE) ]CMP(MixerBowlLevel.RATE.CHANGE<=(MixerBowlLevel.RATE.LoLo.LIM+MixerBowlLevel.RATE.LoLo.DEADBAND))[XIC(MixerBowlLevel.RATE.LoLo.DELAY.DN) OTE(MixerBowlLevel.RATE.LoLo.ACTIVE) ,TON(MixerBowlLevel.RATE.LoLo.DELAY,?,?) ];
+				N: XIC(MixerBowlLevel.STAT.FAULT)[XIC(MixerBowlLevel.Fault.DELAY.DN) OTE(MixerBowlLevel.Fault.ACTIVE) ,MOV(10000,MixerBowlLevel.Fault.DELAY.PRE) TON(MixerBowlLevel.Fault.DELAY,?,?) ];
+				N: AnalogInputMode(MixerBowlLevel.AOI.Mode,MixerBowlLevel.CMD,MixerBowlLevel.STAT,MixerBowlLevel.MAN_SP,MixerBowlLevel.SCALED);
+				N: [XIC(MixerBowlLevel.LoLo.ACTIVE) XIO(MixerBowlLevel.LoLo.DISABLED) OTE(MixerBowlLevel.ALARM[0].ACTIVE) ,AlarmControl(MixerBowlLevel.AOI.AlarmControl[0],MixerBowlLevel.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(MixerBowlLevel.Lo.ACTIVE) XIO(MixerBowlLevel.Lo.DISABLED) OTE(MixerBowlLevel.ALARM[1].ACTIVE) ,AlarmControl(MixerBowlLevel.AOI.AlarmControl[1],MixerBowlLevel.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(MixerBowlLevel.Hi.ACTIVE) XIO(MixerBowlLevel.Hi.DISABLED) OTE(MixerBowlLevel.ALARM[2].ACTIVE) ,AlarmControl(MixerBowlLevel.AOI.AlarmControl[2],MixerBowlLevel.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(MixerBowlLevel.HiHi.ACTIVE) XIO(MixerBowlLevel.HiHi.DISABLED) OTE(MixerBowlLevel.ALARM[3].ACTIVE) ,AlarmControl(MixerBowlLevel.AOI.AlarmControl[3],MixerBowlLevel.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(MixerBowlLevel.Fault.ACTIVE) XIO(MixerBowlLevel.Fault.DISABLED) OTE(MixerBowlLevel.ALARM[6].ACTIVE) ,AlarmControl(MixerBowlLevel.AOI.AlarmControl[6],MixerBowlLevel.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE MixerBowlTemperature 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MIXER.01.01.Analog Input.Mixer09$'$N"
+				    "ControlModule=$'Analog Input.MixerBowlTemperature$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: DIV(MixerBowlTemperature_IO_Value,10,MixerBowlTemperature.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(MixerBowlTemperature.AOI.Scaling,MixerBowlTemperature.RAW,MixerBowlTemperature.RAW_LO,MixerBowlTemperature.RAW_HI,MixerBowlTemperature.SCALE_LO,MixerBowlTemperature.SCALE_HI,MixerBowlTemperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(MixerBowlTemperature_IO_Fault) ,XIC(MixerBowlTemperature.STAT.FAULT) ]XIO(MixerBowlTemperature.CMD.RESET)OTE(MixerBowlTemperature.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(MixerBowlTemperature.SCALED,MixerBowlTemperature.LoLo.LIM) ,XIC(MixerBowlTemperature.LoLo.ACTIVE) ]CMP(MixerBowlTemperature.SCALED<=(MixerBowlTemperature.LoLo.LIM+MixerBowlTemperature.LoLo.DEADBAND))[XIC(MixerBowlTemperature.LoLo.DELAY.DN) OTE(MixerBowlTemperature.LoLo.ACTIVE) ,TON(MixerBowlTemperature.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(MixerBowlTemperature.SCALED,MixerBowlTemperature.Lo.LIM) ,XIC(MixerBowlTemperature.Lo.ACTIVE) ]CMP(MixerBowlTemperature.SCALED<=(MixerBowlTemperature.Lo.LIM+MixerBowlTemperature.Lo.DEADBAND))[XIC(MixerBowlTemperature.Lo.DELAY.DN) OTE(MixerBowlTemperature.Lo.ACTIVE) ,TON(MixerBowlTemperature.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(MixerBowlTemperature.SCALED,MixerBowlTemperature.Hi.LIM) ,XIC(MixerBowlTemperature.Hi.ACTIVE) ]CMP(MixerBowlTemperature.SCALED>=(MixerBowlTemperature.Hi.LIM-MixerBowlTemperature.Hi.DEADBAND))[XIC(MixerBowlTemperature.Hi.DELAY.DN) OTE(MixerBowlTemperature.Hi.ACTIVE) ,TON(MixerBowlTemperature.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(MixerBowlTemperature.SCALED,MixerBowlTemperature.HiHi.LIM) ,XIC(MixerBowlTemperature.HiHi.ACTIVE) ]CMP(MixerBowlTemperature.SCALED>=(MixerBowlTemperature.HiHi.LIM-MixerBowlTemperature.HiHi.DEADBAND))[XIC(MixerBowlTemperature.HiHi.DELAY.DN) OTE(MixerBowlTemperature.HiHi.ACTIVE) ,TON(MixerBowlTemperature.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(MixerBowlTemperature.AOI.Rate,MixerBowlTemperature.SCALED,MixerBowlTemperature.RATE);
+				RC: "$N"
+				    "";
+				N: XIC(MixerHeatingValve.STAT.ENERGIZE)[LES(MixerBowlTemperature.RATE.CHANGE,MixerBowlTemperature.RATE.Lo.LIM) ,XIC(MixerBowlTemperature.RATE.Lo.ACTIVE) ]CMP(MixerBowlTemperature.RATE.CHANGE<=(MixerBowlTemperature.RATE.Lo.LIM+MixerBowlTemperature.RATE.Lo.DEADBAND))[XIC(MixerBowlTemperature.RATE.Lo.DELAY.DN) OTE(MixerBowlTemperature.RATE.Lo.ACTIVE) ,TON(MixerBowlTemperature.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: XIC(MixerHeatingValve.STAT.ENERGIZE)[LES(MixerBowlTemperature.RATE.CHANGE,MixerBowlTemperature.RATE.LoLo.LIM) ,XIC(MixerBowlTemperature.RATE.LoLo.ACTIVE) ]CMP(MixerBowlTemperature.RATE.CHANGE<=(MixerBowlTemperature.RATE.LoLo.LIM+MixerBowlTemperature.RATE.LoLo.DEADBAND))[XIC(MixerBowlTemperature.RATE.LoLo.DELAY.DN) OTE(MixerBowlTemperature.RATE.LoLo.ACTIVE) ,TON(MixerBowlTemperature.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(MixerBowlTemperature.STAT.FAULT)[XIC(MixerBowlTemperature.Fault.DELAY.DN) OTE(MixerBowlTemperature.Fault.ACTIVE) ,MOV(10000,MixerBowlTemperature.Fault.DELAY.PRE) TON(MixerBowlTemperature.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(MixerBowlTemperature.AOI.Mode,MixerBowlTemperature.CMD,MixerBowlTemperature.STAT,MixerBowlTemperature.MAN_SP,MixerBowlTemperature.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(MixerBowlTemperature.LoLo.ACTIVE) XIO(MixerBowlTemperature.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(MixerBowlTemperature.ALARM[0].ACTIVE) ,AlarmControl(MixerBowlTemperature.AOI.AlarmControl[0],MixerBowlTemperature.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(MixerBowlTemperature.Lo.ACTIVE) XIO(MixerBowlTemperature.Lo.DISABLED) XIC(PowerInput.STAT.ON) OTE(MixerBowlTemperature.ALARM[1].ACTIVE) ,AlarmControl(MixerBowlTemperature.AOI.AlarmControl[1],MixerBowlTemperature.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(MixerBowlTemperature.Hi.ACTIVE) XIO(MixerBowlTemperature.Hi.DISABLED) XIC(PowerInput.STAT.ON) OTE(MixerBowlTemperature.ALARM[2].ACTIVE) ,AlarmControl(MixerBowlTemperature.AOI.AlarmControl[2],MixerBowlTemperature.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(MixerBowlTemperature.HiHi.ACTIVE) XIO(MixerBowlTemperature.HiHi.DISABLED) XIC(PowerInput.STAT.ON) OTE(MixerBowlTemperature.ALARM[3].ACTIVE) ,AlarmControl(MixerBowlTemperature.AOI.AlarmControl[3],MixerBowlTemperature.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(MixerBowlTemperature.Fault.ACTIVE) XIO(MixerBowlTemperature.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(MixerBowlTemperature.ALARM[6].ACTIVE) ,AlarmControl(MixerBowlTemperature.AOI.AlarmControl[6],MixerBowlTemperature.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE MixerCommuncationOk 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MIXER.01.01.Alarm.Mixer01$'$N"
+				    "ControlModule=$'Alarm.MixerCommuncationOk$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(Interface.Control.CommunicationOK) OTE(MixerCommunicationOK.STAT.ENERGIZED) ,XIC(MixerCommunicationOK.STAT.ENERGIZED) [XIC(MixerCommunicationOK.DELAY.ON.DN) OTL(MixerCommunicationOK.STAT.ON) OTU(MixerCommunicationOK.STAT.OFF) ,TON(MixerCommunicationOK.DELAY.ON,?,?) ] ,XIO(MixerCommunicationOK.STAT.ENERGIZED) [XIC(MixerCommunicationOK.DELAY.OFF.DN) OTU(MixerCommunicationOK.STAT.ON) OTL(MixerCommunicationOK.STAT.OFF) ,TON(MixerCommunicationOK.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.FAULT$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.FAULT$'$N"
+				    "";
+				N: XIO(MixerCommunicationOK.STAT.ON)OTE(MixerCommunicationOK.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.ON$'$N"
+				    "";
+				N: [XIO(MixerCommunicationOK.STAT.ON) OTE(MixerCommunicationOK.ALARM[0].ACTIVE) ,AlarmControl(MixerCommunicationOK.AOI.AlarmControl[0],MixerCommunicationOK.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(MixerCommunicationOK.STAT.FAULT) OTE(MixerCommunicationOK.ALARM[1].ACTIVE) ,AlarmControl(MixerCommunicationOK.AOI.AlarmControl[1],MixerCommunicationOK.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE MixerHeatingValve 
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_Heater.CM.AutoRun[8])OTE(MixerHeatingValve.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,MixerHeatingValve.MSG.PERM) ,EQU(MixerHeatingValve.MSG.PERM,0) OTE(MixerHeatingValve.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,MixerHeatingValve.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,MixerHeatingValve.MSG.INTRLK) ,XIC(MixerBowlTemperature.HiHi.ACTIVE) MOV(22,MixerHeatingValve.MSG.INTRLK) ,NEQ(MixerHeatingValve.MSG.INTRLK,0) OTE(MixerHeatingValve.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VALVE.FAULT$'$N"
+				    "Function=$'VALVE.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(MixerHeatingValve.STAT.ENERGIZE) [XIO(MixerHeatingValve.STAT.ON_OPEN) ,XIC(MixerHeatingValve.STAT.OFF_CLOSED) ] ,XIO(MixerHeatingValve.STAT.ENERGIZE) [XIC(MixerHeatingValve.STAT.ON_OPEN) ,XIO(MixerHeatingValve.STAT.OFF_CLOSED) ] ,XIC(MixerHeatingValve.STAT.FAULT) ]XIO(MixerHeatingValve.CMD.RESET)[XIC(MixerHeatingValve.DELAY.FAULT.DN) OTE(MixerHeatingValve.STAT.FAULT) ,TON(MixerHeatingValve.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VALVE$'$N"
+				    "Function=$'STATUS.MESSAGE.VALVE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,MixerHeatingValve.MSG.MSG) ,XIC(MixerHeatingValve.STAT.ENERGIZE) XIC(MixerHeatingValve.STAT.OFF_CLOSED) MOV(61,MixerHeatingValve.MSG.MSG) ,XIO(MixerHeatingValve.STAT.ENERGIZE) XIO(MixerHeatingValve.STAT.OFF_CLOSED) MOV(62,MixerHeatingValve.MSG.MSG) ,XIC(MixerHeatingValve.STAT.ENERGIZE) XIO(MixerHeatingValve.STAT.ON_OPEN) MOV(63,MixerHeatingValve.MSG.MSG) ,XIO(MixerHeatingValve.STAT.ENERGIZE) XIC(MixerHeatingValve.STAT.ON_OPEN) MOV(64,MixerHeatingValve.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(MixerHeatingValve.STAT.AUTO_RUN) NEQ(MixerHeatingValve.MSG.PERM,0) MOV(MixerHeatingValve.MSG.PERM,MixerHeatingValve.MSG.MSG) ,NEQ(MixerHeatingValve.MSG.INTRLK,0) MOV(MixerHeatingValve.MSG.INTRLK,MixerHeatingValve.MSG.MSG) ,NEQ(MixerHeatingValve.MSG.FAULT,0) MOV(MixerHeatingValve.MSG.FAULT,MixerHeatingValve.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(MixerHeatingValve.AOI.Message,MixerHeatingValve.ID,MixerHeatingValve.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(MixerHeatingValve.AOI.Control,MixerHeatingValve.CMD,MixerHeatingValve.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.BASIC.CONTROL$'$N"
+				    "";
+				N: [XIC(MixerHeatingValve.STAT.ENERGIZE) OTE(MixerHeatingValve_IO_Output) ,XIC(MixerHeatingValve_IO_Input) OTE(MixerHeatingValve.STAT.ON_OPEN) ,XIO(MixerHeatingValve.STAT.ENERGIZE) OTE(MixerHeatingValve.STAT.OFF_CLOSED) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(MixerHeatingValve.STAT.FAULT) OTE(MixerHeatingValve.ALARM[0].ACTIVE) ,AlarmControl(MixerHeatingValve.AOI.AlarmControl[0],MixerHeatingValve.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE MixerInlet01 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MIXER.01.01.Valve.Mixer09$'$N"
+				    "ControlModule=$'Valve.MixerInlet01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_SugarHopperDump.CM.AutoRun[14])OTE(MixerInlet01.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,MixerInlet01.MSG.PERM) ,XIC(ph_SugarHopperDump.CM.AutoRun[13]) MOV(2,MixerInlet01.MSG.PERM) ,EQU(MixerInlet01.MSG.PERM,0) OTE(MixerInlet01.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,MixerInlet01.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,MixerInlet01.MSG.INTRLK) ,NEQ(MixerInlet01.MSG.INTRLK,0) OTE(MixerInlet01.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VALVE.FAULT$'$N"
+				    "Function=$'VALVE.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(MixerInlet01.STAT.ENERGIZE) [XIO(MixerInlet01.STAT.ON_OPEN) ,XIC(MixerInlet01.STAT.OFF_CLOSED) ] ,XIO(MixerInlet01.STAT.ENERGIZE) [XIC(MixerInlet01.STAT.ON_OPEN) ,XIO(MixerInlet01.STAT.OFF_CLOSED) ] ,XIC(MixerInlet01.STAT.FAULT) ]XIO(MixerInlet01.CMD.RESET)[XIC(MixerInlet01.DELAY.FAULT.DN) OTE(MixerInlet01.STAT.FAULT) ,TON(MixerInlet01.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VALVE$'$N"
+				    "Function=$'STATUS.MESSAGE.VALVE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,MixerInlet01.MSG.MSG) ,XIC(MixerInlet01.STAT.ENERGIZE) XIC(MixerInlet01.STAT.OFF_CLOSED) MOV(61,MixerInlet01.MSG.MSG) ,XIO(MixerInlet01.STAT.ENERGIZE) XIO(MixerInlet01.STAT.OFF_CLOSED) MOV(62,MixerInlet01.MSG.MSG) ,XIC(MixerInlet01.STAT.ENERGIZE) XIO(MixerInlet01.STAT.ON_OPEN) MOV(63,MixerInlet01.MSG.MSG) ,XIO(MixerInlet01.STAT.ENERGIZE) XIC(MixerInlet01.STAT.ON_OPEN) MOV(64,MixerInlet01.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(MixerInlet01.STAT.AUTO_RUN) NEQ(MixerInlet01.MSG.PERM,0) MOV(MixerInlet01.MSG.PERM,MixerInlet01.MSG.MSG) ,NEQ(MixerInlet01.MSG.INTRLK,0) MOV(MixerInlet01.MSG.INTRLK,MixerInlet01.MSG.MSG) ,NEQ(MixerInlet01.MSG.FAULT,0) MOV(MixerInlet01.MSG.FAULT,MixerInlet01.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(MixerInlet01.AOI.Message,MixerInlet01.ID,MixerInlet01.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(MixerInlet01.AOI.Control,MixerInlet01.CMD,MixerInlet01.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.VALVE.OPNCLS.FEEDBACK$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.VALVE$'$N"
+				    "";
+				N: [XIC(MixerInlet01.STAT.ENERGIZE) OTE(MixerInlet01_IO_Output) ,[XIO(MixerInlet01.STAT.ON_OPEN_BYPASS) XIC(MixerInlet01_IO_Opened) ,XIC(MixerInlet01.STAT.ON_OPEN_BYPASS) XIC(MixerInlet01.STAT.ENERGIZE) ] [OTE(MixerInlet01.STAT.ON_OPEN) ,XIC(MixerInlet01.DELAY.ON.DN) OTE(MixerInlet01.STAT.ON_OPEN_DELAY) ,TON(MixerInlet01.DELAY.ON,?,?) ] ,[XIO(MixerInlet01.STAT.OFF_CLOSED_BYPASS) XIO(MixerInlet01_IO_Closed) ,XIC(MixerInlet01.STAT.OFF_CLOSED_BYPASS) XIO(MixerInlet01.STAT.ENERGIZE) ] [OTE(MixerInlet01.STAT.OFF_CLOSED) ,XIC(MixerInlet01.DELAY.OFF.DN) OTE(MixerInlet01.STAT.OFF_CLOSED_DELAY) ,TON(MixerInlet01.DELAY.OFF,?,?) ] ,XIC(PowerInput.STAT.ON) XIC(PowerOutput.STAT.ON) XIC(PowerSafety.STAT.ON) OTE(MixerInlet01.STAT.ControlPowerOn) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(MixerInlet01.STAT.ControlPowerOn) XIC(MixerInlet01.STAT.FAULT) OTE(MixerInlet01.ALARM[0].ACTIVE) ,AlarmControl(MixerInlet01.AOI.AlarmControl[0],MixerInlet01.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE MixerInterlocked 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MIXER.01.01.Digital Input.Mixer09$'$N"
+				    "ControlModule=$'Digital Input.MixerInterlocked$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [NEQ(Interface.ToBatch[2],0) OTE(MixerInterlocked.STAT.ENERGIZED) ,XIC(MixerInterlocked.STAT.ENERGIZED) [XIC(MixerInterlocked.DELAY.ON.DN) OTL(MixerInterlocked.STAT.ON) OTU(MixerInterlocked.STAT.OFF) ,TON(MixerInterlocked.DELAY.ON,?,?) ] ,XIO(MixerInterlocked.STAT.ENERGIZED) [XIC(MixerInterlocked.DELAY.OFF.DN) OTU(MixerInterlocked.STAT.ON) OTL(MixerInterlocked.STAT.OFF) ,TON(MixerInterlocked.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE MixerMotorHighSheer 
+				N: NOP();
+				N: XIC(ph_HighSheerMotor.CM.AutoRun[10])OTE(MixerMotorHighSheer.STAT.AUTO_RUN);
+				N: [MOV(0,MixerMotorHighSheer.MSG.PERM) ,XIC(MixerInterlocked.STAT.ON) MOV(2,MixerMotorHighSheer.MSG.PERM) ,XIO(MixerCommunicationOK.STAT.ON) MOV(3,MixerMotorHighSheer.MSG.PERM) ,XIO(MixerRemoteMode.STAT.ON) MOV(4,MixerMotorHighSheer.MSG.PERM) ,EQU(MixerMotorHighSheer.MSG.PERM,0) OTE(MixerMotorHighSheer.STAT.PERMISSIVE) ];
+				N: [MOV(0,MixerMotorHighSheer.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,MixerMotorHighSheer.MSG.INTRLK) ,XIC(MixerMotorHighSheerInterlock_IO) MOV(22,MixerMotorHighSheer.MSG.INTRLK) ,XIC(MixerMotorHighSheer.STAT.STATE_1) MOV(23,MixerMotorHighSheer.MSG.INTRLK) ,NEQ(MixerMotorHighSheer.MSG.INTRLK,0) OTE(MixerMotorHighSheer.STAT.INTERLOCK) ];
+				N: [XIC(MixerMotorHighSheer.STAT.ENERGIZE) [XIO(MixerMotorHighSheer.STAT.ON_OPEN) ,XIC(MixerMotorHighSheer.STAT.OFF_CLOSED) ] ,XIC(MixerMotorHighSheer.STAT.VFD_FAULT) ,XIC(MixerMotorHighSheer.STAT.FAULT) ]XIO(MixerMotorHighSheer.CMD.RESET)[XIC(MixerMotorHighSheer.DELAY.FAULT.DN) OTE(MixerMotorHighSheer.STAT.FAULT) ,TON(MixerMotorHighSheer.DELAY.FAULT,?,?) ];
+				N: MOV(0,MixerMotorHighSheer.MSG.MSG);
+				N: [XIC(MixerMotorHighSheer.STAT.AUTO_RUN) NEQ(MixerMotorHighSheer.MSG.PERM,0) MOV(MixerMotorHighSheer.MSG.PERM,MixerMotorHighSheer.MSG.MSG) ,NEQ(MixerMotorHighSheer.MSG.INTRLK,0) MOV(MixerMotorHighSheer.MSG.INTRLK,MixerMotorHighSheer.MSG.MSG) ,NEQ(MixerMotorHighSheer.MSG.FAULT,0) MOV(MixerMotorHighSheer.MSG.FAULT,MixerMotorHighSheer.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(MixerMotorHighSheer.AOI.Message,MixerMotorHighSheer.ID,MixerMotorHighSheer.MSG);
+				N: DiscreteOutputControl(MixerMotorHighSheer.AOI.Control,MixerMotorHighSheer.CMD,MixerMotorHighSheer.STAT);
+				N: [MOV(MixerMotorHighSheerSpeedReference.SP_MAN,MixerMotorHighSheerSpeedReference.SP) ,XIC(ph_HighSheerMotor.CM.AutoRun[10]) MOV(ph_HighSheerMotor.SPT[4],MixerMotorHighSheerSpeedReference.SP) ];
+				N: [MOV(0,MixerMotorHighSheerSpeedReference.CV) ,XIC(MixerMotorHighSheer.STAT.AUTO) XIC(MixerMotorHighSheer.STAT.ENERGIZE) MOV(MixerMotorHighSheerSpeedReference.SP,MixerMotorHighSheerSpeedReference.CV) ,XIC(MixerMotorHighSheer.STAT.MAN) XIC(MixerMotorHighSheer.STAT.ENERGIZE) MOV(MixerMotorHighSheerSpeedReference.CV_MAN,MixerMotorHighSheerSpeedReference.CV) ,DIV(Interface.ToBatch[7],1,MixerMotorHighSheerSpeedReference.CV_ACTUAL) ];
+				N: MUL(MixerMotorHighSheerSpeedReference.CV,1,Interface.FromBatch[7]);
+				N: [XIC(MixerMotorHighSheer.STAT.ENERGIZE) OTE(Interface.FromBatch[6].0) ,XIC(Interface.ToBatch[6].0) OTE(MixerMotorHighSheer.STAT.ON_OPEN) ,XIO(MixerMotorHighSheer.STAT.ON_OPEN) OTE(MixerMotorHighSheer.STAT.OFF_CLOSED) ,XIC(Interface.ToBatch[6].1) OTE(MixerMotorHighSheer.STAT.VFD_FAULT) ];
+				N: [XIC(MixerMotorHighSheer.STAT.FAULT) OTE(MixerMotorHighSheer.ALARM[0].ACTIVE) ,AlarmControl(MixerMotorHighSheer.AOI.AlarmControl[0],MixerMotorHighSheer.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE MixerMotorSweep 
+				N: NOP();
+				N: [XIC(ph_SweepMotor.CM.AutoRun[10]) ,XIC(ph_Heater.CM.AutoRun[10]) ,XIC(ph_SugarHopperDump.CM.AutoRun[10]) ]OTE(MixerMotorSweep.STAT.AUTO_RUN);
+				N: [MOV(0,MixerMotorSweep.MSG.PERM) ,XIC(MixerInterlocked.STAT.ON) MOV(2,MixerMotorSweep.MSG.PERM) ,XIO(MixerCommunicationOK.STAT.ON) MOV(3,MixerMotorSweep.MSG.PERM) ,XIO(MixerRemoteMode.STAT.ON) MOV(4,MixerMotorSweep.MSG.PERM) ,EQU(MixerMotorSweep.MSG.PERM,0) OTE(MixerMotorSweep.STAT.PERMISSIVE) ];
+				N: [MOV(0,MixerMotorSweep.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,MixerMotorSweep.MSG.INTRLK) ,XIC(MixerMotorSweepInterlock_IO) MOV(22,MixerMotorSweep.MSG.INTRLK) ,XIC(MixerMotorSweep.STAT.STATE_1) MOV(23,MixerMotorSweep.MSG.INTRLK) ,NEQ(MixerMotorSweep.MSG.INTRLK,0) OTE(MixerMotorSweep.STAT.INTERLOCK) ];
+				N: [XIC(MixerMotorSweep.STAT.ENERGIZE) [XIO(MixerMotorSweep.STAT.ON_OPEN) ,XIC(MixerMotorSweep.STAT.OFF_CLOSED) ] ,XIC(MixerMotorSweep.STAT.VFD_FAULT) ,XIC(MixerMotorSweep.STAT.FAULT) ]XIO(MixerMotorSweep.CMD.RESET)[XIC(MixerMotorSweep.DELAY.FAULT.DN) OTE(MixerMotorSweep.STAT.FAULT) ,TON(MixerMotorSweep.DELAY.FAULT,?,?) ];
+				N: MOV(0,MixerMotorSweep.MSG.MSG);
+				N: [XIC(MixerMotorSweep.STAT.AUTO_RUN) NEQ(MixerMotorSweep.MSG.PERM,0) MOV(MixerMotorSweep.MSG.PERM,MixerMotorSweep.MSG.MSG) ,NEQ(MixerMotorSweep.MSG.INTRLK,0) MOV(MixerMotorSweep.MSG.INTRLK,MixerMotorSweep.MSG.MSG) ,NEQ(MixerMotorSweep.MSG.FAULT,0) MOV(MixerMotorSweep.MSG.FAULT,MixerMotorSweep.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(MixerMotorSweep.AOI.Message,MixerMotorSweep.ID,MixerMotorSweep.MSG);
+				N: DiscreteOutputControl(MixerMotorSweep.AOI.Control,MixerMotorSweep.CMD,MixerMotorSweep.STAT);
+				N: [MOV(MixerMotorSweepSpeedReference.SP_MAN,MixerMotorSweepSpeedReference.SP) ,XIC(ph_Heater.CM.AutoRun[10]) MOV(ph_Heater.USER.SETTINGS[2],MixerMotorSweepSpeedReference.SP) ,XIC(ph_SugarHopperDump.CM.AutoRun[10]) MOV(ph_SugarHopperDump.USER.SETTINGS[2],MixerMotorSweepSpeedReference.SP) ,XIC(ph_SweepMotor.CM.AutoRun[10]) MOV(ph_SweepMotor.SPT[4],MixerMotorSweepSpeedReference.SP) ];
+				N: [MOV(0,MixerMotorSweepSpeedReference.CV) ,XIC(MixerMotorSweep.STAT.AUTO) XIC(MixerMotorSweep.STAT.ENERGIZE) MOV(MixerMotorSweepSpeedReference.SP,MixerMotorSweepSpeedReference.CV) ,XIC(MixerMotorSweep.STAT.MAN) XIC(MixerMotorSweep.STAT.ENERGIZE) MOV(MixerMotorSweepSpeedReference.CV_MAN,MixerMotorSweepSpeedReference.CV) ,DIV(Interface.ToBatch[5],100,MixerMotorSweepSpeedReference.CV_ACTUAL) ];
+				N: MUL(MixerMotorSweepSpeedReference.CV,1.66666666,Interface.FromBatch[5]);
+				N: [XIC(MixerMotorSweep.STAT.ENERGIZE) OTE(Interface.FromBatch[4].0) ,XIC(Interface.ToBatch[4].0) OTE(MixerMotorSweep.STAT.ON_OPEN) ,XIO(MixerMotorSweep.STAT.ON_OPEN) OTE(MixerMotorSweep.STAT.OFF_CLOSED) ,XIC(Interface.ToBatch[4].1) OTE(MixerMotorSweep.STAT.VFD_FAULT) ];
+				N: [XIC(MixerMotorSweep.STAT.FAULT) OTE(MixerMotorSweep.ALARM[0].ACTIVE) ,AlarmControl(MixerMotorSweep.AOI.AlarmControl[0],MixerMotorSweep.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE MixerRemoteMode 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MIXER.01.01.Digital Input.Mixer09$'$N"
+				    "ControlModule=$'Digital Input.MixerRemoteMode$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [EQU(Interface.ToBatch[0],1) OTE(MixerRemoteMode.STAT.ENERGIZED) ,XIC(MixerRemoteMode.STAT.ENERGIZED) [XIC(MixerRemoteMode.DELAY.ON.DN) OTL(MixerRemoteMode.STAT.ON) OTU(MixerRemoteMode.STAT.OFF) ,TON(MixerRemoteMode.DELAY.ON,?,?) ] ,XIO(MixerRemoteMode.STAT.ENERGIZED) [XIC(MixerRemoteMode.DELAY.OFF.DN) OTU(MixerRemoteMode.STAT.ON) OTL(MixerRemoteMode.STAT.OFF) ,TON(MixerRemoteMode.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE TransferComplete 
+				N: [XIC(TransferComplete_IO_Input) OTE(TransferComplete.STAT.ENERGIZED) ,XIC(TransferComplete.STAT.ENERGIZED) [XIC(TransferComplete.DELAY.ON.DN) OTL(TransferComplete.STAT.ON) OTU(TransferComplete.STAT.OFF) ,TON(TransferComplete.DELAY.ON,?,?) ] ,XIO(TransferComplete.STAT.ENERGIZED) [XIC(TransferComplete.DELAY.OFF.DN) OTU(TransferComplete.STAT.ON) OTL(TransferComplete.STAT.OFF) ,TON(TransferComplete.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE TransferReady 
+				N: NOP();
+				N: [XIO(Interface.ToBatch[10].3) OTE(TransferReady.STAT.ENERGIZED) ,XIC(TransferReady.STAT.ENERGIZED) [XIC(TransferReady.DELAY.ON.DN) OTL(TransferReady.STAT.ON) OTU(TransferReady.STAT.OFF) ,TON(TransferReady.DELAY.ON,?,?) ] ,XIO(TransferReady.STAT.ENERGIZED) [XIC(TransferReady.DELAY.OFF.DN) OTU(TransferReady.STAT.ON) OTL(TransferReady.STAT.OFF) ,TON(TransferReady.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE TransferRequest 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MIXER.01.01.Digital Output.Mixer09$'$N"
+				    "ControlModule=$'Digital Output.Discharge$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_Transfer.CM.AutoRun[1])OTE(TransferRequest.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,TransferRequest.MSG.PERM) ,EQU(TransferRequest.MSG.PERM,0) OTE(TransferRequest.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,TransferRequest.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,TransferRequest.MSG.INTRLK) ,NEQ(TransferRequest.MSG.INTRLK,0) OTE(TransferRequest.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.CLEAR$'$N"
+				    "Function=$'STATUS.MESSAGE.CLEAR$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(0,TransferRequest.MSG.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(TransferRequest.STAT.AUTO_RUN) NEQ(TransferRequest.MSG.PERM,0) MOV(TransferRequest.MSG.PERM,TransferRequest.MSG.MSG) ,NEQ(TransferRequest.MSG.INTRLK,0) MOV(TransferRequest.MSG.INTRLK,TransferRequest.MSG.MSG) ,NEQ(TransferRequest.MSG.FAULT,0) MOV(TransferRequest.MSG.FAULT,TransferRequest.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(TransferRequest.AOI.Message,TransferRequest.ID,TransferRequest.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(TransferRequest.AOI.Control,TransferRequest.CMD,TransferRequest.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.BASIC.CONTROL$'$N"
+				    "";
+				N: [XIC(TransferRequest.STAT.ENERGIZE) OTE(TransferRequest_IO_Output) ,XIC(TransferRequest.STAT.ENERGIZE) OTE(TransferRequest.STAT.ON_OPEN) ,XIO(TransferRequest.STAT.ENERGIZE) OTE(TransferRequest.STAT.OFF_CLOSED) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(TransferRequest.STAT.FAULT) OTE(TransferRequest.ALARM[0].ACTIVE) ,AlarmControl(TransferRequest.AOI.AlarmControl[0],TransferRequest.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE TransferRunning 
+				N: [XIC(TransferRunning_IO_Input) OTE(TransferRunning.STAT.ENERGIZED) ,XIC(TransferRunning.STAT.ENERGIZED) [XIC(TransferRunning.DELAY.ON.DN) OTL(TransferRunning.STAT.ON) OTU(TransferRunning.STAT.OFF) ,TON(TransferRunning.DELAY.ON,?,?) ] ,XIO(TransferRunning.STAT.ENERGIZED) [XIC(TransferRunning.DELAY.OFF.DN) OTU(TransferRunning.STAT.ON) OTL(TransferRunning.STAT.OFF) ,TON(TransferRunning.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE ValveCityWater 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MIXER.01.01.Valve.Mixer09$'$N"
+				    "ControlModule=$'Valve.ValveCityWater$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_AddCityWater.CM.AutoRun[8])OTE(ValveCityWater.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,ValveCityWater.MSG.PERM) ,EQU(ValveCityWater.MSG.PERM,0) OTE(ValveCityWater.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,ValveCityWater.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,ValveCityWater.MSG.INTRLK) ,NEQ(ValveCityWater.MSG.INTRLK,0) OTE(ValveCityWater.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VALVE.FAULT$'$N"
+				    "Function=$'VALVE.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(ValveCityWater.STAT.ENERGIZE) [XIO(ValveCityWater.STAT.ON_OPEN) ,XIC(ValveCityWater.STAT.OFF_CLOSED) ] ,XIO(ValveCityWater.STAT.ENERGIZE) [XIC(ValveCityWater.STAT.ON_OPEN) ,XIO(ValveCityWater.STAT.OFF_CLOSED) ] ,XIC(ValveCityWater.STAT.FAULT) ]XIO(ValveCityWater.CMD.RESET)[XIC(ValveCityWater.DELAY.FAULT.DN) OTE(ValveCityWater.STAT.FAULT) ,TON(ValveCityWater.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VALVE$'$N"
+				    "Function=$'STATUS.MESSAGE.VALVE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,ValveCityWater.MSG.MSG) ,XIC(ValveCityWater.STAT.ENERGIZE) XIC(ValveCityWater.STAT.OFF_CLOSED) MOV(61,ValveCityWater.MSG.MSG) ,XIO(ValveCityWater.STAT.ENERGIZE) XIO(ValveCityWater.STAT.OFF_CLOSED) MOV(62,ValveCityWater.MSG.MSG) ,XIC(ValveCityWater.STAT.ENERGIZE) XIO(ValveCityWater.STAT.ON_OPEN) MOV(63,ValveCityWater.MSG.MSG) ,XIO(ValveCityWater.STAT.ENERGIZE) XIC(ValveCityWater.STAT.ON_OPEN) MOV(64,ValveCityWater.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(ValveCityWater.STAT.AUTO_RUN) NEQ(ValveCityWater.MSG.PERM,0) MOV(ValveCityWater.MSG.PERM,ValveCityWater.MSG.MSG) ,NEQ(ValveCityWater.MSG.INTRLK,0) MOV(ValveCityWater.MSG.INTRLK,ValveCityWater.MSG.MSG) ,NEQ(ValveCityWater.MSG.FAULT,0) MOV(ValveCityWater.MSG.FAULT,ValveCityWater.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(ValveCityWater.AOI.Message,ValveCityWater.ID,ValveCityWater.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(ValveCityWater.AOI.Control,ValveCityWater.CMD,ValveCityWater.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.VALVE.NO.FEEDBACK$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.VALVE$'$N"
+				    "";
+				N: [XIC(ValveCityWater.STAT.ENERGIZE) OTE(ValveCityWater_IO_Output) ,XIC(ValveCityWater.STAT.ENERGIZE) [OTE(ValveCityWater.STAT.ON_OPEN) ,XIC(ValveCityWater.DELAY.ON.DN) OTE(ValveCityWater.STAT.ON_OPEN_DELAY) ,TON(ValveCityWater.DELAY.ON,?,?) ] ,XIO(ValveCityWater.STAT.ENERGIZE) OTE(ValveCityWater.STAT.OFF_CLOSED) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(ValveCityWater.STAT.FAULT) OTE(ValveCityWater.ALARM[0].ACTIVE) ,AlarmControl(ValveCityWater.AOI.AlarmControl[0],ValveCityWater.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE ValveShortening 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MIXER.01.01.Valve.Mixer09$'$N"
+				    "ControlModule=$'Valve.ValveShortening$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_AddShortening.CM.AutoRun[8])OTE(ValveShortening.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,ValveShortening.MSG.PERM) ,EQU(ValveShortening.MSG.PERM,0) OTE(ValveShortening.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,ValveShortening.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,ValveShortening.MSG.INTRLK) ,NEQ(ValveShortening.MSG.INTRLK,0) OTE(ValveShortening.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VALVE.FAULT$'$N"
+				    "Function=$'VALVE.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(ValveShortening.STAT.ENERGIZE) [XIO(ValveShortening.STAT.ON_OPEN) ,XIC(ValveShortening.STAT.OFF_CLOSED) ] ,XIO(ValveShortening.STAT.ENERGIZE) [XIC(ValveShortening.STAT.ON_OPEN) ,XIO(ValveShortening.STAT.OFF_CLOSED) ] ,XIC(ValveShortening.STAT.FAULT) ]XIO(ValveShortening.CMD.RESET)[XIC(ValveShortening.DELAY.FAULT.DN) OTE(ValveShortening.STAT.FAULT) ,TON(ValveShortening.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VALVE$'$N"
+				    "Function=$'STATUS.MESSAGE.VALVE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,ValveShortening.MSG.MSG) ,XIC(ValveShortening.STAT.ENERGIZE) XIC(ValveShortening.STAT.OFF_CLOSED) MOV(61,ValveShortening.MSG.MSG) ,XIO(ValveShortening.STAT.ENERGIZE) XIO(ValveShortening.STAT.OFF_CLOSED) MOV(62,ValveShortening.MSG.MSG) ,XIC(ValveShortening.STAT.ENERGIZE) XIO(ValveShortening.STAT.ON_OPEN) MOV(63,ValveShortening.MSG.MSG) ,XIO(ValveShortening.STAT.ENERGIZE) XIC(ValveShortening.STAT.ON_OPEN) MOV(64,ValveShortening.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(ValveShortening.STAT.AUTO_RUN) NEQ(ValveShortening.MSG.PERM,0) MOV(ValveShortening.MSG.PERM,ValveShortening.MSG.MSG) ,NEQ(ValveShortening.MSG.INTRLK,0) MOV(ValveShortening.MSG.INTRLK,ValveShortening.MSG.MSG) ,NEQ(ValveShortening.MSG.FAULT,0) MOV(ValveShortening.MSG.FAULT,ValveShortening.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(ValveShortening.AOI.Message,ValveShortening.ID,ValveShortening.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(ValveShortening.AOI.Control,ValveShortening.CMD,ValveShortening.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.VALVE.OPNCLS.FEEDBACK$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.VALVE$'$N"
+				    "";
+				N: [XIC(ValveShortening.STAT.ENERGIZE) OTE(ValveShortening_IO_Output) ,[XIO(ValveShortening.STAT.ON_OPEN_BYPASS) XIC(ValveShortening_IO_Opened) ,XIC(ValveShortening.STAT.ON_OPEN_BYPASS) XIC(ValveShortening.STAT.ENERGIZE) ] [OTE(ValveShortening.STAT.ON_OPEN) ,XIC(ValveShortening.DELAY.ON.DN) OTE(ValveShortening.STAT.ON_OPEN_DELAY) ,TON(ValveShortening.DELAY.ON,?,?) ] ,[XIO(ValveShortening.STAT.OFF_CLOSED_BYPASS) XIC(ValveShortening_IO_Closed) ,XIC(ValveShortening.STAT.OFF_CLOSED_BYPASS) XIO(ValveShortening.STAT.ENERGIZE) ] [OTE(ValveShortening.STAT.OFF_CLOSED) ,XIC(ValveShortening.DELAY.OFF.DN) OTE(ValveShortening.STAT.OFF_CLOSED_DELAY) ,TON(ValveShortening.DELAY.OFF,?,?) ] ,XIC(PowerInput.STAT.ON) XIC(PowerOutput.STAT.ON) XIC(PowerSafety.STAT.ON) OTE(ValveShortening.STAT.ControlPowerOn) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(ValveShortening.STAT.ControlPowerOn) XIC(ValveShortening.STAT.FAULT) OTE(ValveShortening.ALARM[0].ACTIVE) ,AlarmControl(ValveShortening.AOI.AlarmControl[0],ValveShortening.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'MIXER.01.01$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'MIXER.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'BV400$'$N"
+				    "[Description]:Mixer Inlet 01$N"
+				    "";
+				N: JSR(BatchReady,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'BV400$'$N"
+				    "[Description]:Mixer Inlet 01$N"
+				    "";
+				N: JSR(MixerInlet01,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'DIGITALOUTPUT$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'MixerMotor$'$N"
+				    "[Description]:Mixer Motor$N"
+				    "";
+				N: JSR(MixerMotorSweep,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'DIGITALOUTPUT$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'MixerMotor$'$N"
+				    "[Description]:Mixer Motor$N"
+				    "";
+				N: JSR(MixerMotorHighSheer,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'DIGITALINPUT$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'RemoteMode$'$N"
+				    "[Description]:Mixer Remote Mode$N"
+				    "";
+				N: JSR(MixerRemoteMode,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'DIGITALINPUT$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'Interlocked$'$N"
+				    "[Description]:Mixer Interlocked$N"
+				    "";
+				N: JSR(MixerInterlocked,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'ALARM$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'CommuncationOk$'$N"
+				    "[Description]:Mixer Communcation Ok$N"
+				    "";
+				N: JSR(MixerCommuncationOk,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'DIGITALOUTPUT$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'MixerRefrigeration$'$N"
+				    "[Description]:Mixer Refrigeration$N"
+				    "";
+				N: JSR(MixerHeatingValve,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'ANALOGINPUT$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'BowlTemperature$'$N"
+				    "[Description]:Mixer Bowl Temperature$N"
+				    "";
+				N: JSR(MixerBowlTemperature,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'ANALOGINPUT$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'BowlTemperature$'$N"
+				    "[Description]:Mixer Bowl Temperature$N"
+				    "";
+				N: JSR(MixerBowlLevel,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'DIGITALINPUT$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'Discharging$'$N"
+				    "[Description]:Discharging$N"
+				    "";
+				N: JSR(TransferReady,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'DIGITALOUTPUT$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'Discharge$'$N"
+				    "[Description]:Discharge$N"
+				    "";
+				N: JSR(TransferRequest,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'SOL400$'$N"
+				    "[Description]:Valve City Water$N"
+				    "";
+				N: JSR(ValveCityWater,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'TEMPERATURE$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'TT403$'$N"
+				    "[Description]:City Water Temperature$N"
+				    "";
+				N: JSR(CityWaterTemperature,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'FLOWMETER$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'LMS401$'$N"
+				    "[Description]:City Water Flowmeter$N"
+				    "";
+				N: JSR(CityWaterFlowmeter,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'AV400$'$N"
+				    "[Description]:Valve Shortening$N"
+				    "";
+				N: JSR(ValveShortening,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'AV400$'$N"
+				    "[Description]:Valve Shortening$N"
+				    "";
+				N: JSR(TransferComplete,0)JSR(TransferRunning,0);
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'«|[EM.TYPECLASS]|»$'$N"
+				    "[Description]:Mixer 09$N"
+				    "";
+				N: JSR(Interface,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

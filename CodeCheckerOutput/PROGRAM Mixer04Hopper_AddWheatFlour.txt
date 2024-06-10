@@ -1,0 +1,284 @@
+	PROGRAM Mixer04Hopper_AddWheatFlour (Description := "$N",
+	                                     MAIN := "_000_Main",
+	                                     MODE := 0,
+	                                     DisableFlag := 0,
+	                                     UseAsFolder := 0)
+		TAG
+			Activator OF cDO[167] ;
+			ActualAmount OF Phase.ACTUAL[1] (RADIX := Float);
+			ActualAmountAccumulator OF Phase.ACTUAL[0] (RADIX := Float);
+			ActualAmountAdjustment OF Phase.ACTUAL[3] (RADIX := Float);
+			ActualAmountError OF Phase.ACTUAL[2] (RADIX := Float);
+			ActualAmountTare OF Phase.ACTUAL[4] (RADIX := Float);
+			Airlock OF cDO[168] ;
+			AOI : CB_PHASE_AOI  := [[3],[3,10750000],[3,[0,1015]],[3],[0,0.00000000e+000],[3],[1,0.00000000e+000,0.00000000e+000],[3],[3,1075,107500,107499
+					],[[3],[3],[1],[1],[1],[1],[1],[1]],[3,16,15,15],[1,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],0,0]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,[1,0.00000000e+000,0.00000000e+000],0.00000000e+000
+					],[1,0.00000000e+000,0.00000000e+000]];
+			Arb00 OF cAI[221] ;
+			Arb01 OF cDO[177] ;
+			Arb02 OF cAI[56] ;
+			AutoRunActivator OF Phase.CM.AutoRun[13] (RADIX := Decimal);
+			AutoRunAirlockMotor OF Phase.CM.AutoRun[12] (RADIX := Decimal);
+			AutoRunBlower OF Phase.CM.AutoRun[10] (RADIX := Decimal);
+			AutoRunDribble OF Phase.CM.AutoRun[21] (RADIX := Decimal);
+			AutoRunDustCollector OF Phase.CM.AutoRun[6] (RADIX := Decimal);
+			AutoRunFeederMotor OF Phase.CM.AutoRun[11] (RADIX := Decimal);
+			AutoRunMonitorFlowrate OF Phase.CM.AutoRun[20] (RADIX := Decimal);
+			AutoRunPath OF Phase.CM.AutoRun[1] (RADIX := Decimal);
+			AutoRunReadyToTakeBlowerPath OF Phase.CM.AutoRun[2] (RADIX := Decimal);
+			BlowerMotor OF cDO[177] ;
+			BlowerPressure OF cAI[57] ;
+			BlowerRunningTareHopperWeight OF Phase.TMR[0] ;
+			DustCollector OF cDO[539] ;
+			EmptyTubeTimer OF Phase.TMR[7] ;
+			EStop OF cDI[5] ;
+			Feeder OF cDO[171] ;
+			HopperWeight OF cAI[221] ;
+			OIT : CB_OIT  := [[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0,0,0,49696602,0,0,[0,0,0,0,0,0,0,0,0,0],[0,0,0,0],0,[0,[0,0,0]],[0,[0,0,0]],0,0,0];
+			OtherBlowerOwnerPhase01 OF cPHZ[175] ;
+			Path01 OF cDO[172] ;
+			Path02 OF cDO[173] ;
+			Path03 OF cDO[174] ;
+			Phase OF cPHZ[75] (Usage := Public);
+			PhaseClass OF cPHZ_CLASS[13] (Usage := Public);
+			SettingHopperWeightTareDelay OF Phase.USER.SETTINGS[4] (RADIX := Float);
+			SettingPurgeTimeWaitingForLowLowPressure : REAL (RADIX := Float) := 0.00000000e+000;
+			SettingPurgeTimeWaitingForLowPressure OF Phase.USER.SETTINGS[0] (RADIX := Float);
+			SettingTimeUntilFinalReading OF Phase.USER.SETTINGS[5] (RADIX := Float);
+			SourceUnit OF cUNIT[18] ;
+			TargetAmount OF Phase.SPT[0] (RADIX := Float);
+			TargetAmountAdjustmentLimit OF Phase.SPT[3] (RADIX := Float);
+			TargetAmountSetpoint OF Phase.SPT[1] (RADIX := Float);
+			TargetAmountTolerance OF Phase.SPT[2] (RADIX := Float);
+			Unit OF cUNIT[54] ;
+			UsebinWeight OF cAI[56] ;
+			ValidPath OF Phase.USER.STAT.1 (RADIX := Decimal);
+		END_TAG
+
+		ROUTINE _000_FirstScan 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'USEBIN.TO.HOPPER:02.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.TYPE$'$N"
+				    "Function=$'TYPE$'$N"
+				    "";
+				N: MOV(13,PhaseClass.TYPE);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.INDEX.SETTING$'$N"
+				    "Function=$'INDEX.SETTING$'$N"
+				    "";
+				N: MOV(Unit.ARRAY_INDEX,Phase.INDEX)MOV(PhaseClass.TYPE,Phase.TYPE)MOV(PhaseClass.ID,Phase.CLASS)COP(PhaseClass.NAME,Phase.CLASS_NAME,1)COP(PhaseClass.TYPE_NAME,Phase.TYPE_NAME,1);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.DISPLAY.MASK.SETTING$'$N"
+				    "Function=$'DISPLAY.MASK.SETTING$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.CLASS.PARAMETERS$'$N"
+				    "Function=$'CLASS.PARAMETERS$'$N"
+				    "";
+				N: PhaseClassParameter(AOI.PhaseClassParameter,PhaseClass,Phase.USER,Phase.DISPLAY_MASK,Phase.TYPE_MASK);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.SECTION.FIRSTSCAN.SETTING$'$N"
+				    "Function=$'STANDARD.PHASE.SECTION.FIRSTSCAN.SETTING$'$N"
+				    "";
+				N: PhaseClassParameter(AOI.PhaseClassParameter,PhaseClass,Phase.USER,Phase.DISPLAY_MASK,Phase.TYPE_MASK);
+				RC: "Template=$'PHASE.PHASE.MATERIAL.BLOWER.TRANSFER.TO.HOPPER$'$N"
+				    "Function=$'SETTING.PURGE.TIME$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: LES(SettingPurgeTimeWaitingForLowPressure,30)MOV(120,SettingPurgeTimeWaitingForLowPressure);
+				RC: "Template=$'PHASE.PHASE.MATERIAL.BLOWER.TRANSFER.TO.HOPPER$'$N"
+				    "Function=$'SETTING.RECORD.STEP.TIME$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: MOV(2000,Phase.STEP_TMR.RECORD.PRE);
+				RC: "Template=$'PHASE.PHASE.MATERIAL.BLOWER.TRANSFER.TO.HOPPER$'$N"
+				    "Function=$'SETTING.TARE.HOPPER.TIME$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: LEQ(BlowerRunningTareHopperWeight.PRE,BlowerMotor.DELAY.ON.PRE)ADD(BlowerMotor.DELAY.ON.PRE,5000,BlowerRunningTareHopperWeight.PRE);
+		END_ROUTINE
+
+		ROUTINE _000_Main 
+				N: NOP();
+				N: XIC(S:FS)JSR(_000_FirstScan,0);
+				N: XIC(Phase.STATE.IDLE)XIC(Phase.STATE.RUNNING)XIC(Phase.STATE.HELD)XIC(Phase.STATE.COMPLETE)XIC(Phase.STATE.ABORTED)XIC(Phase.STATE.STOPPED)NOP();
+				N: XIC(Phase.STATE.HOLDING)XIC(Phase.STATE.RESTARTING)XIC(Phase.STATE.ABORTING)XIC(Phase.STATE.STOPPING)NOP();
+				N: [XIC(Phase.CMD.START) XIC(Phase.CMD.HOLD) XIC(Phase.CMD.RESTART) XIC(Phase.CMD.STOP) XIC(Phase.CMD.ABORT) XIC(Phase.CMD.RESET) ,MOV(Phase.STATE_NO,Phase.STATE_NO) MOV(Phase.STEP_INDEX,Phase.STEP_INDEX) MOV(Phase.MSG.FAULT,Phase.MSG.FAULT) ,MOV(BlowerPressure.SIMULATION_AMOUNT,BlowerPressure.SIMULATION_AMOUNT) MOV(HopperWeight.SIMULATION_AMOUNT,HopperWeight.SIMULATION_AMOUNT) MOV(UsebinWeight.SIMULATION_AMOUNT,UsebinWeight.SIMULATION_AMOUNT) ,MOV(Phase.ACTUAL[5],Phase.ACTUAL[5]) MOV(Phase.SPT[1],Phase.SPT[1]) MOV(Phase.ACTUAL[1],Phase.ACTUAL[1]) ]NOP();
+				N: JSR(_120_PermissiveFaultAndMessaging,0);
+				N: PhaseMode(AOI.Mode,Phase,cPHZ[0].MSG)PhaseCommon(AOI.Common,Phase)PhaseStepIndex(AOI.StepIndex,Phase)PhaseStateTransition(AOI.StateTransition,Phase.CMD,Phase.STAT,Phase.STATE,Phase.STATE_NO);
+				N: JSR(_050_StepControl,0);
+				N: JSR(_110_ControlModule,0);
+				N: JSR(_130_Alarming,0);
+				N: PhaseStepMapping(AOI.StepMapping,Phase);
+				N: PhaseBypass(AOI.Bypass,Phase);
+				N: JSR(_100_Arbitration,0);
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _050_StepControl 
+				N: NOP();
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				RC: "Location index assignments$N"
+				    "Set from/to indices, based on silo selection if necessary";
+				N: MOV(17,Phase.INV.LOCATION_INDEX_FROM);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,1)MOV(2000,Phase.STEP_INDEX_GOTO);
+				RC: "When the phase starts up, unless the tank is low, goto the wait step$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)LIM(2000,Phase.STEP_INDEX,2999)GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.RECORD.PRE)MOV(3010,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,3000)[XIC(Phase.STAT.PERMISSIVE) MOV(4000,Phase.STEP_INDEX_GOTO) ,XIC(HopperWeight.Hi.ACTIVE) MOV(3010,Phase.STEP_INDEX_GOTO) ];
+				RC: "Wait for usebin low level, then restart by returning to permissive step$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,3010)[XIC(HopperWeight.Lo.ACTIVE) ,XIC(Phase.CMD.RESTART) ][MOV(3000,Phase.STEP_INDEX_GOTO) ,MOV(0,ActualAmount) MOV(0,ActualAmountAccumulator) SUB(HopperWeight.Hi.LIM,HopperWeight.SCALED,TargetAmountSetpoint) ];
+				N: NOP();
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4000)XIC(ValidPath)[MOV(4040,Phase.STEP_INDEX_GOTO) ,MOV(HopperWeight.SCALED,ActualAmountTare) MOV(ActualAmount,ActualAmountAccumulator) ];
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4040)MOV(4100,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4100)XIC(BlowerMotor.STAT.ON_OPEN_DELAY)MOV(4200,Phase.STEP_INDEX_GOTO);
+				N: [XIC(AutoRunBlower) XIC(BlowerMotor.STAT.ON_OPEN_DELAY) GRT(BlowerPressure.SCALED,BlowerPressure.LoLo.LIM) TON(BlowerRunningTareHopperWeight,?,?) ,XIC(Phase.STATE.RUNNING) EQU(Phase.STEP_INDEX,4200) XIC(BlowerRunningTareHopperWeight.DN) [MOV(ActualAmount,ActualAmountAccumulator) MOV(HopperWeight.SCALED,ActualAmountTare) ,OTL(Phase.STAT.ACTIVE_ONCE) MOV(4220,Phase.STEP_INDEX_GOTO) ] ];
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4220)MOV(5000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STAT.ACTIVE_ONCE)[XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.HOLDING) ,XIC(Phase.STATE.STOPPING) ]LIM(4220,Phase.STEP_INDEX,6010)MOV(TargetAmountSetpoint,TargetAmount)CPT(ActualAmount,(HopperWeight.SCALED-ActualAmountTare)+ActualAmountAccumulator)SUB(ActualAmount,TargetAmount,ActualAmountError);
+				RC: "When we have delivered the required amount into local hopper, or we are Hopper high level, then end the phase$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5000)[XIC(HopperWeight.Hi.ACTIVE) ,GRT(ActualAmount,TargetAmount) ][XIO(UsebinWeight.LoLo.ACTIVE) MOV(6000,Phase.STEP_INDEX_GOTO) ,XIC(UsebinWeight.LoLo.ACTIVE) MOV(5010,Phase.STEP_INDEX_GOTO) ];
+				RC: "We had less than LoLo in use bin hopper, let$'s wait for a delay to clear that all out.$N"
+				    "do not allow weight more than HiHi$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5010)[[XIC(HopperWeight.HiHi.ACTIVE) ,XIC(Phase.TMR[6].DN) ] MOV(6000,Phase.STEP_INDEX_GOTO) ,TON(Phase.TMR[6],?,?) ];
+				N: XIC(Phase.STATE.RUNNING)LIM(5000,Phase.STEP_INDEX,5999)CMP(ActualAmount > TargetAmount - (Phase.PREACT.ACTUAL + Phase.PREACT.DRIBBLE))OTE(Phase.PREACT.DRIBBLING);
+				N: XIC(Phase.STATE.RUNNING)LIM(4210,Phase.STEP_INDEX,5999)XIC(BlowerPressure.Lo.ACTIVE)XIO(BlowerPressure.LoLo.ACTIVE)TON(EmptyTubeTimer,?,?);
+				N: XIC(Phase.STATE.RUNNING)[LIM(6000,Phase.STEP_INDEX,6999) ,EQU(Phase.STEP_INDEX_GOTO,6000) ]XIC(BlowerMotor.STAT.INTERLOCK)MOV(7000,Phase.STEP_INDEX)MOV(7000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,6000)[XIC(BlowerPressure.Lo.ACTIVE) ,XIC(BlowerPressure.HiHi.ACTIVE) ,XIC(BlowerPressure.Hi.ACTIVE) GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,15) ,GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,SettingPurgeTimeWaitingForLowPressure) OTL(Phase.ALARM[3].ACTIVE) ]MOV(6010,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,6010)GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,SettingTimeUntilFinalReading)MOV(6020,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,6020)[LES(BlowerPressure.SCALED,BlowerPressure.LoLo.LIM) ,GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,30) ][XIC(Phase.TMR[1].DN) MOV(7000,Phase.STEP_INDEX_GOTO) ,TON(Phase.TMR[1],?,?) ];
+				RC: "Wait for usebin low level, then restart by returning to permissive step$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,7000)MOV(3010,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,8000)MOV(9000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,9000)[GRT(TargetAmountTolerance,0) CMP(ABS(ActualAmountError)>TargetAmountTolerance) OTL(Phase.STAT.OUT_TOL) ,XIO(Phase.STAT.OUT_TOL) MOV(10000,Phase.STEP_INDEX_GOTO) ,XIC(Phase.STAT.OUT_TOL) MOV(9010,Phase.STEP_INDEX_GOTO) ];
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,9010)[XIC(Phase.CMD.ACK) ,XIC(Phase.CMD.ACK_OUT_TOL) ]OTU(Phase.STAT.OUT_TOL)MOV(10000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.RUNNING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Holding)[GEQ(Phase.STEP_INDEX,6000) MOV(Phase.STEP_INDEX,Phase.STEP_INDEX_GOTO_ON_RESTART) ,LES(Phase.STEP_INDEX,6000) MOV(2900,Phase.STEP_INDEX_GOTO_ON_RESTART) ];
+				N: XIC(Phase.STATE.HOLDING)EQU(Phase.STEP_INDEX,2000)GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.RECORD.PRE)MOV(2900,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.HOLDING)LIM(2001,Phase.STEP_INDEX,2999)MOV(3000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.HOLDING)LIM(3000,Phase.STEP_INDEX,4199)MOV(7000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.HOLDING)LIM(4200,Phase.STEP_INDEX,5999)MOV(6000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.HOLDING)[LIM(6000,Phase.STEP_INDEX,6999) ,EQU(Phase.STEP_INDEX_GOTO,6000) ]XIC(BlowerMotor.STAT.INTERLOCK)MOV(7000,Phase.STEP_INDEX)MOV(7000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.HOLDING)EQU(Phase.STEP_INDEX,6000)[XIC(BlowerPressure.Lo.ACTIVE) ,XIC(BlowerPressure.HiHi.ACTIVE) ,XIC(BlowerPressure.Hi.ACTIVE) GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,20) ,GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,SettingPurgeTimeWaitingForLowPressure) ]MOV(6010,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.HOLDING)EQU(Phase.STEP_INDEX,6010)GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,SettingTimeUntilFinalReading)MOV(6020,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.HOLDING)EQU(Phase.STEP_INDEX,6020)[LES(BlowerPressure.SCALED,BlowerPressure.LoLo.LIM) ,GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,30) ]MOV(7000,Phase.STEP_INDEX_GOTO);
+				N: NOP();
+				N: XIC(Phase.STATE.HOLDING)GEQ(Phase.STEP_INDEX,7000)OTE(Phase.STAT.HOLDING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Restarting)GRT(Phase.STEP_INDEX_GOTO_ON_RESTART,0)MOV(Phase.STEP_INDEX_GOTO_ON_RESTART,Phase.STEP_INDEX_GOTO)MOV(-1,Phase.STEP_INDEX_GOTO_ON_RESTART);
+				N: NOP();
+				N: XIC(Phase.STATE.RESTARTING)[XIC(Phase.STEP_TMR.RESTARTING.DN) OTE(Phase.STAT.RESTARTING_COMPLETE) ,TON(Phase.STEP_TMR.RESTARTING,?,?) ];
+				N: NOP();
+				N: XIC(Phase.STATE.STOPPING)LIM(1,Phase.STEP_INDEX,4199)MOV(7000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)LIM(4200,Phase.STEP_INDEX,5999)MOV(6000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)[LIM(6000,Phase.STEP_INDEX,6999) ,EQU(Phase.STEP_INDEX_GOTO,6000) ]XIC(BlowerMotor.STAT.INTERLOCK)MOV(7000,Phase.STEP_INDEX)MOV(7000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,6000)[XIC(BlowerPressure.Lo.ACTIVE) ,GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,SettingPurgeTimeWaitingForLowPressure) ]MOV(6010,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,6010)GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,SettingTimeUntilFinalReading)MOV(6020,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,6020)[LES(BlowerPressure.SCALED,BlowerPressure.LoLo.LIM) ,GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,30) ][XIC(Phase.TMR[2].DN) MOV(7000,Phase.STEP_INDEX_GOTO) ,TON(Phase.TMR[2],?,?) ];
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,7000)MOV(8000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,8000)MOV(9000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)LIM(9000,Phase.STEP_INDEX,9999)MOV(10000,Phase.STEP_INDEX_GOTO);
+				N: NOP();
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.STOPPING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Aborting)MOV(10000,Phase.STEP_INDEX_GOTO);
+				N: NOP();
+				N: XIC(Phase.STATE.ABORTING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.ABORTING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Idle)MOV(0,Phase.STEP_INDEX_GOTO_ON_RESTART)OTU(Phase.STAT.OUT_TOL)OTU(Phase.PREACT.PreactOutOfLimitHigh)OTU(Phase.PREACT.PreactOutOfLimitLow);
+				N: XIC(Phase.STATE.RUNNING)[EQU(Phase.STEP_INDEX,9010) ,EQU(Phase.STEP_INDEX,2010) ]OTE(Phase.STAT.ACK_REQUIRED);
+				N: XIC(Phase.STATE.DONE)OTL(Phase.CMD.RESET);
+		END_ROUTINE
+
+		ROUTINE _100_Arbitration 
+				N: NOP();
+				N: [XIC(Phase.NEEDS.LIST[0].ACQUIRED) ,EQU(Phase.NEEDS.LIST[0].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[1].ACQUIRED) ,EQU(Phase.NEEDS.LIST[1].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[2].ACQUIRED) ,EQU(Phase.NEEDS.LIST[2].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[3].ACQUIRED) ,EQU(Phase.NEEDS.LIST[3].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[4].ACQUIRED) ,EQU(Phase.NEEDS.LIST[4].OBJECT_INDEX,0) ]OTE(Phase.NEEDS.OWNS_ALL_REQUIRED);
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.STEP_INDEX,3000)XIC(Phase.STEP.FirstScanInStepIndex)OTL(Phase.NEEDS.StartArbitration);
+				N: [XIC(Phase.STATE.IDLE) ,XIC(Phase.STATE.RUNNING) [EQU(Phase.STEP_INDEX,3010) ,EQU(Phase.STEP_INDEX,8000) ] ,XIC(Phase.STATE.DONE) ,XIC(Phase.STATE.HELD) ]OTE(Phase.NEEDS.Release);
+				N: [XIC(Phase.NEEDS.StartArbitration) MOV(0,Phase.NEEDS.LIST_INDEX) OTL(Phase.NEEDS.Arbitrating) OTU(Phase.NEEDS.StartArbitration) ,XIC(Phase.NEEDS.Arbitrating) XIC(Phase.NEEDS.OWNS_ALL_REQUIRED) OTU(Phase.NEEDS.Arbitrating) ];
+				N: [EQU(Arb00.ARB.OWNER,Phase.ID) OTE(Phase.NEEDS.LIST[0].ACQUIRED) ,XIC(Phase.NEEDS.Arbitrating) EQU(Phase.NEEDS.LIST_INDEX,0) [XIO(Phase.NEEDS.LIST[0].REQUESTED) EQU(Arb00.ARB.RQ,0) MOV(Phase.ID,Arb00.ARB.RQ) OTL(Phase.NEEDS.LIST[0].REQUESTED) ,XIC(Phase.NEEDS.LIST[0].ACQUIRED) OTU(Phase.NEEDS.LIST[0].REQUESTED) MOV(1,Phase.NEEDS.LIST_INDEX) ] ,XIC(Phase.NEEDS.Release) EQU(Arb00.ARB.OWNER,Phase.ID) MOV(Phase.ID,Arb00.ARB.RELEASE) ,MOV(cCOMMON.AI_OBJECT_NUMBER,Phase.NEEDS.LIST[0].OBJECT_TYPE) MOV(Arb00.ID,Phase.NEEDS.LIST[0].OBJECT_INDEX) ];
+				N: [EQU(Arb01.ARB.OWNER,Phase.ID) OTE(Phase.NEEDS.LIST[1].ACQUIRED) ,XIC(Phase.NEEDS.Arbitrating) EQU(Phase.NEEDS.LIST_INDEX,1) [XIO(Phase.NEEDS.LIST[1].REQUESTED) EQU(Arb01.ARB.RQ,0) MOV(Phase.ID,Arb01.ARB.RQ) OTL(Phase.NEEDS.LIST[1].REQUESTED) ,XIC(Phase.NEEDS.LIST[1].ACQUIRED) OTU(Phase.NEEDS.LIST[1].REQUESTED) MOV(2,Phase.NEEDS.LIST_INDEX) ] ,XIC(Phase.NEEDS.Release) EQU(Arb01.ARB.OWNER,Phase.ID) MOV(Phase.ID,Arb01.ARB.RELEASE) ,MOV(cCOMMON.DO_OBJECT_NUMBER,Phase.NEEDS.LIST[1].OBJECT_TYPE) MOV(Arb01.ID,Phase.NEEDS.LIST[1].OBJECT_INDEX) ];
+				N: [EQU(Arb02.ARB.OWNER,Phase.ID) OTE(Phase.NEEDS.LIST[2].ACQUIRED) ,XIC(Phase.NEEDS.Arbitrating) EQU(Phase.NEEDS.LIST_INDEX,2) [XIO(Phase.NEEDS.LIST[2].REQUESTED) EQU(Arb02.ARB.RQ,0) MOV(Phase.ID,Arb02.ARB.RQ) OTL(Phase.NEEDS.LIST[2].REQUESTED) ,XIC(Phase.NEEDS.LIST[2].ACQUIRED) OTU(Phase.NEEDS.LIST[2].REQUESTED) MOV(3,Phase.NEEDS.LIST_INDEX) ] ,XIC(Phase.NEEDS.Release) EQU(Arb02.ARB.OWNER,Phase.ID) MOV(Phase.ID,Arb02.ARB.RELEASE) ,MOV(cCOMMON.AI_OBJECT_NUMBER,Phase.NEEDS.LIST[2].OBJECT_TYPE) MOV(Arb02.ID,Phase.NEEDS.LIST[2].OBJECT_INDEX) ];
+				N: MOV(0,Phase.NEEDS.LIST[3].OBJECT_TYPE)MOV(0,Phase.NEEDS.LIST[3].OBJECT_INDEX);
+				N: MOV(0,Phase.NEEDS.LIST[4].OBJECT_TYPE)MOV(0,Phase.NEEDS.LIST[4].OBJECT_INDEX);
+		END_ROUTINE
+
+		ROUTINE _110_ControlModule 
+				N: NOP();
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				RC: "THIS phase is attempting to set it$'s path, AND all non-divert valves are in correct position$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)XIC(AutoRunPath)XIC(Path03.STAT.ON_OPEN)OTE(AutoRunReadyToTakeBlowerPath);
+				RC: "Keep path open for an OFF delay after blower stops.$N"
+				    "AND ALSO$N"
+				    "if another phase takes ownership of the blower, then we can close the path$N"
+				    "";
+				N: [[XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.HOLDING) ,XIC(Phase.STATE.STOPPING) ] [LIM(4000,Phase.STEP_INDEX,6010) ,XIC(BlowerMotor.STAT.AUTO_RUN) ] TOF(Phase.TMR[8],?,?) ,XIC(Phase.TMR[8].DN) OTE(AutoRunPath) ,XIC(OtherBlowerOwnerPhase01.CM.AutoRun[2]) MOV(Phase.TMR[8].PRE,Phase.TMR[8].ACC) ];
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.HOLDING) ,XIC(Phase.STATE.STOPPING) ]LIM(4100,Phase.STEP_INDEX,6010)OTE(AutoRunBlower);
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.HOLDING) ,XIC(Phase.STATE.STOPPING) ]LIM(4040,Phase.STEP_INDEX,6010)OTE(AutoRunDustCollector);
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.HOLDING) ,XIC(Phase.STATE.STOPPING) ]LIM(4280,Phase.STEP_INDEX,5999)OTE(AutoRunFeederMotor);
+				RC: "If we want to let this fill it up to high level, then we could open this LIM up and not let the phase complete until filled$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)LIM(4290,Phase.STEP_INDEX,5000)[XIC(UsebinWeight.Lo.ACTIVE) ,XIC(AutoRunAirlockMotor) ]XIO(UsebinWeight.Hi.ACTIVE)OTE(AutoRunAirlockMotor);
+				N: XIC(Phase.STATE.RUNNING)LIM(4280,Phase.STEP_INDEX,5000)OTE(AutoRunActivator);
+				N: XIC(Phase.STATE.RUNNING)LIM(4280,Phase.STEP_INDEX,5999)XIC(Phase.PREACT.DRIBBLING)OTE(AutoRunDribble);
+				N: XIC(Phase.STATE.RUNNING)LIM(4280,Phase.STEP_INDEX,5000)OTE(AutoRunMonitorFlowrate);
+				N: ADD(UsebinWeight.SCALED,HopperWeight.SCALED,Phase.ACTUAL[5]);
+				N: [XIC(Phase.CMD.START) ,XIC(Phase.CMD.RESTART) ]OTU(Phase.ALARM[3].ACTIVE)OTL(BlowerMotor.CMD.RESET)OTL(DustCollector.CMD.RESET)OTL(Activator.CMD.RESET)OTL(Airlock.CMD.RESET)OTL(Feeder.CMD.RESET);
+		END_ROUTINE
+
+		ROUTINE _120_PermissiveFaultAndMessaging 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'USEBIN.TO.HOPPER:02.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(Path01.STAT.OFF_CLOSED)XIC(Path02.STAT.OFF_CLOSED)XIC(Path03.STAT.ON_OPEN)OTE(ValidPath);
+				RC: "$N"
+				    "";
+				N: [MOV(0,Phase.MSG.PERM) ,NEQ(Arb02.ARB.OWNER,Phase.ID) MOV(13,Phase.MSG.PERM) ,NEQ(Arb01.ARB.OWNER,Phase.ID) MOV(11,Phase.MSG.PERM) ,NEQ(Arb00.ARB.OWNER,Phase.ID) MOV(12,Phase.MSG.PERM) ,XIO(Feeder.STAT.AUTO) MOV(1,Phase.MSG.PERM) ,XIO(BlowerMotor.STAT.AUTO) MOV(2,Phase.MSG.PERM) ,XIO(DustCollector.STAT.AUTO) MOV(3,Phase.MSG.PERM) ,XIO(Airlock.STAT.AUTO) MOV(4,Phase.MSG.PERM) ,XIO(Path01.STAT.AUTO) MOV(5,Phase.MSG.PERM) ,XIO(Path02.STAT.AUTO) MOV(6,Phase.MSG.PERM) ,XIO(Path03.STAT.AUTO) MOV(7,Phase.MSG.PERM) ,XIO(Activator.STAT.AUTO) MOV(8,Phase.MSG.PERM) ,EQU(Phase.MSG.PERM,0) OTE(Phase.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.MSG.FAULT,0)[XIC(EStop.STAT.FAULT) MOV(21,Phase.MSG.FAULT) ,XIC(Feeder.STAT.FAULT) MOV(22,Phase.MSG.FAULT) ,XIC(BlowerPressure.STAT.FAULT) MOV(25,Phase.MSG.FAULT) ,XIC(BlowerPressure.HiHi.ACTIVE) MOV(26,Phase.MSG.FAULT) ,EQU(Phase.STEP_INDEX,5000) XIC(BlowerPressure.LoLo.ACTIVE) MOV(27,Phase.MSG.FAULT) ,XIC(AutoRunBlower) XIC(BlowerMotor.STAT.INTERLOCK) MOV(28,Phase.MSG.FAULT) ,XIC(BlowerMotor.STAT.FAULT) MOV(29,Phase.MSG.FAULT) ,XIC(AutoRunBlower) XIO(ValidPath) MOV(30,Phase.MSG.FAULT) ,XIC(DustCollector.STAT.FAULT) MOV(31,Phase.MSG.FAULT) ,XIC(HopperWeight.STAT.FAULT) MOV(32,Phase.MSG.FAULT) ,LIM(4000,Phase.STEP_INDEX,5999) XIC(HopperWeight.HiHi.ACTIVE) MOV(33,Phase.MSG.FAULT) ,XIC(HopperWeight.RATE.LoLo.ACTIVE) MOV(34,Phase.MSG.FAULT) ,LES(TargetAmount,Phase.PREACT.ACTUAL) MOV(35,Phase.MSG.FAULT) ,XIC(Activator.STAT.FAULT) MOV(36,Phase.MSG.FAULT) ,XIC(Path02.STAT.FAULT) MOV(42,Phase.MSG.FAULT) ,XIC(Path03.STAT.FAULT) MOV(43,Phase.MSG.FAULT) ,XIC(Path01.STAT.FAULT) MOV(44,Phase.MSG.FAULT) ,XIC(Airlock.STAT.FAULT) MOV(45,Phase.MSG.FAULT) ,XIC(cSETUP.SIMULATION.Enabled) XIC(cSETUP.SIMULATION.PHASE) MOV(0,Phase.MSG.FAULT) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "";
+				N: [MOV(0,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIO(Phase.STEP.RECORD) MOV(61,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIC(Phase.STEP.RECORD) MOV(62,Phase.MSG.MSG) ,XIC(Phase.STATE.HELD) XIO(Phase.STAT.FAULTED) MOV(63,Phase.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE.UNIQUE$'$N"
+				    "Function=$'STATUS.MESSAGE.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(AOI.Message,Phase.ID,Phase.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE.STATUS$'$N"
+				    "Function=$'MESSAGE$'$N"
+				    "";
+				N: [LIM(2000,Phase.STEP_INDEX,3000) NEQ(Phase.MSG.PERM,0) MOV(Phase.MSG.PERM,Phase.MSG.MSG) ,GEQ(Phase.STEP_INDEX,3000) NEQ(Phase.MSG.FAULT,0) MOV(Phase.MSG.FAULT,Phase.MSG.MSG) ,EQU(Phase.MSG.FAULT,0) EQU(Phase.MSG.PERM,0) ONS(Phase.MSG.OS.1) CLR(Phase.MSG.MSG) ];
+		END_ROUTINE
+
+		ROUTINE _130_Alarming 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'USEBIN.TO.HOPPER:02.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ALARM.FAULT$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(Phase.STAT.FAULTED) OTE(Phase.ALARM[0].ACTIVE) ,AlarmControl(AOI.AlarmControl[0],Phase.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "GEM-1 Glycerin Out of Tolerance";
+				N: [XIC(Phase.STAT.OUT_TOL) OTE(Phase.ALARM[1].ACTIVE) ,AlarmControl(AOI.AlarmControl[1],Phase.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

@@ -1,0 +1,385 @@
+	PROGRAM Loading_ShorteningPalm (Description := "$NProgram=$'EM$'$NClass=$'LOADSTATION.01.01$'$N",
+	                                MAIN := "_Main",
+	                                MODE := 0,
+	                                DisableFlag := 0,
+	                                UseAsFolder := 0)
+		TAG
+			ConnectionProx01 OF cDI[412] ;
+			ConnectionProx01_IO_Input OF iRack2A:6:I.Pt06.Data (RADIX := Decimal);
+			ConnectionProx02 OF cDI[411] ;
+			ConnectionProx02_IO_Input OF iRack2A:6:I.Pt07.Data (RADIX := Decimal);
+			ConnectionProx03 : CB_DI  := [0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]];
+			EStop OF cDI[5] ;
+			HighLevelSwitch01 OF cDI[225] ;
+			HighLevelSwitch02 OF cDI[220] ;
+			HighLevelSwitch03 : CB_DI  := [0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]];
+			InletValve01 OF cDO[645] ;
+			InletValve01_IO_Closed OF iRack2A:4:I.Pt11.Data (RADIX := Decimal);
+			InletValve01_IO_Opened OF iRack2A:4:I.Pt10.Data (RADIX := Decimal);
+			InletValve01_IO_Output OF iRack2A:7:O.Pt05.Data (RADIX := Decimal);
+			InletValve02 OF cDO[644] ;
+			InletValve02_IO_Closed OF iRack2A:4:I.Pt07.Data (RADIX := Decimal);
+			InletValve02_IO_Opened OF iRack2A:4:I.Pt06.Data (RADIX := Decimal);
+			InletValve02_IO_Output OF iRack2A:7:O.Pt03.Data (RADIX := Decimal);
+			Level01 OF cAI[135] ;
+			Level02 OF cAI[125] ;
+			Level03 : CB_AI  := [0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000,[0,0,0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0],0.00000000e+000
+					,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000
+					,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,[0,0,0],0]];
+			Null : CB_NULL  := [[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0
+					],[0,0,0,0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1],[1],[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1],[1,0,0,0],[[1],[1],[1]],[1,0,0,[0,0
+					,0]]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[0],[[0,0,0],[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[[[0,0,0],[0,0,0]],[[0,0,0,0],[0,0
+					,0,0]],[[0,0,0,0],[0,0,0,0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000
+					,[0,0,0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0
+					,0,0,0],[0,0,0,0,0,0],0.00000000e+000,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0
+					],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1
+					],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000
+					,0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0
+					,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0,0],[0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,[[0,0.00000000e+000,0.00000000e+000,0,[0,0,0],[0,0,0]],[0,0.00000000e+000,0.00000000e+000
+					,0,[0,0,0],[0,0,0]],[0,[0,0,0]]],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0],[[1],[1]]],[0,0,0,0,0,0,0,0,[[0,0,0,0
+					,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0]],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[0,[0,0],0],[0],0,0,0,0,0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0]],0,0,0,0,[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000],[0,0,0,0,0],0,0,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,0,0,0,0,0,0,0,0
+					,[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					]],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0],[0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0],[[1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0]]]];
+			OIT OF dOIT[1] ;
+			PowerInput OF cDI[455] ;
+			PowerInput_Old OF cDI[19] ;
+			PowerOutput OF cDI[456] ;
+			PowerOutput_Delete OF cDI[457] ;
+			PowerOutput_Old OF cDI[20] ;
+			PowerSafety OF cDI[457] ;
+			PowerSafety_Delete OF cDI[456] ;
+			PowerSafety_Old OF cDI[21] ;
+			ReadyLight OF cDO[646] ;
+			ReadyLight_IO_Output OF iRack2A:8:O.Pt08.Data (RADIX := Decimal);
+			ResetButtonLight OF cDO[648] ;
+			ResetButtonLight_IO_Output OF iRack2A:8:O.Pt07.Data (RADIX := Decimal);
+			ResetPushButton OF cDI[413] ;
+			ResetPushButton_IO_Input OF iRack2A:6:I.Pt05.Data (RADIX := Decimal);
+			Unit OF cUNIT[66] ;
+			WarningHorn OF cDO[647] ;
+			WarningHorn_IO_Output OF iRack2A:8:O.Pt06.Data (RADIX := Decimal);
+		END_TAG
+
+		ROUTINE ConnectionProx01 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Prox Switch.Loading_ShorteningPalm$'$N"
+				    "ControlModule=$'Prox Switch.ConnectionProx01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(ConnectionProx01_IO_Input) OTE(ConnectionProx01.STAT.ENERGIZED) ,XIC(ConnectionProx01.STAT.ENERGIZED) [XIC(ConnectionProx01.DELAY.ON.DN) OTL(ConnectionProx01.STAT.ON) OTU(ConnectionProx01.STAT.OFF) ,TON(ConnectionProx01.DELAY.ON,?,?) ] ,XIO(ConnectionProx01.STAT.ENERGIZED) [XIC(ConnectionProx01.DELAY.OFF.DN) OTU(ConnectionProx01.STAT.ON) OTL(ConnectionProx01.STAT.OFF) ,TON(ConnectionProx01.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE ConnectionProx02 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Prox Switch.Loading_ShorteningPalm$'$N"
+				    "ControlModule=$'Prox Switch.ConnectionProx02$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(ConnectionProx02_IO_Input) OTE(ConnectionProx02.STAT.ENERGIZED) ,XIC(ConnectionProx02.STAT.ENERGIZED) [XIC(ConnectionProx02.DELAY.ON.DN) OTL(ConnectionProx02.STAT.ON) OTU(ConnectionProx02.STAT.OFF) ,TON(ConnectionProx02.DELAY.ON,?,?) ] ,XIO(ConnectionProx02.STAT.ENERGIZED) [XIC(ConnectionProx02.DELAY.OFF.DN) OTU(ConnectionProx02.STAT.ON) OTL(ConnectionProx02.STAT.OFF) ,TON(ConnectionProx02.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE InletValve01 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Valve.Loading_ShorteningPalm$'$N"
+				    "ControlModule=$'Valve.InletValve01$'$N"
+				    "";
+				N: NOP();
+				N: OTE(InletValve01.STAT.AUTO_RUN);
+				N: [MOV(0,InletValve01.MSG.PERM) ,XIC(ConnectionProx02.STAT.OFF) MOV(5,InletValve01.MSG.PERM) ,EQU(InletValve01.MSG.PERM,0) OTE(InletValve01.STAT.PERMISSIVE) ];
+				N: [XIC(HighLevelSwitch01.STAT.FAULT) ,XIC(HighLevelSwitch01.STAT.ON) ,XIC(Level01.HiHi.ACTIVE) ]TON(InletValve01.TMR[0],?,?);
+				N: [MOV(0,InletValve01.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,InletValve01.MSG.INTRLK) ,XIC(HighLevelSwitch01.STAT.FAULT) XIC(InletValve01.TMR[0].DN) MOV(22,InletValve01.MSG.INTRLK) ,XIC(HighLevelSwitch01.STAT.ON) XIC(InletValve01.TMR[0].DN) MOV(23,InletValve01.MSG.INTRLK) ,XIC(Level01.HiHi.ACTIVE) XIC(InletValve01.TMR[0].DN) MOV(24,InletValve01.MSG.INTRLK) ,NEQ(InletValve01.MSG.INTRLK,0) OTE(InletValve01.STAT.INTERLOCK) ];
+				N: [XIC(InletValve01.STAT.ENERGIZE) [XIO(InletValve01.STAT.ON_OPEN) ,XIC(InletValve01.STAT.OFF_CLOSED) ] ,XIO(InletValve01.STAT.ENERGIZE) [XIC(InletValve01.STAT.ON_OPEN) ,XIO(InletValve01.STAT.OFF_CLOSED) ] ,XIC(InletValve01.STAT.FAULT) ]XIO(InletValve01.CMD.RESET)[XIC(InletValve01.DELAY.FAULT.DN) OTE(InletValve01.STAT.FAULT) ,TON(InletValve01.DELAY.FAULT,?,?) ];
+				N: [MOV(0,InletValve01.MSG.MSG) ,XIC(InletValve01.STAT.ENERGIZE) XIC(InletValve01.STAT.OFF_CLOSED) MOV(61,InletValve01.MSG.MSG) ,XIO(InletValve01.STAT.ENERGIZE) XIO(InletValve01.STAT.OFF_CLOSED) MOV(62,InletValve01.MSG.MSG) ,XIC(InletValve01.STAT.ENERGIZE) XIO(InletValve01.STAT.ON_OPEN) MOV(63,InletValve01.MSG.MSG) ,XIO(InletValve01.STAT.ENERGIZE) XIC(InletValve01.STAT.ON_OPEN) MOV(64,InletValve01.MSG.MSG) ];
+				N: [XIC(InletValve01.STAT.AUTO_RUN) NEQ(InletValve01.MSG.PERM,0) MOV(InletValve01.MSG.PERM,InletValve01.MSG.MSG) ,NEQ(InletValve01.MSG.INTRLK,0) MOV(InletValve01.MSG.INTRLK,InletValve01.MSG.MSG) ,NEQ(InletValve01.MSG.FAULT,0) MOV(InletValve01.MSG.FAULT,InletValve01.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(InletValve01.AOI.Message,InletValve01.ID,InletValve01.MSG);
+				N: DiscreteOutputControl(InletValve01.AOI.Control,InletValve01.CMD,InletValve01.STAT);
+				N: [XIC(InletValve01.STAT.ENERGIZE) OTE(InletValve01_IO_Output) ,[XIO(InletValve01.STAT.ON_OPEN_BYPASS) XIC(InletValve01_IO_Opened) ,XIC(InletValve01.STAT.ON_OPEN_BYPASS) XIC(InletValve01.STAT.ENERGIZE) ] [OTE(InletValve01.STAT.ON_OPEN) ,XIC(InletValve01.DELAY.ON.DN) OTE(InletValve01.STAT.ON_OPEN_DELAY) ,TON(InletValve01.DELAY.ON,?,?) ] ,[XIO(InletValve01.STAT.OFF_CLOSED_BYPASS) XIC(InletValve01_IO_Closed) ,XIC(InletValve01.STAT.OFF_CLOSED_BYPASS) XIO(InletValve01.STAT.ENERGIZE) ] [OTE(InletValve01.STAT.OFF_CLOSED) ,XIC(InletValve01.DELAY.OFF.DN) OTE(InletValve01.STAT.OFF_CLOSED_DELAY) ,TON(InletValve01.DELAY.OFF,?,?) ] ,XIC(PowerInput.STAT.ON) XIC(PowerOutput.STAT.ON) XIC(PowerSafety.STAT.ON) OTE(InletValve01.STAT.ControlPowerOn) ];
+				N: [XIC(InletValve01.STAT.ControlPowerOn) XIC(InletValve01.STAT.FAULT) OTE(InletValve01.ALARM[0].ACTIVE) ,AlarmControl(InletValve01.AOI.AlarmControl[0],InletValve01.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: OTU(InletValve01.STAT.DISABLE_REPORTING)MOV(201326647,InletValve01.REPORT.CMD.Mask.BITS)MOV(16247,InletValve01.REPORT.STAT_TRUE.Mask.BITS)MOV(16247,InletValve01.REPORT.STAT_FALSE.Mask.BITS);
+		END_ROUTINE
+
+		ROUTINE InletValve02 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Valve.Loading_ShorteningPalm$'$N"
+				    "ControlModule=$'Valve.InletValve02$'$N"
+				    "";
+				N: NOP();
+				N: OTE(InletValve02.STAT.AUTO_RUN);
+				N: [MOV(0,InletValve02.MSG.PERM) ,XIC(ConnectionProx01.STAT.OFF) MOV(5,InletValve02.MSG.PERM) ,EQU(InletValve02.MSG.PERM,0) OTE(InletValve02.STAT.PERMISSIVE) ];
+				N: [XIC(HighLevelSwitch02.STAT.FAULT) ,XIC(HighLevelSwitch02.STAT.ON) ,XIC(Level02.HiHi.ACTIVE) ]TON(InletValve02.TMR[0],?,?);
+				N: [MOV(0,InletValve02.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,InletValve02.MSG.INTRLK) ,XIC(HighLevelSwitch02.STAT.FAULT) XIC(InletValve02.TMR[0].DN) MOV(22,InletValve02.MSG.INTRLK) ,XIC(HighLevelSwitch02.STAT.ON) XIC(InletValve02.TMR[0].DN) MOV(23,InletValve02.MSG.INTRLK) ,XIC(Level02.HiHi.ACTIVE) XIC(InletValve02.TMR[0].DN) MOV(24,InletValve02.MSG.INTRLK) ,NEQ(InletValve02.MSG.INTRLK,0) OTE(InletValve02.STAT.INTERLOCK) ];
+				N: [XIC(InletValve02.STAT.ENERGIZE) [XIO(InletValve02.STAT.ON_OPEN) ,XIC(InletValve02.STAT.OFF_CLOSED) ] ,XIO(InletValve02.STAT.ENERGIZE) [XIC(InletValve02.STAT.ON_OPEN) ,XIO(InletValve02.STAT.OFF_CLOSED) ] ,XIC(InletValve02.STAT.FAULT) ]XIO(InletValve02.CMD.RESET)[XIC(InletValve02.DELAY.FAULT.DN) OTE(InletValve02.STAT.FAULT) ,TON(InletValve02.DELAY.FAULT,?,?) ];
+				N: [MOV(0,InletValve02.MSG.MSG) ,XIC(InletValve02.STAT.ENERGIZE) XIC(InletValve02.STAT.OFF_CLOSED) MOV(61,InletValve02.MSG.MSG) ,XIO(InletValve02.STAT.ENERGIZE) XIO(InletValve02.STAT.OFF_CLOSED) MOV(62,InletValve02.MSG.MSG) ,XIC(InletValve02.STAT.ENERGIZE) XIO(InletValve02.STAT.ON_OPEN) MOV(63,InletValve02.MSG.MSG) ,XIO(InletValve02.STAT.ENERGIZE) XIC(InletValve02.STAT.ON_OPEN) MOV(64,InletValve02.MSG.MSG) ];
+				N: [XIC(InletValve02.STAT.AUTO_RUN) NEQ(InletValve02.MSG.PERM,0) MOV(InletValve02.MSG.PERM,InletValve02.MSG.MSG) ,NEQ(InletValve02.MSG.INTRLK,0) MOV(InletValve02.MSG.INTRLK,InletValve02.MSG.MSG) ,NEQ(InletValve02.MSG.FAULT,0) MOV(InletValve02.MSG.FAULT,InletValve02.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(InletValve02.AOI.Message,InletValve02.ID,InletValve02.MSG);
+				N: DiscreteOutputControl(InletValve02.AOI.Control,InletValve02.CMD,InletValve02.STAT);
+				N: [XIC(InletValve02.STAT.ENERGIZE) OTE(InletValve02_IO_Output) ,[XIO(InletValve02.STAT.ON_OPEN_BYPASS) XIC(InletValve02_IO_Opened) ,XIC(InletValve02.STAT.ON_OPEN_BYPASS) XIC(InletValve02.STAT.ENERGIZE) ] [OTE(InletValve02.STAT.ON_OPEN) ,XIC(InletValve02.DELAY.ON.DN) OTE(InletValve02.STAT.ON_OPEN_DELAY) ,TON(InletValve02.DELAY.ON,?,?) ] ,[XIO(InletValve02.STAT.OFF_CLOSED_BYPASS) XIC(InletValve02_IO_Closed) ,XIC(InletValve02.STAT.OFF_CLOSED_BYPASS) XIO(InletValve02.STAT.ENERGIZE) ] [OTE(InletValve02.STAT.OFF_CLOSED) ,XIC(InletValve02.DELAY.OFF.DN) OTE(InletValve02.STAT.OFF_CLOSED_DELAY) ,TON(InletValve02.DELAY.OFF,?,?) ] ,XIC(PowerInput.STAT.ON) XIC(PowerOutput.STAT.ON) XIC(PowerSafety.STAT.ON) OTE(InletValve02.STAT.ControlPowerOn) ];
+				N: [XIC(InletValve02.STAT.ControlPowerOn) XIC(InletValve02.STAT.FAULT) OTE(InletValve02.ALARM[0].ACTIVE) ,AlarmControl(InletValve02.AOI.AlarmControl[0],InletValve02.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: OTU(InletValve02.STAT.DISABLE_REPORTING)MOV(202326647,InletValve02.REPORT.CMD.Mask.BITS)MOV(16247,InletValve02.REPORT.STAT_TRUE.Mask.BITS)MOV(16247,InletValve02.REPORT.STAT_FALSE.Mask.BITS);
+		END_ROUTINE
+
+		ROUTINE ReadyLight 
+				N: NOP();
+				N: [XIC(ConnectionProx01.STAT.ON) ,XIC(ConnectionProx02.STAT.ON) ,XIC(ConnectionProx03.STAT.ON) ]OTE(ReadyLight.STAT.AUTO_RUN);
+				N: [MOV(0,ReadyLight.MSG.PERM) ,[XIC(ConnectionProx02.STAT.ON) XIC(Level01.Hi.ACTIVE) ,XIC(ConnectionProx01.STAT.ON) XIC(Level02.Hi.ACTIVE) ,XIC(ConnectionProx03.STAT.ON) XIC(Level03.Hi.ACTIVE) ] MOV(1,ReadyLight.MSG.PERM) ,XIO(ConnectionProx01.STAT.ON) XIO(ConnectionProx02.STAT.ON) XIO(ConnectionProx03.STAT.ON) MOV(2,ReadyLight.MSG.PERM) ,EQU(ReadyLight.MSG.PERM,0) OTE(ReadyLight.STAT.PERMISSIVE) ];
+				N: [MOV(0,ReadyLight.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,ReadyLight.MSG.INTRLK) ,[XIC(ConnectionProx02.STAT.ON) XIC(Level01.HiHi.ACTIVE) ,XIC(ConnectionProx01.STAT.ON) XIC(Level02.HiHi.ACTIVE) ,XIC(ConnectionProx03.STAT.ON) XIC(Level03.HiHi.ACTIVE) ] MOV(22,ReadyLight.MSG.INTRLK) ,[XIC(ConnectionProx02.STAT.ON) XIC(HighLevelSwitch01.STAT.ON) ,XIC(ConnectionProx01.STAT.ON) XIC(HighLevelSwitch02.STAT.ON) ,XIC(ConnectionProx03.STAT.ON) XIC(HighLevelSwitch03.STAT.ON) ] MOV(23,ReadyLight.MSG.INTRLK) ,[XIC(ConnectionProx02.STAT.ON) XIC(HighLevelSwitch01.STAT.FAULT) ,XIC(ConnectionProx01.STAT.ON) XIC(HighLevelSwitch02.STAT.FAULT) ,XIC(ConnectionProx03.STAT.ON) XIC(HighLevelSwitch03.STAT.FAULT) ] MOV(24,ReadyLight.MSG.INTRLK) ,NEQ(ReadyLight.MSG.INTRLK,0) OTE(ReadyLight.STAT.INTERLOCK) ];
+				N: [MOV(0,ReadyLight.MSG.MSG) ,XIC(ReadyLight.STAT.ON_OPEN) MOV(61,ReadyLight.MSG.MSG) ];
+				N: [NEQ(ReadyLight.MSG.PERM,0) MOV(ReadyLight.MSG.PERM,ReadyLight.MSG.MSG) ,NEQ(ReadyLight.MSG.INTRLK,0) MOV(ReadyLight.MSG.INTRLK,ReadyLight.MSG.MSG) ,NEQ(ReadyLight.MSG.FAULT,0) MOV(ReadyLight.MSG.FAULT,ReadyLight.MSG.MSG) ];
+				N: MakeMessageNumberGloballyUnique(ReadyLight.AOI.Message,ReadyLight.ID,ReadyLight.MSG);
+				N: DiscreteOutputControl(ReadyLight.AOI.Control,ReadyLight.CMD,ReadyLight.STAT);
+				N: [XIC(ReadyLight.STAT.ENERGIZE) OTE(ReadyLight_IO_Output) ,XIC(ReadyLight.STAT.ENERGIZE) [OTE(ReadyLight.STAT.ON_OPEN) ,XIC(ReadyLight.DELAY.ON.DN) OTE(ReadyLight.STAT.ON_OPEN_DELAY) ,TON(ReadyLight.DELAY.ON,?,?) ] ,XIO(ReadyLight.STAT.ENERGIZE) [OTE(ReadyLight.STAT.OFF_CLOSED) ,XIC(ReadyLight.DELAY.OFF.DN) OTE(ReadyLight.STAT.OFF_CLOSED_DELAY) ,TON(ReadyLight.DELAY.OFF,?,?) ] ];
+				N: OTU(ReadyLight.STAT.DISABLE_REPORTING)MOV(201326647,ReadyLight.REPORT.CMD.Mask.BITS)MOV(1911,ReadyLight.REPORT.STAT_TRUE.Mask.BITS)MOV(1911,ReadyLight.REPORT.STAT_FALSE.Mask.BITS);
+		END_ROUTINE
+
+		ROUTINE ResetButtonLight 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Light.Loading_ShorteningPalm$'$N"
+				    "ControlModule=$'Light.ResetButtonLight$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: [XIC(ResetPushButton.STAT.ON) ,XIC(WarningHorn.STAT.AUTO_RUN) ]OTE(ResetButtonLight.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,ResetButtonLight.MSG.PERM) ,EQU(ResetButtonLight.MSG.PERM,0) OTE(ResetButtonLight.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,ResetButtonLight.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,ResetButtonLight.MSG.INTRLK) ,NEQ(ResetButtonLight.MSG.INTRLK,0) OTE(ResetButtonLight.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.CLEAR$'$N"
+				    "Function=$'STATUS.MESSAGE.CLEAR$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(0,ResetButtonLight.MSG.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(ResetButtonLight.STAT.AUTO_RUN) NEQ(ResetButtonLight.MSG.PERM,0) MOV(ResetButtonLight.MSG.PERM,ResetButtonLight.MSG.MSG) ,NEQ(ResetButtonLight.MSG.INTRLK,0) MOV(ResetButtonLight.MSG.INTRLK,ResetButtonLight.MSG.MSG) ,NEQ(ResetButtonLight.MSG.FAULT,0) MOV(ResetButtonLight.MSG.FAULT,ResetButtonLight.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(ResetButtonLight.AOI.Message,ResetButtonLight.ID,ResetButtonLight.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(ResetButtonLight.AOI.Control,ResetButtonLight.CMD,ResetButtonLight.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.BASIC.CONTROL$'$N"
+				    "";
+				N: [XIC(ResetButtonLight.STAT.ENERGIZE) OTE(ResetButtonLight_IO_Output) ,XIC(ResetButtonLight.STAT.ENERGIZE) OTE(ResetButtonLight.STAT.ON_OPEN) ,XIO(ResetButtonLight.STAT.ENERGIZE) OTE(ResetButtonLight.STAT.OFF_CLOSED) ];
+		END_ROUTINE
+
+		ROUTINE ResetPushButton 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'LOADSTATION.01.01.Push Button.Loading_ShorteningPalm$'$N"
+				    "ControlModule=$'Push Button.ResetPushButton$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.TYPE$'$N"
+				    "Function=$'SET.CM.TYPE$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIC(ResetPushButton_IO_Input) OTE(ResetPushButton.STAT.ENERGIZED) ,XIC(ResetPushButton.STAT.ENERGIZED) [XIC(ResetPushButton.DELAY.ON.DN) OTL(ResetPushButton.STAT.ON) OTU(ResetPushButton.STAT.OFF) ,TON(ResetPushButton.DELAY.ON,?,?) ] ,XIO(ResetPushButton.STAT.ENERGIZED) [XIC(ResetPushButton.DELAY.OFF.DN) OTU(ResetPushButton.STAT.ON) OTL(ResetPushButton.STAT.OFF) ,TON(ResetPushButton.DELAY.OFF,?,?) ] ];
+		END_ROUTINE
+
+		ROUTINE WarningHorn 
+				N: NOP();
+				RC: "No device popup/faceplate for this, force the device into auto$N"
+				    "ICRiley 20240523";
+				N: XIO(WarningHorn.STAT.AUTO)OTL(WarningHorn.CMD.AUTO);
+				N: [XIC(ConnectionProx01.STAT.ON) ,XIC(ConnectionProx02.STAT.ON) ,XIC(ConnectionProx03.STAT.ON) ]XIC(ReadyLight.STAT.OFF_CLOSED)[XIO(ReadyLight.STAT.PERMISSIVE) [XIC(WarningHorn.TMR[0].TT) PulseOnOff(WarningHorn.AOI.Pulse,WarningHorn.DELAY.ON.PRE,WarningHorn.DELAY.OFF.PRE) ,XIO(WarningHorn.TMR[0].TT) ] ,XIC(ReadyLight.STAT.INTERLOCK) ]OTE(WarningHorn.STAT.AUTO_RUN);
+				RC: "TMR[1] - wait for a delay before horn will be engaged$N"
+				    "TMR[0] - warning horn pulses when permissive is lost (Hi level) - then goes solid$N"
+				    "";
+				N: [XIC(ConnectionProx01.STAT.ON) ,XIC(ConnectionProx02.STAT.ON) ,XIC(ConnectionProx03.STAT.ON) ][TON(WarningHorn.TMR[1],?,?) ,XIC(ReadyLight.STAT.OFF_CLOSED) XIC(WarningHorn.TMR[1].DN) XIO(ReadyLight.STAT.PERMISSIVE) XIO(ReadyLight.STAT.INTERLOCK) TON(WarningHorn.TMR[0],?,?) ];
+				RC: "Un-silence the horn$N"
+				    "when a new, and higher-priority interlock occurs, re-enable the horn$N"
+				    "";
+				N: [NEQ(ReadyLight.MSG.INTRLK,0) GRT(ReadyLight.MSG.INTRLK,ReadyLight.MSG.FAULT) OTU(WarningHorn.STAT.STATE_1) ,MOV(ReadyLight.MSG.INTRLK,ReadyLight.MSG.FAULT) ];
+				N: XIC(ResetPushButton.STAT.ON)OTL(WarningHorn.STAT.STATE_1);
+				N: [XIC(ConnectionProx01.STAT.ON) ,XIC(ConnectionProx02.STAT.ON) ,XIC(ConnectionProx03.STAT.ON) ]XIC(WarningHorn.STAT.ON_OPEN)OTL(WarningHorn.STAT.STATE_2);
+				N: XIO(ConnectionProx01.STAT.ON)XIO(ConnectionProx02.STAT.ON)XIO(ConnectionProx03.STAT.ON)[OTU(WarningHorn.STAT.STATE_1) ,OTU(WarningHorn.STAT.STATE_2) ];
+				N: [MOV(0,WarningHorn.MSG.PERM) ,XIC(WarningHorn.STAT.STATE_1) MOV(1,WarningHorn.MSG.PERM) ,XIO(WarningHorn.TMR[1].DN) MOV(2,WarningHorn.MSG.PERM) ,EQU(WarningHorn.MSG.PERM,0) OTE(WarningHorn.STAT.PERMISSIVE) ];
+				N: DiscreteOutputControl(WarningHorn.AOI.Control,WarningHorn.CMD,WarningHorn.STAT);
+				N: [XIC(WarningHorn.STAT.ENERGIZE) OTE(WarningHorn_IO_Output) ,XIC(WarningHorn.STAT.ENERGIZE) OTE(WarningHorn.STAT.ON_OPEN) ,XIO(WarningHorn.STAT.ENERGIZE) OTE(WarningHorn.STAT.OFF_CLOSED) ];
+				N: [XIC(WarningHorn.STAT.STATE_2) OTE(WarningHorn.ALARM[0].ACTIVE) ,AlarmControl(WarningHorn.AOI.AlarmControl[0],WarningHorn.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: OTU(WarningHorn.STAT.DISABLE_REPORTING)MOV(201326647,WarningHorn.REPORT.CMD.Mask.BITS)MOV(1911,WarningHorn.REPORT.STAT_TRUE.Mask.BITS)MOV(1911,WarningHorn.REPORT.STAT_FALSE.Mask.BITS);
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'LOADSTATION.01.01$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'LOADSTATION.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'AV203$'$N"
+				    "[Description]:Inlet Valve 02$N"
+				    "";
+				N: JSR(InletValve02,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VALVE$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'AV205$'$N"
+				    "[Description]:Inlet Valve 01$N"
+				    "";
+				N: JSR(InletValve01,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'PROXSWITCH$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'PX205$'$N"
+				    "[Description]:Connection Prox 02$N"
+				    "";
+				N: JSR(ConnectionProx02,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'PROXSWITCH$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'PX204$'$N"
+				    "[Description]:Connection Prox 01$N"
+				    "";
+				N: JSR(ConnectionProx01,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LIGHT$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'PL202$'$N"
+				    "[Description]:Warning Light$N"
+				    "";
+				N: JSR(ReadyLight,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'HORN$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'HR202$'$N"
+				    "[Description]:Warning Horn$N"
+				    "";
+				N: JSR(WarningHorn,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'PUSHBUTTON$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'PB203$'$N"
+				    "[Description]:Reset Push Button$N"
+				    "";
+				N: JSR(ResetPushButton,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LIGHT$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'PBL203$'$N"
+				    "[Description]:Reset Button Light$N"
+				    "";
+				N: JSR(ResetButtonLight,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

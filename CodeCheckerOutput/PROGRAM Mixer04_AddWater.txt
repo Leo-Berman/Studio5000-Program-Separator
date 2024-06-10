@@ -1,0 +1,388 @@
+	PROGRAM Mixer04_AddWater (Description := "$NProgram=$'PH$'$NClass=$'WATERBLENDER.TO.MIXER:01.01.01$'$N",
+	                          MAIN := "_000_Main",
+	                          MODE := 0,
+	                          DisableFlag := 0,
+	                          UseAsFolder := 0)
+		TAG
+			ActualAmount OF Phase.ACTUAL[1] (RADIX := Float);
+			ActualAmountAccumulator OF Phase.ACTUAL[0] (RADIX := Float);
+			ActualAmountAdjustment OF Phase.ACTUAL[3] (RADIX := Float);
+			ActualAmountError OF Phase.ACTUAL[2] (RADIX := Float);
+			Actual_Water_Temperature : REAL (RADIX := Float) := 6.80000000e+001;
+			Alarm OF Horner:I.Data[2].1 (RADIX := Decimal);
+			Alarm_Code OF Horner:I.Data[3] (RADIX := Decimal);
+			AOI : CB_PHASE_AOI  := [[3],[3,10580000],[3,[0,1015]],[3],[0,1.00006100e-001],[3],[3,0.00000000e+000,0.00000000e+000],[3],[3,1058,105800,105799
+					],[[3],[3],[3],[3],[3],[3],[1],[1]],[3,16,15,15],[1,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],0,0]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,[1,0.00000000e+000,0.00000000e+000],0.00000000e+000
+					],[1,0.00000000e+000,0.00000000e+000]];
+			Arb00 OF cDO[533] ;
+			AutoRunAirBlow OF Phase.CM.AutoRun[11] (RADIX := Decimal);
+			AutoRunInletValve OF Phase.CM.AutoRun[8] (RADIX := Decimal);
+			AutoRunMonitorFlowrate OF Phase.CM.AutoRun[20] (RADIX := Decimal);
+			AutoRunPath OF Phase.CM.AutoRun[1] (RADIX := Decimal);
+			AutoRunResetFlowMeter OF Phase.CM.AutoRun[2] (RADIX := Decimal);
+			Avg_Temp OF Horner:I.Data[0] (RADIX := Decimal);
+			Batch_Complete OF Horner:I.Data[2].2 (RADIX := Decimal);
+			Batch_Completed : BOOL (RADIX := Decimal) := 0;
+			Batch_Running OF Horner:I.Data[2].0 (RADIX := Decimal);
+			CalibrateEnabled : BOOL (RADIX := Decimal) := 0;
+			Clear_Alarm : BOOL (RADIX := Decimal) := 0;
+			Clear_Alarm1 OF Horner:O.Data[2].3 (RADIX := Decimal);
+			Clear_Weight OF Horner:O.Data[2].2 (RADIX := Decimal);
+			Comm_Loss : TIMER  := [-1071882766,10000,56];
+			CompressedAirToMixer OF cDO[533] ;
+			EStop OF cDI[5] ;
+			FlowMeter OF cAI[219] ;
+			FlowResetDelayLimit : REAL (RADIX := Float) := 1.00000000e+000;
+			FlowResetLimit : REAL (RADIX := Float) := 2.00000000e+000;
+			Horner_Alarm : DINT (Description := "1 = Water Not Hot Enough$N2 = Water Not Cold Enough$N3 = Water No Flow Alarm$N4 = Water Over Flow Alarm$N5 = Ethernet Comm",
+			            RADIX := Decimal) := 2;
+			Horner_Water_Delivery : REAL (RADIX := Float) := 1.33100006e+002;
+			InletValve OF cDO[532] ;
+			Instant_Output_Temp : REAL (RADIX := Float) := 8.64000015e+001;
+			MixerClosed OF cDI[352] ;
+			MixerCommOk OF cDI[353] ;
+			MixerInterlocked OF cDI[350] ;
+			MixerRemote OF cDI[349] ;
+			OIT : CB_OIT  := [[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0,0,0,91543658,0,0,[0,0,0,0,0,0,0,0,0,0],[0,0,0,0],0,[0,[0,0,0]],[0,[0,0,0]],0,0,0];
+			Phase OF cPHZ[58] (Usage := Public);
+			PhaseClass OF cPHZ_CLASS[26] ;
+			PhaseClass_DELETE OF cPHZ_CLASS[15] (Usage := Public);
+			Start_Batch OF Horner:O.Data[2].0 (RADIX := Decimal);
+			Start_Water : BOOL (RADIX := Decimal) := 0;
+			Stop_Batch OF Horner:O.Data[2].1 (RADIX := Decimal);
+			Stop_Water : BOOL (RADIX := Decimal) := 0;
+			TargetAmount OF Phase.SPT[0] (RADIX := Float);
+			TargetAmountAdjustmentLimit OF Phase.SPT[3] (RADIX := Float);
+			TargetAmountSetpoint OF Phase.SPT[1] (RADIX := Float);
+			TargetAmountTolerance OF Phase.SPT[2] (RADIX := Float);
+			TargetFlowTotalResetTimeout : REAL (RADIX := Float) := 2.00000000e+000;
+			Temperature_SP OF Horner:O.Data[0] (RADIX := Decimal);
+			Unit OF cUNIT[53] ;
+			ValidPath OF Phase.USER.STAT.1 (RADIX := Decimal);
+			Weight OF Horner:I.Data[1] (RADIX := Decimal);
+			Weight_SP OF Horner:O.Data[1] (RADIX := Decimal);
+		END_TAG
+
+		ROUTINE Horner 
+				N: NOP();
+				N: [XIC(Phase.STATE.RUNNING) EQU(Phase.STEP_INDEX,4000) CPT(Weight_SP,10*(Phase.SPT[0] - Phase.ACTUAL[1]) + 10) MUL(Phase.SPT[4],10,Temperature_SP) ,MOV(Horner_Water_Delivery,FlowMeter.SCALED) MOV(Actual_Water_Temperature,Phase.ACTUAL[5]) ];
+				N: XIC(AutoRunInletValve)ONS(Phase.OS[0])OTL(Start_Water);
+				N: XIO(AutoRunInletValve)ONS(Phase.OS[1])OTL(Stop_Water);
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.STEP_INDEX,3000)OTL(Clear_Alarm);
+				N: XIC(Start_Water)XIO(Alarm)XIO(Batch_Running)OTE(Start_Batch);
+				N: XIC(Batch_Running)OTU(Start_Water);
+				N: [XIC(Start_Water) XIC(Batch_Completed) ,XIC(AutoRunResetFlowMeter) ]OTE(Clear_Weight);
+				N: DIV(Horner:I.Data[5],10,Instant_Output_Temp)DIV(Weight,10,Horner_Water_Delivery)DIV(Avg_Temp,10,Actual_Water_Temperature);
+				N: XIC(Stop_Water)XIC(Batch_Running)OTE(Stop_Batch);
+				N: XIO(Batch_Running)OTU(Stop_Water);
+				N: XIC(Batch_Complete)OTE(Batch_Completed);
+				RC: "$N"
+				    "Alarms$N"
+				    "$N"
+				    "";
+				N: XIC(Alarm)MOV(Alarm_Code,Horner_Alarm);
+				N: [XIC(Clear_Alarm) ,XIC(Clear_Alarm1) ]XIC(Alarm)OTE(Clear_Alarm1);
+				N: XIO(Alarm)OTU(Clear_Alarm);
+				N: [[XIC(Horner:I.Data[2].5) XIC(Horner:O.Data[2].8) ,XIO(Horner:I.Data[2].5) XIO(Horner:O.Data[2].8) ] TON(Comm_Loss,?,?) ,XIC(Horner:I.Data[2].5) OTE(Horner:O.Data[2].8) ];
+		END_ROUTINE
+
+		ROUTINE _000_FirstScan 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'WATERBLENDER.TO.MIXER:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.TYPE$'$N"
+				    "Function=$'TYPE$'$N"
+				    "";
+				N: MOV(26,PhaseClass.TYPE);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.INDEX.SETTING$'$N"
+				    "Function=$'INDEX.SETTING$'$N"
+				    "";
+				N: MOV(Unit.ARRAY_INDEX,Phase.INDEX)MOV(PhaseClass.TYPE,Phase.TYPE)MOV(PhaseClass.ID,Phase.CLASS)COP(PhaseClass.NAME,Phase.CLASS_NAME,1)COP(PhaseClass.TYPE_NAME,Phase.TYPE_NAME,1);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.DISPLAY.MASK.SETTING$'$N"
+				    "Function=$'DISPLAY.MASK.SETTING$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.CLASS.PARAMETERS$'$N"
+				    "Function=$'CLASS.PARAMETERS$'$N"
+				    "";
+				N: PhaseClassParameter(AOI.PhaseClassParameter,PhaseClass,Phase.USER,Phase.DISPLAY_MASK,Phase.TYPE_MASK);
+		END_ROUTINE
+
+		ROUTINE _000_Main 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'WATERBLENDER.TO.MIXER:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.FIRSTSCAN$'$N"
+				    "Function=$'EXECUTE.FIRSTSCAN$'$N"
+				    "";
+				N: XIC(S:FS)JSR(_000_FirstScan,0);
+				N: JSR(Horner,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.WATCHWINDOW.STATE$'$N"
+				    "Function=$'WATCHWINDOW.PHASE.STATE$'$N"
+				    "";
+				N: XIC(Phase.STATE.IDLE)XIC(Phase.STATE.RUNNING)XIC(Phase.STATE.HELD)XIC(Phase.STATE.COMPLETE)XIC(Phase.STATE.ABORTED)XIC(Phase.STATE.STOPPED)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.WATCHWINDOW.STATE.TRANSITION$'$N"
+				    "Function=$'WATCHWINDOW.PHASE.STATE.TRANSITION$'$N"
+				    "";
+				N: XIC(Phase.STATE.HOLDING)XIC(Phase.STATE.RESTARTING)XIC(Phase.STATE.ABORTING)XIC(Phase.STATE.STOPPING)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.WATCHWINDOW.CONTROL$'$N"
+				    "Function=$'WATCHWINDOW.PHASE.CONTROL$'$N"
+				    "";
+				N: [XIC(Phase.CMD.START) XIC(Phase.CMD.HOLD) XIC(Phase.CMD.RESTART) XIC(Phase.CMD.STOP) XIC(Phase.CMD.ABORT) XIC(Phase.CMD.RESET) ,MOV(Phase.STATE_NO,Phase.STATE_NO) MOV(Phase.STEP_INDEX,Phase.STEP_INDEX) MOV(Phase.MSG.FAULT,Phase.MSG.FAULT) ]NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.PERMISSIVES.FAULTS.MESSAGING$'$N"
+				    "Function=$'EXECUTE.PERMISSIVES.FAULTS.MESSAGING$'$N"
+				    "";
+				N: JSR(_120_PermissiveFaultAndMessaging,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.AOI$'$N"
+				    "Function=$'AOI$'$N"
+				    "";
+				N: PhaseMode(AOI.Mode,Phase,cPHZ[0].MSG)PhaseCommon(AOI.Common,Phase)PhaseStepIndex(AOI.StepIndex,Phase)PhaseStateTransition(AOI.StateTransition,Phase.CMD,Phase.STAT,Phase.STATE,Phase.STATE_NO);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.STEPCONTROL$'$N"
+				    "Function=$'EXECUTE.STEPCONTROL$'$N"
+				    "";
+				N: JSR(_050_StepControl,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.CONTROLMODULE$'$N"
+				    "Function=$'EXECUTE.CONTROLMODULE$'$N"
+				    "";
+				N: JSR(_110_ControlModule,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.ALARMING$'$N"
+				    "Function=$'EXECUTE.ALARMING$'$N"
+				    "";
+				N: JSR(_130_Alarming,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.STEP.MAPPING$'$N"
+				    "Function=$'STEP.MAPPING$'$N"
+				    "";
+				N: PhaseStepMapping(AOI.StepMapping,Phase);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.BYPASS$'$N"
+				    "Function=$'BYPASS$'$N"
+				    "";
+				N: PhaseBypass(AOI.Bypass,Phase);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.ARBITRATION$'$N"
+				    "Function=$'EXECUTE.ARBITRATION$'$N"
+				    "";
+				N: JSR(_100_Arbitration,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MAIN.EXTENDED.FUNCTION$'$N"
+				    "Function=$'EXTENDED.FUNCTION$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _050_StepControl 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'LIQUID.SYSTEM.TO.MIXER:02.01.01$'$N"
+				    "";
+				N: NOP();
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,1)MOV(2000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,2000)[GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.RECORD.PRE) MOV(3000,Phase.STEP_INDEX_GOTO) ,FLL(0,Phase.ACTUAL[0],3) FLL(0,Phase.ACTUAL[4],3) ];
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,3000)XIC(Phase.STAT.PERMISSIVE)MOV(4000,Phase.STEP_INDEX_GOTO);
+				N: NOP();
+				RC: "Reset flow meter$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4000)[LES(FlowMeter.SCALED,FlowResetLimit) GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,FlowResetDelayLimit) MOV(4010,Phase.STEP_INDEX_GOTO) ,LES(TargetFlowTotalResetTimeout,2) MOV(2,TargetFlowTotalResetTimeout) ,SUB(TargetFlowTotalResetTimeout,1,FlowResetDelayLimit) ,MOV(ActualAmount,ActualAmountAccumulator) ];
+				RC: "Wait for valid path$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4010)XIC(ValidPath)MOV(4100,Phase.STEP_INDEX_GOTO);
+				RC: "Confirm valve open$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4100)XIC(InletValve.STAT.ON_OPEN)MOV(4200,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4200)MOV(5000,Phase.STEP_INDEX_GOTO);
+				RC: "Process Amount Parameter$N"
+				    "";
+				N: PhaseTargetAdjustLimit(AOI.TargetAdjustLimit,TargetAmountAdjustmentLimit,ActualAmountAdjustment,TargetAmount,TargetAmountSetpoint,Phase.STAT.MAN)PhaseTargetAdjustLimit(AOI.TargetAdjustLimit,Phase.SPT[7],Phase.ACTUAL[7],Phase.SPT[4],Phase.SPT[5],Phase.STAT.MAN);
+				N: NOP();
+				RC: "Calculate phase actuall$N"
+				    "";
+				N: XIC(Phase.STAT.ACTIVE_ONCE)[XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.HOLDING) ,XIC(Phase.STATE.STOPPING) ]LIM(4200,Phase.STEP_INDEX,6000)ADD(FlowMeter.SCALED,ActualAmountAccumulator,ActualAmount)SUB(ActualAmount,TargetAmount,ActualAmountError);
+				RC: "Dribble mode$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)LIM(5000,Phase.STEP_INDEX,5999)CMP(ActualAmount >  TargetAmount - (Phase.PREACT.ACTUAL + Phase.PREACT.DRIBBLE))OTE(Phase.PREACT.DRIBBLING);
+				RC: "Delivery complete$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5000)CMP(ActualAmount >  TargetAmount - Phase.PREACT.ACTUAL)MOV(6000,Phase.STEP_INDEX_GOTO);
+				RC: "Settle$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,6000)GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.SETTLE.PRE)MOV(6010,Phase.STEP_INDEX_GOTO);
+				RC: "make this phase consistent with other liquids, goto 6020 for air blow$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,6010)MOV(6020,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,6020)GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,Phase.USER.SETTINGS[3])MOV(7000,Phase.STEP_INDEX_GOTO);
+				RC: "Calculate preact$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,7000)XIC(Phase.STEP.FirstScanInStepIndex)[XIO(CalibrateEnabled) PhaseCalculatePreact(AOI.CalculatePreact,Phase.PREACT,ActualAmountError) ,MOV(8000,Phase.STEP_INDEX_GOTO) ];
+				RC: "NOP$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,8000)MOV(9000,Phase.STEP_INDEX_GOTO);
+				RC: "check tol$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,9000)[GRT(TargetAmountTolerance,0) CMP(ABS(ActualAmountError)> TargetAmountTolerance) OTL(Phase.STAT.OUT_TOL) ,XIO(Phase.STAT.OUT_TOL) MOV(10000,Phase.STEP_INDEX_GOTO) ,XIC(Phase.STAT.OUT_TOL) OTL(Phase.STAT.ACK_REQUIRED) MOV(9010,Phase.STEP_INDEX_GOTO) ];
+				RC: "Ack out of tol$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,9010)[XIC(Phase.CMD.ACK) ,XIC(Phase.CMD.ACK_OUT_TOL) ]OTU(Phase.STAT.OUT_TOL)OTU(Phase.STAT.ACK_REQUIRED)MOV(10000,Phase.STEP_INDEX_GOTO);
+				RC: "Complete$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.RUNNING_COMPLETE);
+				RC: "HOLDING$N"
+				    "";
+				N: NOP();
+				RC: "this makes step 2000 only happen once per phase$N"
+				    "";
+				N: XIC(Phase.STATE.HOLDING)EQU(Phase.STEP_INDEX,2000)[GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.RECORD.PRE) MOV(3000,Phase.STEP_INDEX_GOTO) ,FLL(0,Phase.ACTUAL[0],5) ];
+				RC: "holding complete$N"
+				    "";
+				N: XIC(Phase.STATE.HOLDING)[XIC(Phase.STEP_TMR.HOLDING.DN) OTE(Phase.STAT.HOLDING_COMPLETE) ,TON(Phase.STEP_TMR.HOLDING,?,?) ];
+				RC: "RESTARTING$N"
+				    "";
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Restarting)[LES(Phase.STEP_INDEX,5999) MOV(3000,Phase.STEP_INDEX_GOTO) ,LIM(6000,Phase.STEP_INDEX,6999) MOV(7000,Phase.STEP_INDEX_GOTO) ];
+				N: NOP();
+				N: XIC(Phase.STATE.RESTARTING)[XIC(Phase.STEP_TMR.RESTARTING.DN) OTE(Phase.STAT.RESTARTING_COMPLETE) ,TON(Phase.STEP_TMR.RESTARTING,?,?) ];
+				RC: "STOPPING$N"
+				    "";
+				N: NOP();
+				N: XIC(Phase.STATE.STOPPING)LES(Phase.STEP_INDEX,6000)MOV(6000,Phase.STEP_INDEX_GOTO);
+				RC: "Settle$N"
+				    "";
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,6000)GEQ(Phase.STEP_TMR.CurrentStepIndex.ACC,Phase.STEP_TMR.SETTLE.PRE)MOV(6010,Phase.STEP_INDEX_GOTO);
+				RC: "make this phase consistent with other liquids, goto 6020 for air blow$N"
+				    "";
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,6010)MOV(6020,Phase.STEP_INDEX_GOTO);
+				RC: "Air Blow$N"
+				    "";
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,6020)GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,Phase.USER.SETTINGS[3])MOV(7000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,7000)MOV(8000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)LIM(8000,Phase.STEP_INDEX,8999)MOV(9000,Phase.STEP_INDEX_GOTO);
+				N: XIC(Phase.STATE.STOPPING)LIM(9000,Phase.STEP_INDEX,9999)MOV(10000,Phase.STEP_INDEX_GOTO);
+				N: NOP();
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.STOPPING_COMPLETE);
+				RC: "ABORTING$N"
+				    "";
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Aborting)MOV(10000,Phase.STEP_INDEX_GOTO);
+				N: NOP();
+				N: XIC(Phase.STATE.ABORTING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.ABORTING_COMPLETE);
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Idle)MOV(0,Phase.STEP_INDEX_GOTO_ON_RESTART)OTU(Phase.STAT.OUT_TOL)OTU(Phase.STAT.ACK_REQUIRED)OTU(Phase.PREACT.PreactOutOfLimitHigh)OTU(Phase.PREACT.PreactOutOfLimitLow);
+		END_ROUTINE
+
+		ROUTINE _100_Arbitration 
+				N: NOP();
+				RC: "we own all the things$N"
+				    "";
+				N: [XIC(Phase.NEEDS.LIST[0].ACQUIRED) ,EQU(Phase.NEEDS.LIST[0].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[1].ACQUIRED) ,EQU(Phase.NEEDS.LIST[1].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[2].ACQUIRED) ,EQU(Phase.NEEDS.LIST[2].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[3].ACQUIRED) ,EQU(Phase.NEEDS.LIST[3].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[4].ACQUIRED) ,EQU(Phase.NEEDS.LIST[4].OBJECT_INDEX,0) ]OTE(Phase.NEEDS.OWNS_ALL_REQUIRED);
+				RC: "Start Arbitration$N"
+				    "";
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.STEP_INDEX,3000)XIC(Phase.STEP.FirstScanInStepIndex)OTL(Phase.NEEDS.StartArbitration);
+				RC: "Let it go$N"
+				    "";
+				N: [XIC(Phase.STATE.IDLE) ,XIC(Phase.STATE.RUNNING) EQU(Phase.STEP_INDEX,8000) ,XIC(Phase.STATE.DONE) ,XIC(Phase.STATE.HELD) ]OTE(Phase.NEEDS.Release);
+				RC: "Start Arbitration - Begin with item 0$N"
+				    "";
+				N: [XIC(Phase.NEEDS.StartArbitration) MOV(0,Phase.NEEDS.LIST_INDEX) OTL(Phase.NEEDS.Arbitrating) OTU(Phase.NEEDS.StartArbitration) ,XIC(Phase.NEEDS.Arbitrating) XIC(Phase.NEEDS.OWNS_ALL_REQUIRED) OTU(Phase.NEEDS.Arbitrating) ];
+				N: [EQU(Arb00.ARB.OWNER,Phase.ID) OTE(Phase.NEEDS.LIST[0].ACQUIRED) ,XIC(Phase.NEEDS.Arbitrating) EQU(Phase.NEEDS.LIST_INDEX,0) [XIO(Phase.NEEDS.LIST[0].REQUESTED) EQU(Arb00.ARB.RQ,0) MOV(Phase.ID,Arb00.ARB.RQ) OTL(Phase.NEEDS.LIST[0].REQUESTED) ,XIC(Phase.NEEDS.LIST[0].ACQUIRED) OTU(Phase.NEEDS.LIST[0].REQUESTED) MOV(1,Phase.NEEDS.LIST_INDEX) ] ,XIC(Phase.NEEDS.Release) EQU(Arb00.ARB.OWNER,Phase.ID) MOV(Phase.ID,Arb00.ARB.RELEASE) ,MOV(cCOMMON.DO_OBJECT_NUMBER,Phase.NEEDS.LIST[0].OBJECT_TYPE) MOV(Arb00.ID,Phase.NEEDS.LIST[0].OBJECT_INDEX) ];
+				N: MOV(0,Phase.NEEDS.LIST[1].OBJECT_TYPE)MOV(0,Phase.NEEDS.LIST[1].OBJECT_INDEX);
+				N: MOV(0,Phase.NEEDS.LIST[2].OBJECT_TYPE)MOV(0,Phase.NEEDS.LIST[2].OBJECT_INDEX);
+				N: MOV(0,Phase.NEEDS.LIST[3].OBJECT_TYPE)MOV(0,Phase.NEEDS.LIST[3].OBJECT_INDEX);
+				N: MOV(0,Phase.NEEDS.LIST[4].OBJECT_TYPE)MOV(0,Phase.NEEDS.LIST[4].OBJECT_INDEX);
+		END_ROUTINE
+
+		ROUTINE _110_ControlModule 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'LIQUID.SYSTEM.TO.MIXER:02.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.SIMULATE.RETURN$'$N"
+				    "Function=$'SIMULATE.RETURN$'$N"
+				    "";
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.SYSTEM.TO.MIXER$'$N"
+				    "Function=$'RUNG.CONTROLMODULE.AUTORUN.RESET.FLOWMETER$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,4000)OTE(AutoRunResetFlowMeter);
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.SYSTEM.TO.MIXER$'$N"
+				    "Function=$'RUNG.CONTROLMODULE.AUTORUN.INLET.VALVE$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)LIM(4100,Phase.STEP_INDEX,5000)OTE(AutoRunInletValve);
+				RC: "AutoRun the Compressed Air Valves to Blow Down the lines$N"
+				    "";
+				N: XIC(Phase.STAT.AUTO)[XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.STOPPING) ]EQU(Phase.STEP_INDEX,6020)GRT(Phase.USER.SETTINGS[3],0)OTE(AutoRunAirBlow);
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.SYSTEM.TO.MIXER$'$N"
+				    "Function=$'RUNG.CONTROLMODULE.AUTORUN.FLOWRATE$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)LIM(4100,Phase.STEP_INDEX,5000)OTE(AutoRunMonitorFlowrate);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.CONTROLMODULE.RESET.CM$'$N"
+				    "Function=$'CONTROLMODULE.RESET.CM$'$N"
+				    "";
+				N: [XIC(Phase.CMD.START) ,XIC(Phase.CMD.RESTART) ]OTL(InletValve.CMD.RESET);
+		END_ROUTINE
+
+		ROUTINE _120_PermissiveFaultAndMessaging 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'WATERBLENDER.TO.MIXER:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: OTE(ValidPath);
+				RC: "$N"
+				    "";
+				N: [MOV(0,Phase.MSG.PERM) ,XIO(InletValve.STAT.AUTO) MOV(3,Phase.MSG.PERM) ,NEQ(Arb00.ARB.OWNER,Phase.ID) MOV(11,Phase.MSG.PERM) ,XIO(CompressedAirToMixer.STAT.AUTO) MOV(15,Phase.MSG.PERM) ,EQU(Phase.MSG.PERM,0) OTE(Phase.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.MSG.FAULT,0)[XIC(EStop.STAT.FAULT) MOV(21,Phase.MSG.FAULT) ,XIC(InletValve.STAT.FAULT) MOV(42,Phase.MSG.FAULT) ,XIC(CompressedAirToMixer.STAT.FAULT) MOV(43,Phase.MSG.FAULT) ,XIC(cSETUP.SIMULATION.Enabled) XIC(cSETUP.SIMULATION.PHASE) MOV(0,Phase.MSG.FAULT) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "";
+				N: [MOV(0,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIO(Phase.STEP.RECORD) MOV(61,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIC(Phase.STEP.RECORD) MOV(62,Phase.MSG.MSG) ,XIC(Phase.STATE.HELD) XIO(Phase.STAT.FAULTED) MOV(63,Phase.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE.UNIQUE$'$N"
+				    "Function=$'STATUS.MESSAGE.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(AOI.Message,Phase.ID,Phase.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE.STATUS$'$N"
+				    "Function=$'MESSAGE$'$N"
+				    "";
+				N: [LIM(2000,Phase.STEP_INDEX,3000) NEQ(Phase.MSG.PERM,0) MOV(Phase.MSG.PERM,Phase.MSG.MSG) ,GEQ(Phase.STEP_INDEX,3000) NEQ(Phase.MSG.FAULT,0) MOV(Phase.MSG.FAULT,Phase.MSG.MSG) ,EQU(Phase.MSG.FAULT,0) EQU(Phase.MSG.PERM,0) ONS(Phase.MSG.OS.1) CLR(Phase.MSG.MSG) ];
+		END_ROUTINE
+
+		ROUTINE _130_Alarming 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'LIQUID.SYSTEM.TO.MIXER:02.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "HB Brew Water Blender Comm LOST!$N"
+				    "";
+				N: [XIC(Comm_Loss.DN) OTE(Phase.ALARM[0].ACTIVE) ,AlarmControl(AOI.AlarmControl[0],Phase.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: [XIC(Phase.STAT.OUT_TOL) OTE(Phase.ALARM[1].ACTIVE) ,AlarmControl(AOI.AlarmControl[1],Phase.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "HB Brew Water NOT HOT ENOUGH$N"
+				    "";
+				N: [EQU(Horner_Alarm,1) OTE(Phase.ALARM[2].ACTIVE) ,AlarmControl(AOI.AlarmControl[1],Phase.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "HB Brew Water NOT COLD ENOUGH$N"
+				    "";
+				N: [EQU(Horner_Alarm,2) OTE(Phase.ALARM[3].ACTIVE) ,AlarmControl(AOI.AlarmControl[2],Phase.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "HB Brew Water NO FLOW$N"
+				    "";
+				N: [EQU(Horner_Alarm,3) OTE(Phase.ALARM[4].ACTIVE) ,AlarmControl(AOI.AlarmControl[3],Phase.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "HB Brew Water OVERFLOW$N"
+				    "";
+				N: [EQU(Horner_Alarm,4) OTE(Phase.ALARM[5].ACTIVE) ,AlarmControl(AOI.AlarmControl[4],Phase.ALARM[4],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "HB Brew Ethernet Comm$N"
+				    "";
+				N: [EQU(Horner_Alarm,5) OTE(Phase.ALARM[6].ACTIVE) ,AlarmControl(AOI.AlarmControl[5],Phase.ALARM[5],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

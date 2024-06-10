@@ -1,0 +1,309 @@
+	PROGRAM Tote02_SoyOil_Refill (Description := "$NProgram=$'PH$'$NClass=$'TOTE.ADD.GLYCERIN:01.01.01$'$N",
+	                              MAIN := "_000_Main",
+	                              MODE := 0,
+	                              DisableFlag := 0,
+	                              UseAsFolder := 0)
+		TAG
+			ActualTimeElapsedRemaining : TimeElapsedRemainingAOI  := [[0,15000,15002],[[1.50019999e+001,2.50033319e-001,4.16722242e-003,1.73634253e-004,15002],[-2.00000000e-003
+					,-3.33333337e-005,-5.55555573e-007,1.73634253e-004,-2],[1.50000000e+001,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,2],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,-2],15000
+					,15002]];
+			AOI : CB_PHASE_AOI  := [[3],[3,11180000],[3,[0,1015]],[3],[1,0.00000000e+000],[3],[3,0.00000000e+000,0.00000000e+000],[3],[3,1118,111800,111799
+					],[[3],[1],[1],[1],[1],[1],[1],[1]],[3,16,15,15],[1,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],0,0]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,[1,0.00000000e+000,0.00000000e+000],0.00000000e+000
+					],[1,0.00000000e+000,0.00000000e+000]];
+			AutoRunGreenLight OF Phase.CM.AutoRun[1] (RADIX := Decimal);
+			AutoRunRedLight OF Phase.CM.AutoRun[2] (RADIX := Decimal);
+			AutoRunValve OF Phase.CM.AutoRun[3] (RADIX := Decimal);
+			DischargeValve OF cDO[362] ;
+			EStop OF cDI[5] ;
+			HighLevel OF cDI[246] ;
+			LowLevel OF cDI[247] ;
+			Mixer04_AddSoyOil OF cPHZ[57] ;
+			OIT : CB_OIT  := [[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],0,0,0,84047262,0,0,[0,0,0,0,0,0,0,0,0,0],[0,0,0,0],0,[0,[0,0,0]],[0,[0,0,0]],0,0,0];
+			Phase OF cPHZ[118] (Usage := Public);
+			PhaseClass OF cPHZ_CLASS[33] (Usage := Public);
+			TargetTime OF Phase.SPT[0] (RADIX := Float);
+			TargetTimeAdjustmentLimit OF Phase.SPT[3] (RADIX := Float);
+			ToteEmpty : BOOL (RADIX := Decimal) := 0;
+			Unit OF cUNIT[37] ;
+			ValidPath OF Phase.USER.STAT.1 (RADIX := Decimal);
+		END_TAG
+
+		ROUTINE _000_FirstScan 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'MIXER.TIME.DELAY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.TYPE$'$N"
+				    "Function=$'TYPE$'$N"
+				    "";
+				N: MOV(11,PhaseClass.TYPE);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.INDEX.SETTING$'$N"
+				    "Function=$'INDEX.SETTING$'$N"
+				    "";
+				N: MOV(Unit.ARRAY_INDEX,Phase.INDEX)MOV(PhaseClass.TYPE,Phase.TYPE)MOV(PhaseClass.ID,Phase.CLASS)COP(PhaseClass.NAME,Phase.CLASS_NAME,1)COP(PhaseClass.TYPE_NAME,Phase.TYPE_NAME,1);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.DISPLAY.MASK.SETTING$'$N"
+				    "Function=$'DISPLAY.MASK.SETTING$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.CLASS.PARAMETERS$'$N"
+				    "Function=$'CLASS.PARAMETERS$'$N"
+				    "";
+				N: PhaseClassParameter(AOI.PhaseClassParameter,PhaseClass,Phase.USER,Phase.DISPLAY_MASK,Phase.TYPE_MASK);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.SECTION.FIRSTSCAN.SETTING$'$N"
+				    "Function=$'STANDARD.PHASE.SECTION.FIRSTSCAN.SETTING$'$N"
+				    "";
+				N: PhaseClassParameter(AOI.PhaseClassParameter,PhaseClass,Phase.USER,Phase.DISPLAY_MASK,Phase.TYPE_MASK);
+		END_ROUTINE
+
+		ROUTINE _000_Main 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'MIXER.TIME.DELAY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.FIRSTSCAN$'$N"
+				    "Function=$'EXECUTE.FIRSTSCAN$'$N"
+				    "";
+				N: XIC(S:FS)JSR(_000_FirstScan,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.WATCHWINDOW.STATE$'$N"
+				    "Function=$'WATCHWINDOW.PHASE.STATE$'$N"
+				    "";
+				N: XIC(Phase.STATE.IDLE)XIC(Phase.STATE.RUNNING)XIC(Phase.STATE.HELD)XIC(Phase.STATE.COMPLETE)XIC(Phase.STATE.ABORTED)XIC(Phase.STATE.STOPPED)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.WATCHWINDOW.STATE.TRANSITION$'$N"
+				    "Function=$'WATCHWINDOW.PHASE.STATE.TRANSITION$'$N"
+				    "";
+				N: XIC(Phase.STATE.HOLDING)XIC(Phase.STATE.RESTARTING)XIC(Phase.STATE.ABORTING)XIC(Phase.STATE.STOPPING)NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.WATCHWINDOW.CONTROL$'$N"
+				    "Function=$'WATCHWINDOW.PHASE.CONTROL$'$N"
+				    "";
+				N: [XIC(Phase.CMD.START) XIC(Phase.CMD.HOLD) XIC(Phase.CMD.RESTART) XIC(Phase.CMD.STOP) XIC(Phase.CMD.ABORT) XIC(Phase.CMD.RESET) ,MOV(Phase.STATE_NO,Phase.STATE_NO) MOV(Phase.STEP_INDEX,Phase.STEP_INDEX) MOV(Phase.MSG.FAULT,Phase.MSG.FAULT) ]NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.PERMISSIVES.FAULTS.MESSAGING$'$N"
+				    "Function=$'EXECUTE.PERMISSIVES.FAULTS.MESSAGING$'$N"
+				    "";
+				N: JSR(_120_PermissiveFaultAndMessaging,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.AOI$'$N"
+				    "Function=$'AOI$'$N"
+				    "";
+				N: PhaseMode(AOI.Mode,Phase,cPHZ[0].MSG)PhaseCommon(AOI.Common,Phase)PhaseStepIndex(AOI.StepIndex,Phase)PhaseStateTransition(AOI.StateTransition,Phase.CMD,Phase.STAT,Phase.STATE,Phase.STATE_NO);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.STEPCONTROL$'$N"
+				    "Function=$'EXECUTE.STEPCONTROL$'$N"
+				    "";
+				N: JSR(_050_StepControl,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.CONTROLMODULE$'$N"
+				    "Function=$'EXECUTE.CONTROLMODULE$'$N"
+				    "";
+				N: JSR(_110_ControlModule,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.ALARMING$'$N"
+				    "Function=$'EXECUTE.ALARMING$'$N"
+				    "";
+				N: JSR(_130_Alarming,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.STEP.MAPPING$'$N"
+				    "Function=$'STEP.MAPPING$'$N"
+				    "";
+				N: PhaseStepMapping(AOI.StepMapping,Phase);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.BYPASS$'$N"
+				    "Function=$'BYPASS$'$N"
+				    "";
+				N: PhaseBypass(AOI.Bypass,Phase);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.EXECUTE.ARBITRATION$'$N"
+				    "Function=$'EXECUTE.ARBITRATION$'$N"
+				    "";
+				N: JSR(_100_Arbitration,0);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MAIN.EXTENDED.FUNCTION$'$N"
+				    "Function=$'EXTENDED.FUNCTION$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _050_StepControl 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'MIXER.TIME.DELAY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.SIMULATE.RETURN$'$N"
+				    "Function=$'SIMULATE.RETURN$'$N"
+				    "";
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				RC: "Initial Step$N"
+				    "$N"
+				    "StepIndex is reset to 0 when phase is done.$N"
+				    "Set the StepIndex to the first desired step.$N"
+				    "Set the StepIndexTime for the next step index.  This is used to transition out of next step.  Set on the way into steps.$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,1)MOV(2000,Phase.STEP_INDEX_GOTO);
+				RC: "RESET TIMER$N"
+				    "reset the phase timer and go directly to 5000 (Active) step index.$N"
+				    " $N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,2000)[MOV(3000,Phase.STEP_INDEX_GOTO) ,RES(Phase.STEP_TMR.ACTIVE) ];
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,3000)XIC(Phase.STAT.PERMISSIVE)MOV(5000,Phase.STEP_INDEX_GOTO);
+				RC: "WAIT FOR LEVEL BELOW HIGH INDICATOR";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5000)[XIC(Mixer04_AddSoyOil.CM.AutoRun[11]) MOV(5020,Phase.STEP_INDEX_GOTO) ,XIO(HighLevel.STAT.ON) MOV(5010,Phase.STEP_INDEX_GOTO) ];
+				RC: "WAIT FOR MIXER ADDITION COMPLETE OR TIMER";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5010)[XIC(Mixer04_AddSoyOil.CM.AutoRun[12]) ,GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,Phase.USER.SETTINGS[0]) ]MOV(5020,Phase.STEP_INDEX_GOTO);
+				RC: "WAIT FOR LEVEL ABOVE HIGH INDICATOR$N"
+				    "Filled tank successfully$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5020)[XIC(HighLevel.STAT.ON) MOV(5000,Phase.STEP_INDEX_GOTO) ,EQU(Phase.STEP_INDEX,5020) GEQ(Phase.STEP_TMR.CurrentStepIndexSeconds,Phase.USER.SETTINGS[1]) MOV(5030,Phase.STEP_INDEX_GOTO) ];
+				RC: "WAITING FOR ACKOWLEGEMENT OF NEW TOTE IN PLACE";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5030)[XIC(Phase.CMD.ACK) MOV(5020,Phase.STEP_INDEX_GOTO) ,XIC(LowLevel.STAT.ON) MOV(5040,Phase.STEP_INDEX_GOTO) ];
+				RC: "WAITING FOR ACKOWLEGEMENT OF NEW TOTE IN PLACE$N"
+				    "Tank is empty";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5040)XIC(Phase.CMD.ACK)MOV(5020,Phase.STEP_INDEX_GOTO);
+				RC: "COMPLETE$N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.RUNNING_COMPLETE);
+				RC: "HOLDING$N"
+				    "Phase enters holdinging state as a result of CMD.HOLD (see PhaseStateTransition)$N"
+				    "Logic in this routine should set all EM$'s and CM$'s to a safe state.$N"
+				    "Then set Holding Complete bit to end the holding logic and proceed to HELD.$N"
+				    " $N"
+				    "";
+				N: NOP();
+				RC: "RESET TIMER$N"
+				    "reset the phase timer and go directly to 5000 (Active) step index.$N"
+				    " $N"
+				    "";
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,2000)[MOV(3000,Phase.STEP_INDEX_GOTO) ,RES(Phase.STEP_TMR.ACTIVE) ];
+				RC: "HOLDING COMPLETE$N"
+				    "Proceed immediately to HELD$N"
+				    " $N"
+				    "";
+				N: XIC(Phase.STATE.HOLDING)OTE(Phase.STAT.HOLDING_COMPLETE);
+				RC: "RESTARTING$N"
+				    "In the restarting state (40), the engine waits for RESTARTING_COMPLETE, and then transitions to HELD (60, see PhaseStateTransition AOI)$N"
+				    "In some cases the phase may need to execute a sequence in restarting.$N"
+				    "The Step Index is not changed when the phase is HELD, so in some cases the phase may decide to change StepIndex depending on value when phase was held.$N"
+				    " $N"
+				    "";
+				N: NOP();
+				RC: "RESTARTING COMPLETE$N"
+				    "Wait for a delay, then set Restarting Complete. Phase transitions to HELD (see PhaseStateTransition AOI)$N"
+				    " $N"
+				    "";
+				N: XIC(Phase.STATE.RESTARTING)OTE(Phase.STAT.RESTARTING_COMPLETE);
+				RC: "STOPPING$N"
+				    "Phase enters stopping state as a result of CMD.STOP (see PhaseStateTransition)$N"
+				    "Logic in this routine should set all EM$'s and CM$'s to a safe state.$N"
+				    "Then set Stopping Complete bit to end the stopping logic and proceed to STOPPED.$N"
+				    " $N"
+				    "";
+				N: NOP();
+				RC: "This phase proceeds directly to complete step index$N"
+				    "";
+				N: XIC(Phase.STATE.Oneshot.Stopping)MOV(10000,Phase.STEP_INDEX_GOTO);
+				RC: "Proceed immediately to STOPPED$N"
+				    " $N"
+				    "";
+				N: XIC(Phase.STATE.STOPPING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.STOPPING_COMPLETE);
+				RC: "ABORTING$N"
+				    "Phase enters aborting state as a result of CMD.ABORT (see PhaseStateTransition)$N"
+				    "Logic in this routine should IMMEDIATELY set all EM$'s and CM$'s to a safe state.$N"
+				    "Then set Aborting Complete bit to end the aborting logic and proceed to ABORTED.$N"
+				    " $N"
+				    "";
+				N: NOP();
+				RC: "Go directly to the complete step$N"
+				    " $N"
+				    "";
+				N: XIC(Phase.STATE.Oneshot.Aborting)MOV(10000,Phase.STEP_INDEX_GOTO);
+				RC: "Proceed immediately to ABORTED$N"
+				    " $N"
+				    "";
+				N: XIC(Phase.STATE.ABORTING)EQU(Phase.STEP_INDEX,10000)OTE(Phase.STAT.ABORTING_COMPLETE);
+				RC: "RESETTING$N"
+				    "This routine is responsible for custom resetting logic for this phase$N"
+				    "";
+				N: NOP();
+				N: XIC(Phase.STATE.Oneshot.Idle)MOV(0,Phase.STEP_INDEX_GOTO_ON_RESTART);
+		END_ROUTINE
+
+		ROUTINE _100_Arbitration 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'MIXER.TIME.DELAY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ARBITRATION.STATUS$'$N"
+				    "Function=$'ARBITRATION.STATUS$'$N"
+				    "";
+				N: [XIC(Phase.NEEDS.LIST[0].ACQUIRED) ,EQU(Phase.NEEDS.LIST[0].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[1].ACQUIRED) ,EQU(Phase.NEEDS.LIST[1].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[2].ACQUIRED) ,EQU(Phase.NEEDS.LIST[2].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[3].ACQUIRED) ,EQU(Phase.NEEDS.LIST[3].OBJECT_INDEX,0) ][XIC(Phase.NEEDS.LIST[4].ACQUIRED) ,EQU(Phase.NEEDS.LIST[4].OBJECT_INDEX,0) ]OTE(Phase.NEEDS.OWNS_ALL_REQUIRED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ARBITRATION.START$'$N"
+				    "Function=$'ARBITRATION.START$'$N"
+				    "";
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.STEP_INDEX,3000)XIC(Phase.STEP.FirstScanInStepIndex)OTL(Phase.NEEDS.StartArbitration);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ARBITRATION.RELEASE$'$N"
+				    "Function=$'ARBITRATION.RELEASE$'$N"
+				    "";
+				N: [XIC(Phase.STATE.IDLE) ,XIC(Phase.STATE.RUNNING) EQU(Phase.STEP_INDEX,8000) ,XIC(Phase.STATE.DONE) ,XIC(Phase.STATE.HELD) ]OTE(Phase.NEEDS.Release);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ARBITRATION.INITIALIZE$'$N"
+				    "Function=$'ARBITRATION.INITIALIZE$'$N"
+				    "";
+				N: [XIC(Phase.NEEDS.StartArbitration) MOV(0,Phase.NEEDS.LIST_INDEX) OTL(Phase.NEEDS.Arbitrating) OTU(Phase.NEEDS.StartArbitration) ,XIC(Phase.NEEDS.Arbitrating) XIC(Phase.NEEDS.OWNS_ALL_REQUIRED) OTU(Phase.NEEDS.Arbitrating) ];
+		END_ROUTINE
+
+		ROUTINE _110_ControlModule 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'MIXER.TIME.DELAY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.SIMULATE.RETURN$'$N"
+				    "Function=$'SIMULATE.RETURN$'$N"
+				    "";
+				N: XIC(cSETUP.SIMULATION.Enabled)XIC(cSETUP.SIMULATION.PHASE)RET();
+				N: XIC(Phase.STATE.RUNNING)[LIM(5000,Phase.STEP_INDEX,5010) ,EQU(Phase.STEP_INDEX,5020) XIO(Phase.TMR[0].DN) TON(Phase.TMR[0],?,?) GRT(Phase.TMR[0].ACC,1000) ]OTE(AutoRunGreenLight);
+				N: [XIC(Phase.STATE.RUNNING) EQU(Phase.STEP_INDEX,5030) ,XIC(Phase.STATE.RUNNING) EQU(Phase.STEP_INDEX,5040) XIO(Phase.TMR[1].DN) TON(Phase.TMR[1],?,?) GRT(Phase.TMR[1].ACC,1000) ,XIO(Phase.STATE.RUNNING) XIO(Phase.TMR[2].DN) TON(Phase.TMR[2],?,?) GRT(Phase.TMR[2].ACC,500) ]OTE(AutoRunRedLight);
+				N: XIC(Phase.STATE.RUNNING)EQU(Phase.STEP_INDEX,5020)OTE(AutoRunValve);
+				N: XIC(Phase.STATE.RUNNING)LIM(5030,Phase.STEP_INDEX,5040)OTE(ToteEmpty)OTE(Phase.STAT.ACK_REQUIRED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.CONTROLMODULE.RESET.CM$'$N"
+				    "Function=$'CONTROLMODULE.RESET.CM$'$N"
+				    "";
+				N: [XIC(Phase.CMD.START) ,XIC(Phase.CMD.RESTART) ]NOP();
+		END_ROUTINE
+
+		ROUTINE _120_PermissiveFaultAndMessaging 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'MIXER.TIME.DELAY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: OTE(ValidPath);
+				RC: "$N"
+				    "";
+				N: [MOV(0,Phase.MSG.PERM) ,XIO(DischargeValve.STAT.AUTO) MOV(1,Phase.MSG.PERM) ,XIC(DischargeValve.STAT.FAULT) MOV(2,Phase.MSG.PERM) ,XIC(LowLevel.STAT.FAULT) MOV(3,Phase.MSG.PERM) ,XIC(HighLevel.STAT.FAULT) MOV(4,Phase.MSG.PERM) ,EQU(Phase.MSG.PERM,0) OTE(Phase.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [XIC(Phase.STATE.RUNNING) ,XIC(Phase.STATE.RESTARTING) ]EQU(Phase.MSG.FAULT,0)[XIC(EStop.STAT.FAULT) MOV(21,Phase.MSG.FAULT) ,XIO(DischargeValve.STAT.AUTO) MOV(22,Phase.MSG.FAULT) ,XIC(DischargeValve.STAT.FAULT) MOV(23,Phase.MSG.FAULT) ,XIC(LowLevel.STAT.FAULT) MOV(24,Phase.MSG.FAULT) ,XIC(HighLevel.STAT.FAULT) MOV(25,Phase.MSG.FAULT) ,XIC(cSETUP.SIMULATION.Enabled) XIC(cSETUP.SIMULATION.PHASE) MOV(0,Phase.MSG.FAULT) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "";
+				N: [MOV(0,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIO(Phase.STEP.RECORD) MOV(61,Phase.MSG.MSG) ,XIC(Phase.STAT.BYPASS) XIC(Phase.STEP.RECORD) MOV(62,Phase.MSG.MSG) ,XIC(Phase.STATE.HELD) XIO(Phase.STAT.FAULTED) MOV(63,Phase.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE.UNIQUE$'$N"
+				    "Function=$'STATUS.MESSAGE.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(AOI.Message,Phase.ID,Phase.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.MESSAGE.STATUS$'$N"
+				    "Function=$'MESSAGE$'$N"
+				    "";
+				N: [LIM(2000,Phase.STEP_INDEX,3000) NEQ(Phase.MSG.PERM,0) MOV(Phase.MSG.PERM,Phase.MSG.MSG) ,GEQ(Phase.STEP_INDEX,3000) NEQ(Phase.MSG.FAULT,0) MOV(Phase.MSG.FAULT,Phase.MSG.MSG) ,EQU(Phase.MSG.FAULT,0) EQU(Phase.MSG.PERM,0) ONS(Phase.MSG.OS.1) CLR(Phase.MSG.MSG) ];
+		END_ROUTINE
+
+		ROUTINE _130_Alarming 
+				RC: "Type=$'PHASE$'$N"
+				    "Template=$'MIXER.TIME.DELAY:01.01.01$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.PHASE.ALARM.FAULT$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(Phase.STAT.FAULTED) OTE(Phase.ALARM[0].ACTIVE) ,AlarmControl(AOI.AlarmControl[0],Phase.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

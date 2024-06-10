@@ -1,0 +1,641 @@
+	PROGRAM Mixer04_BatchB (Description := "$N Program=$'EM.MIXER04_BATCHB$'$N",
+	                        MAIN := "_Main",
+	                        MODE := 0,
+	                        DisableFlag := 0,
+	                        UseAsFolder := 0)
+		TAG
+			Batch OF cLINE[6] ;
+			BatchProcedurePhase : BatchProcedurePhase  := [1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0];
+			BatchProcedureUnit : BatchProcedureUnit[11]  := [[1,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0
+					],[1,0,0,0,0,0,0,0,0],[1,0,0,0,0,0,0,0,0]];
+			BatchView OF Batch.View ;
+			C : DINT (RADIX := Decimal) := 0;
+			Debug : DINT[11] (RADIX := Decimal) := [0,0,0,0,0,0,0,0,0,0,0];
+			iPhaseArrayIndex : DINT (RADIX := Decimal) := 0;
+			iTotalActual : REAL (RADIX := Float) := 0.00000000e+000;
+			iTotalTarget : REAL (RADIX := Float) := 0.00000000e+000;
+			iUnitArrayIndex : DINT (RADIX := Decimal) := 0;
+			iV : DINT (RADIX := Decimal) := 0;
+			iW : DINT (RADIX := Decimal) := 0;
+			MaxUnitProcedures OF cSETUP.NO_STEPS_UNIT (RADIX := Decimal);
+			MaxUnitProcedureSteps OF cSETUP.NO_STEPS_PHASE (RADIX := Decimal);
+			MessageToggle : MessageToggle  := [0,102];
+			Mixer OF cUNIT[53] ;
+			OtherBatch OF cLINE[5] ;
+			p : DINT (RADIX := Decimal) := 0;
+			ph_AddCornSyrup OF cPHZ[54] ;
+			ph_AddCornSyrup_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_AddGEMConcentrate OF cPHZ[72] ;
+			ph_AddGEMConcentrate_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_AddGlycerin OF cPHZ[55] ;
+			ph_AddGlycerin_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_AddHFCS OF cPHZ[56] ;
+			ph_AddHFCS_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_AddPastryFlour OF cPHZ[73] ;
+			ph_AddPastryFlour_ClearMSG : BOOL (RADIX := Decimal) := 1;
+			ph_AddSoyOil OF cPHZ[57] ;
+			ph_AddSoyOil_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_AddSugar OF cPHZ[74] ;
+			ph_AddSugar_ClearMSG : BOOL (RADIX := Decimal) := 1;
+			ph_AddWater OF cPHZ[58] ;
+			ph_AddWater_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_AddWheatFlour OF cPHZ[75] ;
+			ph_AddWheatFlour_ClearMSG : BOOL (RADIX := Decimal) := 1;
+			ph_ConcentrateHopperDump OF cPHZ[59] ;
+			ph_ConcentrateHopperDump_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_ConcentrateHopperReadyToDump OF cPHZ[60] ;
+			ph_ConcentrateHopperReadyToDump_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_Discharge OF cPHZ[61] ;
+			ph_Discharge_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_HandAdd OF cPHZ[62] ;
+			ph_HandAdd_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_HighSpeed OF cPHZ[63] ;
+			ph_HighSpeed_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_LoadBowl OF cPHZ[116] ;
+			ph_LowSpeed OF cPHZ[64] ;
+			ph_LowSpeed_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_PastryHopperDump OF cPHZ[65] ;
+			ph_PastryHopperDump_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_PastryHopperReadyToDump OF cPHZ[66] ;
+			ph_PastryHopperReadyToDump_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_SugarHopperDump OF cPHZ[67] ;
+			ph_SugarHopperDump_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_SugarHopperReadyToDump OF cPHZ[68] ;
+			ph_SugarHopperReadyToDump_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_TimeDelay OF cPHZ[69] ;
+			ph_TimeDelay_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_WheatHopperDump OF cPHZ[70] ;
+			ph_WheatHopperDump_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			ph_WheatHopperReadyToDump OF cPHZ[71] ;
+			ph_WheatHopperReadyToDump_ClearMSG : BOOL (RADIX := Decimal) := 0;
+			Schedule OF cSCHEDULE[5] ;
+			TempProgress : CB_BatchView_Phase_Progress  := [0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0];
+			unit_HardWheatFlourHopper OF cUNIT[54] ;
+			unit_MinorsHopper OF cUNIT[55] ;
+			unit_PastryFlourHopper OF cUNIT[56] ;
+			unit_SugarHopper OF cUNIT[57] ;
+		END_TAG
+
+		ROUTINE _050_Running 
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: MOV(0,C)LIM(1,Batch.CAMPAIGN_INDEX,cSETUP.NO_CAMPAIGN)MOV(Batch.CAMPAIGN_INDEX,C);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Batch.STATE.Oneshot.Complete)ADD(Batch.ACTUAL[1],Schedule.CAMPAIGN[C].ACTUAL[1],Schedule.CAMPAIGN[C].ACTUAL[1]);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: MUL(Schedule.CAMPAIGN[C].BATCH.REQUIRED,Batch.SPT[1],Schedule.CAMPAIGN[C].SPT[1]);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Batch.STEP.COMPLETE)OTE(Batch.STAT.RUNNING_COMPLETE);
+		END_ROUTINE
+
+		ROUTINE _110_UnitProcedures 
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: [MOV(unit_MinorsHopper.ARRAY_INDEX,Batch.RECIPE.STEP_NEEDS[2].UNIT_INDEX) MOV(unit_MinorsHopper.ARRAY_INDEX,Batch.REC_BUF.RECIPE.STEP_NEEDS[2].UNIT_INDEX) ,MOV(Mixer.ARRAY_INDEX,Batch.RECIPE.STEP_NEEDS[1].UNIT_INDEX) MOV(Mixer.ARRAY_INDEX,Batch.REC_BUF.RECIPE.STEP_NEEDS[1].UNIT_INDEX) ];
+				RC: "$N"
+				    "";
+				N: [XIC(unit_MinorsHopper.STAT.PHASE_HELD) EQU(unit_MinorsHopper.INDEX,Batch.ARRAY_INDEX) ,XIC(Mixer.STAT.PHASE_HELD) EQU(Mixer.INDEX,Batch.ARRAY_INDEX) ]OTE(Batch.STAT.PHASE_HELD);
+				RC: "$N"
+				    "";
+				N: [XIC(unit_MinorsHopper.STAT.OUT_TOL) EQU(unit_MinorsHopper.INDEX,Batch.ARRAY_INDEX) ,XIC(Mixer.STAT.OUT_TOL) EQU(Mixer.INDEX,Batch.ARRAY_INDEX) ]OTE(Batch.STAT.OUT_TOL);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'MIXERBATCH.UNITPROCEDURES.OUTOFTOLERENCE.PROMPT$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [XIC(Batch.STAT.OUT_TOL) ,XIC(Batch.STAT.PROMPT) ]OTE(Batch.STAT.BITS.31);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'MIXERBATCH.UNITPROCEDURES.BATCH.STAT.PROMPT$'$N"
+				    "[Description]$N"
+				    "[Note]TODO : Add the logic that sets batch stat prompt$N"
+				    "";
+				N: AFI()OTE(Batch.STAT.PROMPT);
+		END_ROUTINE
+
+		ROUTINE _120_PermissiveFaultAndMessaging 
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [XIC(Batch.STATE.RUNNING) ,XIC(Batch.STATE.RESTARTING) ]EQU(Batch.MSG.FAULT,0)XIC(OtherBatch.STATE.ABORTING)MOV(201,Batch.MSG.FAULT);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [EQU(1,Batch.MSG.MSG) MOV(0,Batch.MSG.MSG) ,XIC(Batch.STATE.HELD) MessageToggle(MessageToggle,1,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [EQU(2,Batch.MSG.MSG) MOV(0,Batch.MSG.MSG) ,XIO(Batch.STATE.HELD) XIC(Batch.STAT.PHASE_HELD) MessageToggle(MessageToggle,2,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [EQU(3,Batch.MSG.MSG) MOV(0,Batch.MSG.MSG) ,XIC(Batch.STAT.OUT_TOL) MessageToggle(MessageToggle,3,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "$N"
+				    "";
+				N: [EQU(21,Batch.MSG.MSG) MOV(0,Batch.MSG.MSG) ,[XIC(unit_MinorsHopper.STAT.DEVICES_IN_AUTO) EQU(unit_MinorsHopper.INDEX,Batch.ARRAY_INDEX) ,XIC(unit_PastryFlourHopper.STAT.DEVICES_IN_AUTO) EQU(unit_PastryFlourHopper.INDEX,Batch.ARRAY_INDEX) ,XIC(unit_SugarHopper.STAT.DEVICES_IN_AUTO) EQU(unit_SugarHopper.INDEX,Batch.ARRAY_INDEX) ,XIC(unit_HardWheatFlourHopper.STAT.DEVICES_IN_AUTO) EQU(unit_HardWheatFlourHopper.INDEX,Batch.ARRAY_INDEX) ,XIC(Mixer.STAT.DEVICES_IN_AUTO) EQU(Mixer.INDEX,Batch.ARRAY_INDEX) ] MessageToggle(MessageToggle,21,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "$N"
+				    "";
+				N: [EQU(25,Batch.MSG.MSG) MOV(0,Batch.MSG.MSG) ,[EQU(unit_MinorsHopper.STEP_NO,5) EQU(unit_MinorsHopper.GO_ACTIVE,0) EQU(unit_MinorsHopper.INDEX,Batch.ARRAY_INDEX) ,EQU(unit_PastryFlourHopper.STEP_NO,5) EQU(unit_PastryFlourHopper.GO_ACTIVE,0) EQU(unit_PastryFlourHopper.INDEX,Batch.ARRAY_INDEX) ,EQU(unit_SugarHopper.STEP_NO,5) EQU(unit_SugarHopper.GO_ACTIVE,0) EQU(unit_SugarHopper.INDEX,Batch.ARRAY_INDEX) ,EQU(unit_HardWheatFlourHopper.STEP_NO,5) EQU(unit_HardWheatFlourHopper.GO_ACTIVE,0) EQU(unit_HardWheatFlourHopper.INDEX,Batch.ARRAY_INDEX) ,EQU(Mixer.STEP_NO,5) EQU(Mixer.GO_ACTIVE,0) EQU(Mixer.INDEX,Batch.ARRAY_INDEX) ] MessageToggle(MessageToggle,25,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [EQU(8,Batch.MSG.MSG) MOV(0,Batch.MSG.MSG) ,XIO(Batch.STATE.IDLE) XIO(Batch.STATE.COMPLETE) EQU(Batch.RECIPE.BATCH.NUMBER,Batch.RECIPE.BATCH.REQUIRED) MessageToggle(MessageToggle,8,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [EQU(31,Batch.MSG.MSG) MOV(0,Batch.MSG.MSG) ,EQU(Batch.MSG.FAULT,31) MessageToggle(MessageToggle,31,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [EQU(Batch.MSG.MSG,101) MOV(0,Batch.MSG.MSG) ,XIC(Batch.STATE.HELD) EQU(Batch.RECIPE.BATCH.NUMBER,1) EQU(Batch.STEP_REM,3) MessageToggle(MessageToggle,101,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [EQU(Batch.MSG.MSG,102) MOV(0,Batch.MSG.MSG) ,XIC(Batch.STATE.IDLE) XIC(OtherBatch.STATE.IDLE) XIO(Batch.STAT.IS_MIX_BATCH) MessageToggle(MessageToggle,102,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: MOV(0,C)LIM(1,Batch.CAMPAIGN_INDEX,cSETUP.NO_CAMPAIGN)MOV(Batch.CAMPAIGN_INDEX,C);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [EQU(Batch.MSG.MSG,103) MOV(0,Batch.MSG.MSG) ,XIC(Schedule.CAMPAIGN[C].STATE.HELD) MessageToggle(MessageToggle,103,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [EQU(Batch.MSG.MSG,104) MOV(0,Batch.MSG.MSG) ,XIC(Batch.STATE.ABORTED) MessageToggle(MessageToggle,104,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'MIXERBATCH.PERMISSIVEFAULTANDMESSAGING.PHASE.BATCH.MSG$'$N"
+				    "[Description]$N"
+				    "[Note]TODO : Add the batch phase messages$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [EQU(Batch.MSG.MSG,Batch.MSG.FAULT) MOV(0,Batch.MSG.MSG) ,XIC(Batch.STAT.FAULTED) MessageToggle(MessageToggle,Batch.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'MIXERBATCH.PERMISSIVEFAULTANDMESSAGING.PHASE.PERMISSIVE.MSG$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_ADDCORNSYRUP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_AddCornSyrup.MSG.PERM) ,GRT(ph_AddCornSyrup.STEP_INDEX,3000) ONS(ph_AddCornSyrup_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddCornSyrup.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddCornSyrup.STATE.RUNNING) EQU(ph_AddCornSyrup.STEP_INDEX,3000) XIO(ph_AddCornSyrup.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_AddCornSyrup.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_ADDGLYCERIN$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_AddGlycerin.MSG.PERM) ,GRT(ph_AddGlycerin.STEP_INDEX,3000) ONS(ph_AddGlycerin_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddGlycerin.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddGlycerin.STATE.RUNNING) EQU(ph_AddGlycerin.STEP_INDEX,3000) XIO(ph_AddGlycerin.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_AddGlycerin.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_ADDHFCS$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_AddHFCS.MSG.PERM) ,GRT(ph_AddHFCS.STEP_INDEX,3000) ONS(ph_AddHFCS_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddHFCS.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddHFCS.STATE.RUNNING) EQU(ph_AddHFCS.STEP_INDEX,3000) XIO(ph_AddHFCS.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_AddHFCS.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_ADDSOYOIL$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_AddSoyOil.MSG.PERM) ,GRT(ph_AddSoyOil.STEP_INDEX,3000) ONS(ph_AddSoyOil_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddSoyOil.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddSoyOil.STATE.RUNNING) EQU(ph_AddSoyOil.STEP_INDEX,3000) XIO(ph_AddSoyOil.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_AddSoyOil.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.WATERBLENDER.TO.MIXER:01.01.01$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_ADDWATER$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_AddWater.MSG.PERM) ,GRT(ph_AddWater.STEP_INDEX,3000) ONS(ph_AddWater_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddWater.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddWater.STATE.RUNNING) EQU(ph_AddWater.STEP_INDEX,3000) XIO(ph_AddWater.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_AddWater.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.HOPPER.DUMP:01.01.01$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_CONCENTRATEHOPPERDUMP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_ConcentrateHopperDump.MSG.PERM) ,GRT(ph_ConcentrateHopperDump.STEP_INDEX,3000) ONS(ph_ConcentrateHopperDump_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_ConcentrateHopperDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_ConcentrateHopperDump.STATE.RUNNING) EQU(ph_ConcentrateHopperDump.STEP_INDEX,3000) XIO(ph_ConcentrateHopperDump.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_ConcentrateHopperDump.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.MIXER.DISCHARGE:01.01.01$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_DISCHARGE$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_Discharge.MSG.PERM) ,GRT(ph_Discharge.STEP_INDEX,3000) ONS(ph_Discharge_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_Discharge.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_Discharge.STATE.RUNNING) EQU(ph_Discharge.STEP_INDEX,3000) XIO(ph_Discharge.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_Discharge.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.MIXER.HAND.ADD:01.01.01$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_HANDADD$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_HandAdd.MSG.PERM) ,GRT(ph_HandAdd.STEP_INDEX,3000) ONS(ph_HandAdd_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_HandAdd.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_HandAdd.STATE.RUNNING) EQU(ph_HandAdd.STEP_INDEX,3000) XIO(ph_HandAdd.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_HandAdd.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.MATERIAL.MIXER.RUN.SPEED.HIGH$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_HIGHSPEED$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_HighSpeed.MSG.PERM) ,GRT(ph_HighSpeed.STEP_INDEX,3000) ONS(ph_HighSpeed_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_HighSpeed.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_HighSpeed.STATE.RUNNING) EQU(ph_HighSpeed.STEP_INDEX,3000) XIO(ph_HighSpeed.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_HighSpeed.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.MATERIAL.MIXER.RUN.SPEED.LOW$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_LOWSPEED$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_LowSpeed.MSG.PERM) ,GRT(ph_LowSpeed.STEP_INDEX,3000) ONS(ph_LowSpeed_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_LowSpeed.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_LowSpeed.STATE.RUNNING) EQU(ph_LowSpeed.STEP_INDEX,3000) XIO(ph_LowSpeed.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_LowSpeed.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.HOPPER.DUMP:01.01.01$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_PASTRYHOPPERDUMP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_PastryHopperDump.MSG.PERM) ,GRT(ph_PastryHopperDump.STEP_INDEX,3000) ONS(ph_PastryHopperDump_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_PastryHopperDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_PastryHopperDump.STATE.RUNNING) EQU(ph_PastryHopperDump.STEP_INDEX,3000) XIO(ph_PastryHopperDump.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_PastryHopperDump.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.HOPPER.DUMP:01.01.01$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_SUGARHOPPERDUMP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_SugarHopperDump.MSG.PERM) ,GRT(ph_SugarHopperDump.STEP_INDEX,3000) ONS(ph_SugarHopperDump_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_SugarHopperDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_SugarHopperDump.STATE.RUNNING) EQU(ph_SugarHopperDump.STEP_INDEX,3000) XIO(ph_SugarHopperDump.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_SugarHopperDump.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.MIXER.TIME.DELAY:01.01.01$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_TIMEDELAY$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_TimeDelay.MSG.PERM) ,GRT(ph_TimeDelay.STEP_INDEX,3000) ONS(ph_TimeDelay_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_TimeDelay.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_TimeDelay.STATE.RUNNING) EQU(ph_TimeDelay.STEP_INDEX,3000) XIO(ph_TimeDelay.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_TimeDelay.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.HOPPER.DUMP:01.01.01$'$N"
+				    "Function=$'PERMISSIVE.PHASE.MSG.MIXER04_WHEATHOPPERDUMP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_WheatHopperDump.MSG.PERM) ,GRT(ph_WheatHopperDump.STEP_INDEX,3000) ONS(ph_WheatHopperDump_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_WheatHopperDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_WheatHopperDump.STATE.RUNNING) EQU(ph_WheatHopperDump.STEP_INDEX,3000) XIO(ph_WheatHopperDump.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_WheatHopperDump.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_ConcentrateHopperReadyToDump.MSG.PERM) ,GRT(ph_ConcentrateHopperReadyToDump.STEP_INDEX,3000) ONS(ph_ConcentrateHopperReadyToDump_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_ConcentrateHopperReadyToDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_ConcentrateHopperReadyToDump.STATE.RUNNING) EQU(ph_ConcentrateHopperReadyToDump.STEP_INDEX,3000) XIO(ph_ConcentrateHopperReadyToDump.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_ConcentrateHopperReadyToDump.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_PastryHopperReadyToDump.MSG.PERM) ,GRT(ph_PastryHopperReadyToDump.STEP_INDEX,3000) ONS(ph_PastryHopperReadyToDump_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_PastryHopperReadyToDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_PastryHopperReadyToDump.STATE.RUNNING) EQU(ph_PastryHopperReadyToDump.STEP_INDEX,3000) XIO(ph_PastryHopperReadyToDump.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_PastryHopperReadyToDump.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_SugarHopperReadyToDump.MSG.PERM) ,GRT(ph_SugarHopperReadyToDump.STEP_INDEX,3000) ONS(ph_SugarHopperReadyToDump_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_SugarHopperReadyToDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_SugarHopperReadyToDump.STATE.RUNNING) EQU(ph_SugarHopperReadyToDump.STEP_INDEX,3000) XIO(ph_SugarHopperReadyToDump.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_SugarHopperReadyToDump.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_WheatHopperReadyToDump.MSG.PERM) ,GRT(ph_WheatHopperReadyToDump.STEP_INDEX,3000) ONS(ph_WheatHopperReadyToDump_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_WheatHopperReadyToDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_WheatHopperReadyToDump.STATE.RUNNING) EQU(ph_WheatHopperReadyToDump.STEP_INDEX,3000) XIO(ph_WheatHopperReadyToDump.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_WheatHopperReadyToDump.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_AddGEMConcentrate.MSG.PERM) ,GRT(ph_AddGEMConcentrate.STEP_INDEX,3000) ONS(ph_AddGEMConcentrate_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddGEMConcentrate.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddGEMConcentrate.STATE.RUNNING) EQU(ph_AddGEMConcentrate.STEP_INDEX,3000) XIO(ph_AddGEMConcentrate.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_AddGEMConcentrate.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_AddPastryFlour.MSG.PERM) ,GRT(ph_AddPastryFlour.STEP_INDEX,3000) ONS(ph_AddPastryFlour_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddPastryFlour.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddPastryFlour.STATE.RUNNING) EQU(ph_AddPastryFlour.STEP_INDEX,3000) XIO(ph_AddPastryFlour.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_AddPastryFlour.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_AddSugar.MSG.PERM) ,GRT(ph_AddSugar.STEP_INDEX,3000) ONS(ph_AddSugar_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddSugar.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddSugar.STATE.RUNNING) EQU(ph_AddSugar.STEP_INDEX,3000) XIO(ph_AddSugar.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_AddSugar.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_AddWheatFlour.MSG.PERM) ,GRT(ph_AddWheatFlour.STEP_INDEX,3000) ONS(ph_AddWheatFlour_ClearMSG) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddWheatFlour.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddWheatFlour.STATE.RUNNING) EQU(ph_AddWheatFlour.STEP_INDEX,3000) XIO(ph_AddWheatFlour.STAT.PERMISSIVE) MessageToggle(MessageToggle,ph_AddWheatFlour.MSG.PERM,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'MIXERBATCH.PERMISSIVEFAULTANDMESSAGING.PHASE.FAULT.MSG$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_ADDCORNSYRUP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_AddCornSyrup.MSG.FAULT) ,XIC(ph_AddCornSyrup.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddCornSyrup.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddCornSyrup.STAT.FAULTED) MessageToggle(MessageToggle,ph_AddCornSyrup.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_ADDGLYCERIN$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_AddGlycerin.MSG.FAULT) ,XIC(ph_AddGlycerin.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddGlycerin.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddGlycerin.STAT.FAULTED) MessageToggle(MessageToggle,ph_AddGlycerin.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_ADDHFCS$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_AddHFCS.MSG.FAULT) ,XIC(ph_AddHFCS.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddHFCS.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddHFCS.STAT.FAULTED) MessageToggle(MessageToggle,ph_AddHFCS.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.PHASE.MATERIAL.TANK.PUMP.TO.MIXER$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_ADDSOYOIL$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_AddSoyOil.MSG.FAULT) ,XIC(ph_AddSoyOil.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddSoyOil.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddSoyOil.STAT.FAULTED) MessageToggle(MessageToggle,ph_AddSoyOil.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.WATERBLENDER.TO.MIXER:01.01.01$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_ADDWATER$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_AddWater.MSG.FAULT) ,XIC(ph_AddWater.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddWater.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddWater.STAT.FAULTED) MessageToggle(MessageToggle,ph_AddWater.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.HOPPER.DUMP:01.01.01$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_CONCENTRATEHOPPERDUMP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_ConcentrateHopperDump.MSG.FAULT) ,XIC(ph_ConcentrateHopperDump.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_ConcentrateHopperDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_ConcentrateHopperDump.STAT.FAULTED) MessageToggle(MessageToggle,ph_ConcentrateHopperDump.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.MIXER.DISCHARGE:01.01.01$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_DISCHARGE$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_Discharge.MSG.FAULT) ,XIC(ph_Discharge.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_Discharge.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_Discharge.STAT.FAULTED) MessageToggle(MessageToggle,ph_Discharge.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.MIXER.HAND.ADD:01.01.01$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_HANDADD$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_HandAdd.MSG.FAULT) ,XIC(ph_HandAdd.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_HandAdd.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_HandAdd.STAT.FAULTED) MessageToggle(MessageToggle,ph_HandAdd.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.MATERIAL.MIXER.RUN.SPEED.HIGH$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_HIGHSPEED$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_HighSpeed.MSG.FAULT) ,XIC(ph_HighSpeed.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_HighSpeed.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_HighSpeed.STAT.FAULTED) MessageToggle(MessageToggle,ph_HighSpeed.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.MATERIAL.MIXER.RUN.SPEED.LOW$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_LOWSPEED$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_LowSpeed.MSG.FAULT) ,XIC(ph_LowSpeed.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_LowSpeed.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_LowSpeed.STAT.FAULTED) MessageToggle(MessageToggle,ph_LowSpeed.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.HOPPER.DUMP:01.01.01$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_PASTRYHOPPERDUMP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_PastryHopperDump.MSG.FAULT) ,XIC(ph_PastryHopperDump.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_PastryHopperDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_PastryHopperDump.STAT.FAULTED) MessageToggle(MessageToggle,ph_PastryHopperDump.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.HOPPER.DUMP:01.01.01$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_SUGARHOPPERDUMP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_SugarHopperDump.MSG.FAULT) ,XIC(ph_SugarHopperDump.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_SugarHopperDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_SugarHopperDump.STAT.FAULTED) MessageToggle(MessageToggle,ph_SugarHopperDump.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.MIXER.TIME.DELAY:01.01.01$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_TIMEDELAY$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_TimeDelay.MSG.FAULT) ,XIC(ph_TimeDelay.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_TimeDelay.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_TimeDelay.STAT.FAULTED) MessageToggle(MessageToggle,ph_TimeDelay.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'PHASE.HOPPER.DUMP:01.01.01$'$N"
+				    "Function=$'FAULT.PHASE.MSG.MIXER04_WHEATHOPPERDUMP$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: [[EQU(Batch.MSG.MSG,ph_WheatHopperDump.MSG.FAULT) ,XIC(ph_WheatHopperDump.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_WheatHopperDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_WheatHopperDump.STAT.FAULTED) MessageToggle(MessageToggle,ph_WheatHopperDump.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_ConcentrateHopperReadyToDump.MSG.FAULT) ,XIC(ph_ConcentrateHopperReadyToDump.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_ConcentrateHopperReadyToDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_ConcentrateHopperReadyToDump.STAT.FAULTED) MessageToggle(MessageToggle,ph_ConcentrateHopperReadyToDump.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_PastryHopperReadyToDump.MSG.FAULT) ,XIC(ph_PastryHopperReadyToDump.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_PastryHopperReadyToDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_PastryHopperReadyToDump.STAT.FAULTED) MessageToggle(MessageToggle,ph_PastryHopperReadyToDump.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_SugarHopperReadyToDump.MSG.FAULT) ,XIC(ph_SugarHopperReadyToDump.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_SugarHopperReadyToDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_SugarHopperReadyToDump.STAT.FAULTED) MessageToggle(MessageToggle,ph_SugarHopperReadyToDump.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_WheatHopperReadyToDump.MSG.FAULT) ,XIC(ph_WheatHopperReadyToDump.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_WheatHopperReadyToDump.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_WheatHopperReadyToDump.STAT.FAULTED) MessageToggle(MessageToggle,ph_WheatHopperReadyToDump.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_AddGEMConcentrate.MSG.FAULT) ,XIC(ph_AddGEMConcentrate.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddGEMConcentrate.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddGEMConcentrate.STAT.FAULTED) MessageToggle(MessageToggle,ph_AddGEMConcentrate.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_AddPastryFlour.MSG.FAULT) ,XIC(ph_AddPastryFlour.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddPastryFlour.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddPastryFlour.STAT.FAULTED) MessageToggle(MessageToggle,ph_AddPastryFlour.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_AddSugar.MSG.FAULT) ,XIC(ph_AddSugar.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddSugar.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddSugar.STAT.FAULTED) MessageToggle(MessageToggle,ph_AddSugar.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				N: [[EQU(Batch.MSG.MSG,ph_AddWheatFlour.MSG.FAULT) ,XIC(ph_AddWheatFlour.CMD.CLEAR_FAILURE) ] MOV(0,Batch.MSG.MSG) ,EQU(ph_AddWheatFlour.LINE_INDEX,Batch.ARRAY_INDEX) XIC(ph_AddWheatFlour.STAT.FAULTED) MessageToggle(MessageToggle,ph_AddWheatFlour.MSG.FAULT,Batch.MSG.MSG,Batch.MSG.Toggle.1) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: MOV(0,Batch.IPAR[10])CMP(Batch.MSG.MSG>100000*cSETUP.PLC_ID)CMP(Batch.MSG.MSG<=200000*cSETUP.PLC_ID)DIV(Batch.MSG.MSG,100,Batch.IPAR[10]);
+		END_ROUTINE
+
+		ROUTINE _200_Actuals 
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'MIXERBATCH.MATERIAL.ADD.SETPOINTS$'$N"
+				    "[Description] ADD.SETPOINTS:Material setpoints to setpoint 1.$N"
+				    "[Note]TODO : Add the setpoints from all material additions phases batch setpoint 1.$N"
+				    "";
+				N: MOV(0,Batch.SPT[1]);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'MIXERBATCH.MATERIAL.ADD.ACTUALS$'$N"
+				    "[Description] ADD.ACTUALS:Material actuals to setpoint 1.$N"
+				    "[Note]TODO : Add the actuals from all material additions phases batch setpoint 1.$N"
+				    "";
+				N: XIO(Batch.STATE.IDLE)MOV(0,Batch.ACTUAL[1]);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'MIXERBATCH.BATCH.ACTUAL.02$'$N"
+				    "[Description]$N"
+				    "[Note]TODO : Check batch actual is correct.$N"
+				    "";
+				N: EQU(Mixer.INDEX,Batch.ARRAY_INDEX)DIV(Mixer.TMR[1].ACC,60000,Batch.ACTUAL[2]);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'MIXERBATCH.BATCH.SETPOINT.ACTUAL.03.04$'$N"
+				    "[Description]$N"
+				    "[Note]TODO : Check batch actual is correct.$N"
+				    "";
+				N: EQU(Mixer.INDEX,Batch.ARRAY_INDEX)[MOV(Batch.SPT[4],Mixer.SPT[4]) MOV(Batch.SPT[5],Mixer.SPT[5]) ,MOV(Mixer.ACTUAL[4],Batch.ACTUAL[4]) MOV(Mixer.ACTUAL[5],Batch.ACTUAL[5]) ];
+		END_ROUTINE
+
+		ROUTINE _200_ProcessVariables 
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]TODO : Setup the batch PV values.$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(Batch.STATE.RUNNING)XIC(Batch.STEP.RECORD)FLL(0,Batch.PV[1],9);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _300_BatchView 
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _300_Recipe 
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: MOV(0,V);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: LBL(ForEachUnitProcedure)[ADD(1,V,V) MOV(0,W) ,EQU(Batch.RECIPE.STEP[V].UNIT_INDEX,0) JMP(ExitForEachUnitProcedure) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: LBL(ForEachUnitProcedureStep)[ADD(1,W,W) ,EQU(Batch.RECIPE.STEP[V].STEP[W].PHASE_INDEX,0) JMP(NextUnitProcedure) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: EQU(Batch.RECIPE.HEADER.ID,OtherBatch.RECIPE.HEADER.ID)EQU(Batch.CAMPAIGN_INDEX,OtherBatch.CAMPAIGN_INDEX)[XIC(Batch.RECIPE.STEP[V].STEP[W].STAT.AdjustmentWasMade1) MOV(Batch.RECIPE.STEP[V].STEP[W].ACTUAL[3],OtherBatch.RECIPE.STEP[V].STEP[W].ACTUAL[3]) OTU(Batch.RECIPE.STEP[V].STEP[W].STAT.AdjustmentWasMade1) ,XIC(Batch.RECIPE.STEP[V].STEP[W].STAT.AdjustmentWasMade2) MOV(Batch.RECIPE.STEP[V].STEP[W].ACTUAL[7],OtherBatch.RECIPE.STEP[V].STEP[W].ACTUAL[7]) OTU(Batch.RECIPE.STEP[V].STEP[W].STAT.AdjustmentWasMade2) ,XIC(Batch.RECIPE.STEP[V].STEP[W].STAT.AdjustmentWasMade3) MOV(Batch.RECIPE.STEP[V].STEP[W].ACTUAL[11],OtherBatch.RECIPE.STEP[V].STEP[W].ACTUAL[11]) OTU(Batch.RECIPE.STEP[V].STEP[W].STAT.AdjustmentWasMade3) ,XIC(Batch.RECIPE.STEP[V].STEP[W].STAT.AdjustmentWasMade4) MOV(Batch.RECIPE.STEP[V].STEP[W].ACTUAL[15],OtherBatch.RECIPE.STEP[V].STEP[W].ACTUAL[15]) OTU(Batch.RECIPE.STEP[V].STEP[W].STAT.AdjustmentWasMade4) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.1) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[1],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[1]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.1) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.2) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[2],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[2]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.2) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.3) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[3],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[3]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.3) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.4) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[4],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[4]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.4) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.5) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[5],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[5]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.5) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.6) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[6],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[6]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.6) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.7) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[7],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[7]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.7) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.8) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[8],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[8]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.8) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.9) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[9],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[9]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.9) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.10) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[10],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[10]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.10) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.11) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[11],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[11]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.11) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.12) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[12],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[12]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.12) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.13) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[13],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[13]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.13) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.14) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[14],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[14]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.14) ,XIC(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.15) MOV(Batch.RECIPE.STEP[V].STEP[W].SPT[15],OtherBatch.RECIPE.STEP[V].STEP[W].SPT[15]) OTU(Batch.RECIPE.STEP[V].STEP[W].SPT_ADJUSTED.15) ];
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: LBL(NextUnitProcedureStep)LES(W,MaxUnitProcedureSteps)JMP(ForEachUnitProcedureStep);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: LBL(NextUnitProcedure)LES(V,MaxUnitProcedures)JMP(ForEachUnitProcedure);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: LBL(ExitForEachUnitProcedure)NOP();
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: MOV(cPHZ[6].SPT[0],cPHZ[6].SPT[0])MOV(Batch.RECIPE.STEP[5].STEP[4].ACTUAL[7],Batch.RECIPE.STEP[5].STEP[4].ACTUAL[7])MOV(OtherBatch.RECIPE.STEP[5].STEP[4].ACTUAL[7],OtherBatch.RECIPE.STEP[5].STEP[4].ACTUAL[7]);
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: CPT(Batch.ID,1000*cSETUP.PLC_ID+Batch.ARRAY_INDEX);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: JSR(_300_BatchView,0);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: JSR(_110_UnitProcedures,0);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: JSR(_300_Recipe,0);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: JSR(_050_Running,0);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: JSR(_120_PermissiveFaultAndMessaging,0);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: JSR(_200_ProcessVariables,0);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: JSR(_200_Actuals,0);
+				RC: "Template=$'EQUIPMENT.MODULE.MIXER.01.01$'$N"
+				    "Function=$'$'$N"
+				    "[Description]$N"
+				    "[Note]$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM

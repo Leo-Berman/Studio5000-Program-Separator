@@ -1,0 +1,1065 @@
+	PROGRAM SugarMill_StarchHopper (Description := "$NProgram=$'EM$'$NClass=$'USEBIN.04.01$'$N",
+	                                MAIN := "_Main",
+	                                MODE := 0,
+	                                DisableFlag := 0,
+	                                UseAsFolder := 0)
+		TAG
+			Airlock OF cDO[271] ;
+			AirlockSugar OF cDO[283] ;
+			Airlock_IO_Output OF Local:10:O.Data.14 (RADIX := Decimal);
+			Airlock_IO_Running OF Local:7:I.Data.2 (RADIX := Decimal);
+			Auger OF cDO[273] (COMMENT.STAT.STATE_1 := "Run at constant speed until rate calcs are stabilized",
+			            COMMENT.STAT.STATE_2 := "Disable PID Control");
+			AugerSpeedReference OF cAO[59] (COMMENT.SP := "% Starch");
+			AugerSpeedReference_CV_DEFAULT OF AugerSpeedReference.RPAR[0] (RADIX := Float);
+			AugerSpeedReference_EnableRateCalc OF AugerSpeedReference.STAT.BITS.21 (RADIX := Decimal);
+			AugerSpeedReference_RunConstantDelay OF AugerSpeedReference.TMR[0] ;
+			AugerSpeedReference_SP_CONSTANT : REAL (RADIX := Float) := 2.56000000e+001;
+			AugerWeight OF cAI[89] ;
+			AugerWeight_AnalogInputRateHistorical3 : AnalogInputRateHistorical3  := [68,1.00000000e+003,10000,6.90000000e+001,0.00000000e+000,110000,12,0,[0,10000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],31,2,0,60000];
+			AugerWeight_AnalogInputRateHistorical4 : AnalogInputRateHistorical4  := [68,1.48199997e+002,10000,0.00000000e+000,110000,12,0,[0,10000,0],[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000],[2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0],31,2,0,30000];
+			AugerWeight_IO_Cmd OF iWI4:O.MB1.Command (RADIX := Binary);
+			AugerWeight_IO_DataOkay OF iWI4:I.MB1.Data_Okay (RADIX := Decimal);
+			AugerWeight_IO_Value OF iWI4:I.MB1.Measuring_Value (RADIX := Float);
+			AugerWeight_MaximumValue : REAL (RADIX := Float) := 1.48199997e+002;
+			AugerWeight_MaxValue : DINT (RADIX := Decimal) := 134;
+			AugerWeight_MinimumValue : REAL (RADIX := Float) := 1.48199997e+002;
+			AugerWeight_MinValue : DINT (RADIX := Decimal) := 133;
+			AugerWeight_RateInstantaneous : CB_AI_RATE_OF_CHANGE  := [1.36100006e+002,8000,1.00500061e+002,[-1069602970,9999999,7559],[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]];
+			AugerWeight_RateTotalInterval : DINT (RADIX := Decimal) := 110000;
+			AugerWeight_ResetMaximumONS : BOOL (RADIX := Decimal) := 0;
+			AugerWeight_ResetMinimumONS : BOOL (RADIX := Decimal) := 0;
+			AugerWeight_SIM_Enable : BOOL (RADIX := Decimal) := 0;
+			AugerWeight_SIM_Value : REAL (RADIX := Float) := 8.80599976e+001;
+			AugerWeight_TestINstantaneous : BOOL (RADIX := Decimal) := 0;
+			Auger_CV_DEFAULT OF AugerSpeedReference.RPAR[0] (RADIX := Float);
+			Auger_IO_ClearFaults OF iDrive_M24:O.ClearFaults (RADIX := Decimal);
+			Auger_IO_Faulted OF iDrive_M24:I.Faulted (RADIX := Decimal);
+			Auger_IO_Running OF iDrive_M24:I.Active (RADIX := Decimal);
+			Auger_IO_Setpoint OF iDrive_M24:O.FreqCommand (RADIX := Decimal);
+			Auger_IO_Speed OF iDrive_M24:I.OutputFreq (RADIX := Decimal);
+			Auger_IO_Start OF iDrive_M24:O.Start (RADIX := Decimal);
+			Auger_IO_Stop OF iDrive_M24:O.Stop (RADIX := Decimal);
+			BD_Commish : DINT[11] (COMMENT[0].5 := "Defeat$NAuger INterlock$NCAUTION",
+			            COMMENT[1].1 := "Simulate an offset of the quantity to reduce by",
+			            COMMENT[1].2 := "Enable Simulation$Nof LIW",
+			            RADIX := Decimal) := [14,0,990,0,0,0,0,0,0,0,0];
+			BD_Commish_Timer : TIMER[5]  := [[0,0,0],[0,0,0],[1799098,1000,0],[0,0,0],[0,0,0]];
+			Blower OF cDO[265] ;
+			BlowerMotor OF cDO[295] ;
+			BurstIndicator OF cDI[190] ;
+			BurstIndicator_IO_Fault : BOOL (RADIX := Decimal) := 0;
+			BurstIndicator_IO_Input OF Local:5:I.Data.4 (RADIX := Decimal);
+			DustCollector OF cDO[270] ;
+			DustCollectorDiffPressure OF cAI[86] ;
+			DustCollectorDiffPressureAverage OF cAI[87] ;
+			DustCollectorDiffPressureAverageIndex : DINT (RADIX := Decimal) := 12;
+			DustCollectorDiffPressureData : REAL[20] (RADIX := Float) := [5.59473038e-002,5.16843796e-002,4.40025330e-002,5.02252579e-002,6.62469864e-002,6.60467148e-002
+					,5.35011292e-002,4.66775894e-002,5.10263443e-002,5.29432297e-002,5.01823425e-002,4.72354889e-002
+					,4.60624695e-002,6.82926178e-002,6.20269775e-002,6.06107712e-002,5.84793091e-002,5.81359863e-002
+					,5.76925278e-002,5.77354431e-002];
+			DustCollectorDiffPressure_IO_Fault OF Local:3:I.Ch1Fault (RADIX := Decimal);
+			DustCollectorDiffPressure_IO_Value OF Local:3:I.Ch1Data (RADIX := Float);
+			DustCollectorFilterGuardian : DustCollectorFilterGuardian  := [3,1,3,3,35,0,3,3,[50530,1250,0],[[0,2,0],[0,3,0],[0,3,0],[0,3,0],[0,1,0],[0,1,0],[0,1,0],[0,1,0],[0,1,0],[0,1,0],[0,1,0]],2.03999996e+000];
+			DustCollectorPressure OF cAI[88] ;
+			DustCollectorPressure_IO_Fault OF Local:3:I.Ch0Fault (RADIX := Decimal);
+			DustCollectorPressure_IO_Value OF Local:3:I.Ch0Data (RADIX := Float);
+			DustCollectorValve1_IO_Output OF Local:9:O.Data.13 (RADIX := Decimal);
+			DustCollectorValve2_IO_Output OF Local:9:O.Data.14 (RADIX := Decimal);
+			DustCollectorValve3_IO_Output OF Local:9:O.Data.15 (RADIX := Decimal);
+			DustCollector_IO_Output : BOOL (RADIX := Decimal) := 0;
+			EStop OF cDI[5] ;
+			Evasor OF cDO[275] ;
+			EvasorPulseOnOff : PulseOnOff  := [0,250,3000,[0,0,0]];
+			Evasor_IO_Output OF Local:11:O.Data.9 (RADIX := Decimal);
+			Feeder OF cDO[272] ;
+			Feeder_IO_Output OF Local:10:O.Data.13 (RADIX := Decimal);
+			Feeder_IO_Running OF Local:7:I.Data.1 (RADIX := Decimal);
+			HighLevel OF cDI[191] ;
+			HighLevel_IO_Fault OF Local:6:I.Data.2 (RADIX := Decimal);
+			HighLevel_IO_Input OF Local:6:I.Data.1 (RADIX := Decimal);
+			MillDrive OF cDO[285] ;
+			Null : CB_NULL  := [[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0],[[[1],[1],[1]]],[0,[[0,0,0],[0,0,0]],[[0],[0]],[[0],[0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0
+					],[0,0,0,0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1],[1],[1,0,[1,0,0,0],[1,0,0,0,0,0],[1,0]],[1],[1,0,0,0],[[1],[1],[1]],[1,0,0,[0,0
+					,0]]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[0],[[0,0,0],[0,0,0],0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[[[0,0,0],[0,0,0]],[[0,0,0,0],[0,0
+					,0,0]],[[0,0,0,0],[0,0,0,0]]]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0.00000000e+000,0.00000000e+000
+					,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000
+					,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0,0.00000000e+000
+					,[0,0,0],[0.00000000e+000,0.00000000e+000,[0,0,0],0],[0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,0,0,0,0,0,0,0
+					,0,0,0],[0,0,0,0,0,0],0.00000000e+000,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[[1,0,[1,0,0,0
+					],[1,0,0,0,0,0],[1,0]],[1,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[1,0.00000000e+000],[1],[1,0.00000000e+000],[[1],[1],[1
+					],[1],[1],[1],[1],[1]]],[0.00000000e+000,0,0.00000000e+000,0.00000000e+000,0],[0],0.00000000e+000,[0,[0,0,0],0.00000000e+000
+					,0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,[0,0,0],0]],[0,0,0,[[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0
+					,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0,0],[0,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000]],0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,[[0,0.00000000e+000,0.00000000e+000,0,[0,0,0],[0,0,0]],[0,0.00000000e+000,0.00000000e+000
+					,0,[0,0,0],[0,0,0]],[0,[0,0,0]]],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0,0,0],[0,0,0],[0,0,0]],[0,0,0,0,0,0],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0],[[1],[1]]],[0,0,0,0,0,0,0,0,[[0,0,0,0
+					,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]],[0,0,0,0,[0,0,0]]],[0,0,0],[0],[[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0]],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[0,[0,0],0],[0],0,0,0,0,0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],0.00000000e+000,0.00000000e+000
+					,0.00000000e+000],[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0]],0,0,0,0,[0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000],[0,0,0,0,0],0,0,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0,0,0,0,0,0],[0,0,0,0,0,0,0],[2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0
+					,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0,2#0],[0,0,0,0,0,0,0,0,0
+					,[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					]],[0,[0,0,0,0,0,0,0,0,0,0],[0,0,0],0,0,0,0],[0,0,[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]],0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0],[0],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0,'$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00$00'
+					],[0.00000000e+000,0.00000000e+000,0.00000000e+000,[[1,0,0],[[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000
+					,0.00000000e+000,0.00000000e+000,0.00000000e+000,0],[0.00000000e+000,0.00000000e+000,0.00000000e+000
+					,0.00000000e+000,0],0,0]],0,0,0,0],[[1,0,0,15,10,0.00000000e+000,0.00000000e+000,0.00000000e+000,0,0,0]]]];
+			OIT OF dOIT[1] ;
+			ph_PowderHopperRefill OF cPHZ[113] ;
+			ph_RefillStarchDispensingHopper OF cPHZ[112] ;
+			ph_SugarMillAddStarch OF cPHZ[12] ;
+			PowerInput OF cDI[11] ;
+			PowerOutput OF cDI[12] ;
+			PowerSafety OF cDI[13] ;
+			SugarHopperWeight OF cAI[96] ;
+			Unit OF cUNIT[27] ;
+			Vibrator OF cDO[274] ;
+			VibratorPulseOnOff : PulseOnOff  := [0,250,3000,[0,0,0]];
+			Vibrator_IO_Output OF Local:11:O.Data.0 (RADIX := Decimal);
+			Weight OF cAI[90] ;
+			Weight_IO_Cmd OF iWI5:O.MB1.Command (RADIX := Binary);
+			Weight_IO_DataOkay OF iWI5:I.MB1.Data_Okay (RADIX := Decimal);
+			Weight_IO_Value OF iWI5:I.MB1.Measuring_Value (RADIX := Float);
+			Weight_SIM_Enable : BOOL (RADIX := Decimal) := 0;
+			Weight_SIM_Value : DINT (RADIX := Decimal) := 230;
+		END_TAG
+
+		ROUTINE Airlock 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'USEBIN.04.01.Motor.SugarMill_StarchHopper$'$N"
+				    "ControlModule=$'Motor.Airlock$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_RefillStarchDispensingHopper.CM.AutoRun[12])OTE(Airlock.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,Airlock.MSG.PERM) ,XIC(AugerWeight.HiHi.ACTIVE) MOV(2,Airlock.MSG.PERM) ,EQU(Airlock.MSG.PERM,0) OTE(Airlock.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,Airlock.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,Airlock.MSG.INTRLK) ,NEQ(Airlock.MSG.INTRLK,0) OTE(Airlock.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.MOTOR.FAULT$'$N"
+				    "Function=$'MOTOR.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Airlock.STAT.ENERGIZE) [XIO(Airlock.STAT.ON_OPEN) ,XIC(Airlock.STAT.OFF_CLOSED) ] ,XIC(Airlock.STAT.FAULT) ]XIO(Airlock.CMD.RESET)[XIC(Airlock.DELAY.FAULT.DN) OTE(Airlock.STAT.FAULT) ,TON(Airlock.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.MOTOR$'$N"
+				    "Function=$'STATUS.MESSAGE.MOTOR$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,Airlock.MSG.MSG) ,XIC(Airlock.STAT.ENERGIZE) XIO(Airlock.STAT.ON_OPEN) MOV(61,Airlock.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Airlock.STAT.AUTO_RUN) NEQ(Airlock.MSG.PERM,0) MOV(Airlock.MSG.PERM,Airlock.MSG.MSG) ,NEQ(Airlock.MSG.INTRLK,0) MOV(Airlock.MSG.INTRLK,Airlock.MSG.MSG) ,NEQ(Airlock.MSG.FAULT,0) MOV(Airlock.MSG.FAULT,Airlock.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(Airlock.AOI.Message,Airlock.ID,Airlock.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(Airlock.AOI.Control,Airlock.CMD,Airlock.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.MOTOR.IO.OUTPUT$'$N"
+				    "Function=$'MOTOR.IO.CONTROL$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Airlock.STAT.ENERGIZE) OTE(Airlock_IO_Output) ,XIC(Airlock_IO_Running) [OTE(Airlock.STAT.ON_OPEN) ,XIC(Airlock.DELAY.ON.DN) OTE(Airlock.STAT.ON_OPEN_DELAY) ,TON(Airlock.DELAY.ON,?,?) ] ,XIO(Airlock.STAT.ON_OPEN) [OTE(Airlock.STAT.OFF_CLOSED) ,XIC(Airlock.DELAY.OFF.DN) OTE(Airlock.STAT.OFF_CLOSED_DELAY) ,TON(Airlock.DELAY.OFF,?,?) ] ,XIC(PowerInput.STAT.ON) XIC(PowerOutput.STAT.ON) XIC(PowerSafety.STAT.ON) OTE(Airlock.STAT.ControlPowerOn) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(Airlock.STAT.ControlPowerOn) XIC(Airlock.STAT.FAULT) OTE(Airlock.ALARM[0].ACTIVE) ,AlarmControl(Airlock.AOI.AlarmControl[0],Airlock.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.DISCONNECT$'$N"
+				    "";
+				N: [XIC(Airlock.STAT.ControlPowerOn) XIO(Airlock.STAT.DISCONNECT) OTE(Airlock.ALARM[1].ACTIVE) ,AlarmControl(Airlock.AOI.AlarmControl[1],Airlock.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Auger 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'USEBIN.04.01.VFD.SugarMill_StarchHopper$'$N"
+				    "ControlModule=$'VFD.Auger$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: XIC(ph_PowderHopperRefill.CM.AutoRun[3])OTE(Auger.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,Auger.MSG.PERM) ,XIC(AugerWeight.LoLo.ACTIVE) MOV(1,Auger.MSG.PERM) ,XIO(MillDrive.STAT.ON_OPEN_DELAY) MOV(2,Auger.MSG.PERM) ,EQU(Auger.MSG.PERM,0) OTE(Auger.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,Auger.MSG.INTRLK) ,XIO(BlowerMotor.STAT.ON_OPEN_DELAY) MOV(3,Airlock.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,Auger.MSG.INTRLK) ,NEQ(Auger.MSG.INTRLK,0) OTE(Auger.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VFD.FAULT$'$N"
+				    "Function=$'VFD.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Auger.STAT.ENERGIZE) [XIO(Auger.STAT.ON_OPEN) ,XIC(Auger.STAT.OFF_CLOSED) ] ,XIO(Auger.STAT.ENERGIZE) [XIC(Auger.STAT.ON_OPEN) ,XIO(Auger.STAT.OFF_CLOSED) ] ,XIC(Auger.STAT.VFD_FAULT) ,XIC(Auger.STAT.FAULT) ]XIO(Auger.CMD.RESET)[XIC(Auger.DELAY.FAULT.DN) OTE(Auger.STAT.FAULT) ,TON(Auger.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.VFD$'$N"
+				    "Function=$'STATUS.MESSAGE.VFD$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,Auger.MSG.MSG) ,XIC(Auger.STAT.ENERGIZE) XIO(Auger.STAT.ON_OPEN) MOV(61,Auger.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Auger.STAT.AUTO_RUN) NEQ(Auger.MSG.PERM,0) MOV(Auger.MSG.PERM,Auger.MSG.MSG) ,NEQ(Auger.MSG.INTRLK,0) MOV(Auger.MSG.INTRLK,Auger.MSG.MSG) ,NEQ(Auger.MSG.FAULT,0) MOV(Auger.MSG.FAULT,Auger.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(Auger.AOI.Message,Auger.ID,Auger.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(Auger.AOI.Control,Auger.CMD,Auger.STAT);
+				RC: "Set target percent of Starch in PS$N"
+				    "";
+				N: XIC(ph_PowderHopperRefill.CM.AutoRun[3])MOV(ph_PowderHopperRefill.SPT[1],AugerSpeedReference.SP);
+				N: XIC(Auger.STAT.AUTO)XIC(Auger.STAT.ENERGIZE)[OTE(AugerSpeedReference_EnableRateCalc) ,MOV(ph_PowderHopperRefill.USER.SETTINGS[1],AugerSpeedReference_RunConstantDelay.PRE) TON(AugerSpeedReference_RunConstantDelay,?,?) ,[XIC(AugerSpeedReference_RunConstantDelay.TT) ,XIC(Auger.STAT.STATE_2) ] OTE(Auger.STAT.STATE_1) ];
+				RC: "CALCULATE LOOP PV = Starch %$N"
+				    "Each load cell is calculating a loss in weight$N"
+				    "The percent of Starch LIW out of SUM of the two LIW is percent Starch in the Rate Calculation Overall Time Interval$N"
+				    "";
+				N: XIC(AugerSpeedReference_EnableRateCalc)GRT(AugerWeight.RATE.CHANGE,0)GRT(SugarHopperWeight.RATE.CHANGE,0)CPT(AugerSpeedReference.PV,100*(AugerWeight.RATE.CHANGE/(AugerWeight.RATE.CHANGE + SugarHopperWeight.RATE.CHANGE)));
+				RC: "DHDustPressFault issue remediation - BDK 2/23/2024";
+				N: [XIC(Auger.STAT.STATE_1) TON(Auger.TMR[1],?,?) ,XIC(Auger.TMR[1].TT) CPT(AugerSpeedReference_SP_CONSTANT,AugerSpeedReference_CV_DEFAULT*(Auger.TMR[1].ACC/Auger.TMR[1].PRE)) ,XIC(Auger.TMR[1].DN) MOV(AugerSpeedReference_CV_DEFAULT,AugerSpeedReference_SP_CONSTANT) ];
+				RC: "When the auger and airlock first start running, we want to run at a constant speed.$N"
+				    "BUT, we will ramp up to that constant speed - DHDustPressFault issue remediation - BDK 2/23/2024$N"
+				    "This constant can be adjusted automatically based on the CV of this motor when the StarchPercent is within a tight tolerance$N"
+				    "";
+				N: [XIC(Auger.STAT.STATE_1) OTE(AugerSpeedReference.PID.SWM) MUL(AugerSpeedReference_SP_CONSTANT,1.666666666,AugerSpeedReference.PID.SO) MOV(AugerSpeedReference.SP,AugerSpeedReference.PID.PV) ,XIO(Auger.STAT.STATE_1) MOV(AugerSpeedReference.PV,AugerSpeedReference.PID.PV) ];
+				N: XIC(AugerSpeedReference_EnableRateCalc)MOV(AugerSpeedReference.SP,AugerSpeedReference.PID.SP)[[XIC(AugerSpeedReference.DELAY.UPDATE.DN) ,XIC(AugerSpeedReference.PID.SWM) ] PID(AugerSpeedReference.PID,AugerSpeedReference.PID.PV,0,AugerSpeedReference.PID.OUT,0,0,0) ,XIO(AugerSpeedReference.DELAY.UPDATE.DN) TON(AugerSpeedReference.DELAY.UPDATE,?,?) ,MOV(AugerWeight_AnalogInputRateHistorical4.SampleInterval,AugerSpeedReference.DELAY.UPDATE.PRE) ];
+				RC: "Scale PID.OUT from 0-100% to 0-60Hz$N"
+				    "MINO and MAXO control the limit of PID.OUT, see PID configuration properties$N"
+				    "";
+				N: [MOV(0,AugerSpeedReference.CV) ,XIC(Auger.STAT.AUTO) XIC(Auger.STAT.ENERGIZE) MUL(AugerSpeedReference.PID.OUT,0.6,AugerSpeedReference.CV) ,XIC(Auger.STAT.MAN) XIC(Auger.STAT.ENERGIZE) MOV(AugerSpeedReference.CV_MAN,AugerSpeedReference.CV) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VFD.IO.SPEED$'$N"
+				    "Function=$'VFD.IO.SPEED$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MUL(AugerSpeedReference.CV,100,Auger_IO_Setpoint) ,DIV(Auger_IO_Speed,100,AugerSpeedReference.CV_ACTUAL) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.VFD.IO.OUTPUT$'$N"
+				    "Function=$'VFD.IO.CONTROL$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Auger.STAT.ENERGIZE) OTE(Auger_IO_Start) ,XIO(Auger.STAT.ENERGIZE) OTE(Auger_IO_Stop) ,[XIO(Auger.STAT.ON_OPEN_BYPASS) XIC(Auger_IO_Running) ,XIC(Auger.STAT.ON_OPEN_BYPASS) XIC(Auger.STAT.ENERGIZE) ] [OTE(Auger.STAT.ON_OPEN) ,XIC(Auger.DELAY.ON.DN) OTE(Auger.STAT.ON_OPEN_DELAY) ,TON(Auger.DELAY.ON,?,?) ] ,[XIO(Auger.STAT.OFF_CLOSED_BYPASS) XIO(Auger_IO_Running) ,XIC(Auger.STAT.OFF_CLOSED_BYPASS) XIO(Auger.STAT.ENERGIZE) ] [OTE(Auger.STAT.OFF_CLOSED) ,XIC(Auger.DELAY.OFF.DN) OTE(Auger.STAT.OFF_CLOSED_DELAY) ,TON(Auger.DELAY.OFF,?,?) ] ,XIC(Auger_IO_Faulted) XIO(cCOMMON.FirstScan.AlarmInhibit) OTE(Auger.STAT.VFD_FAULT) ,[XIC(Auger.CMD.RESET) ,XIC(cCOMMON.FirstScan.ResetFaultToVFD) ,XIC(Auger_IO_ClearFaults) ] XIC(Auger_IO_Faulted) OTE(Auger_IO_ClearFaults) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(Auger.STAT.FAULT) OTE(Auger.ALARM[0].ACTIVE) ,AlarmControl(Auger.AOI.AlarmControl[0],Auger.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.DISCONNECT$'$N"
+				    "";
+				N: [XIO(Auger.STAT.DISCONNECT) OTE(Auger.ALARM[1].ACTIVE) ,AlarmControl(Auger.AOI.AlarmControl[1],Auger.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.VFD_FAULT$'$N"
+				    "";
+				N: [XIC(PowerSafety.STAT.ON) XIC(Auger.STAT.VFD_FAULT) OTE(Auger.ALARM[2].ACTIVE) ,AlarmControl(Auger.AOI.AlarmControl[2],Auger.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE AugerWeight 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'USEBIN.04.01.Scale.SugarMill_StarchHopper$'$N"
+				    "ControlModule=$'Scale.AugerWeight$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'USEBIN.04.01.SCALE.AUGERWEIGHT$'$N"
+				    "Function=$'WEIGHT.VALUE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(AugerWeight_IO_Value,AugerWeight.RAW) ,XIC(AugerWeight_IO_DataOkay) OTE(AugerWeight.STAT.DATA_OK) ,XIC(cCOMMON.ONE_SECOND_PULSE) OTU(AugerWeight_IO_DataOkay) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIO(AugerWeight.STAT.DATA_OK)[XIC(AugerWeight.Fault.DELAY.DN) OTE(AugerWeight.STAT.FAULT) OTE(AugerWeight.Fault.ACTIVE) ,MOV(10000,AugerWeight.Fault.DELAY.PRE) TON(AugerWeight.Fault.DELAY,?,?) ];
+				N: XIC(AugerWeight_SIM_Enable)MOV(AugerWeight_SIM_Value,AugerWeight.RAW);
+				RC: "Template=$'USEBIN.04.01.SCALE.AUGERWEIGHT$'$N"
+				    "Function=$'WEIGHT.VALUE.SCALE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(AugerWeight.AOI.Scaling,AugerWeight.RAW,AugerWeight.RAW_LO,AugerWeight.RAW_HI,AugerWeight.SCALE_LO,AugerWeight.SCALE_HI,AugerWeight.SCALED);
+				RC: "Template=$'USEBIN.04.01.SCALE.AUGERWEIGHT$'$N"
+				    "Function=$'WEIGHT.VALUE.ZERO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [[XIC(AugerWeight.CMD.BITS.5) ,XIC(AugerWeight.TMR[1].TT) ] LES(AugerWeight.SCALED,25) [TON(AugerWeight.TMR[1],?,?) ,MOV(404,AugerWeight_IO_Cmd) ] ,XIO(AugerWeight.TMR[1].TT) EQU(AugerWeight_IO_Cmd,404) MOV(0,AugerWeight_IO_Cmd) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(AugerWeight.SCALED,AugerWeight.LoLo.LIM) ,XIC(AugerWeight.LoLo.ACTIVE) ]CMP(AugerWeight.SCALED<=(AugerWeight.LoLo.LIM+AugerWeight.LoLo.DEADBAND))[XIC(AugerWeight.LoLo.DELAY.DN) OTE(AugerWeight.LoLo.ACTIVE) ,TON(AugerWeight.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(AugerWeight.SCALED,AugerWeight.Lo.LIM) ,XIC(AugerWeight.Lo.ACTIVE) ]CMP(AugerWeight.SCALED<=(AugerWeight.Lo.LIM+AugerWeight.Lo.DEADBAND))[XIC(AugerWeight.Lo.DELAY.DN) OTE(AugerWeight.Lo.ACTIVE) ,TON(AugerWeight.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(AugerWeight.SCALED,AugerWeight.Hi.LIM) ,XIC(AugerWeight.Hi.ACTIVE) ]CMP(AugerWeight.SCALED>=(AugerWeight.Hi.LIM-AugerWeight.Hi.DEADBAND))[XIC(AugerWeight.Hi.DELAY.DN) OTE(AugerWeight.Hi.ACTIVE) ,TON(AugerWeight.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(AugerWeight.SCALED,AugerWeight.HiHi.LIM) ,XIC(AugerWeight.HiHi.ACTIVE) ]CMP(AugerWeight.SCALED>=(AugerWeight.HiHi.LIM-AugerWeight.HiHi.DEADBAND))[XIC(AugerWeight.HiHi.DELAY.DN) OTE(AugerWeight.HiHi.ACTIVE) ,TON(AugerWeight.HiHi.DELAY,?,?) ];
+				N: [XIC(AugerSpeedReference_EnableRateCalc) ,XIC(ph_RefillStarchDispensingHopper.CM.AutoRun[20]) ]MOV(AugerWeight_SIM_Value,AugerWeight_SIM_Value)AnalogInputRateHistorical4(AugerWeight_AnalogInputRateHistorical4,AugerWeight.SCALED,AugerWeight.STAT.DATA_OK,AugerWeight.RATE.CHANGE,AugerWeight_RateTotalInterval);
+				N: ABS(AugerWeight.RATE.CHANGE,AugerWeight.RATE.CHANGE);
+				RC: "Calculate rate of change of the Minimum and Maximum weight values.$N"
+				    "This allows us to remove fluctuations from teh equation.$N"
+				    "when we are refilling the hopper, we looking at the rate of change of the Max weight.$N"
+				    "when dispensnig out of it we are looking at minumum weight.$N"
+				    "";
+				N: [XIC(ph_PowderHopperRefill.CM.AutoRun[21]) AnalogInputRate(AugerWeight.AOI.Rate,AugerWeight_MinimumValue,AugerWeight_RateInstantaneous) ,XIC(ph_RefillStarchDispensingHopper.CM.AutoRun[21]) AnalogInputRate(AugerWeight.AOI.Rate,AugerWeight_MaximumValue,AugerWeight_RateInstantaneous) ,XIO(ph_PowderHopperRefill.CM.AutoRun[20]) MOV(AugerWeight.SCALED,AugerWeight_MinimumValue) ,XIO(ph_RefillStarchDispensingHopper.CM.AutoRun[20]) MOV(AugerWeight.SCALED,AugerWeight_MaximumValue) ,LES(AugerWeight.SCALED,AugerWeight_MinimumValue) MOV(AugerWeight.SCALED,AugerWeight_MinimumValue) ,GRT(AugerWeight.SCALED,AugerWeight_MaximumValue) MOV(AugerWeight.SCALED,AugerWeight_MaximumValue) ];
+				RC: "use same limit as lolo, with shorter time delay, to provide warning$N"
+				    "";
+				N: [XIC(ph_RefillStarchDispensingHopper.CM.AutoRun[20]) ,XIC(ph_PowderHopperRefill.CM.AutoRun[20]) ][LES(AugerWeight_RateInstantaneous.CHANGE,AugerWeight.RATE.Lo.LIM) ,XIC(AugerWeight.RATE.Lo.ACTIVE) ]CMP(AugerWeight_RateInstantaneous.CHANGE<=(AugerWeight.RATE.Lo.LIM+AugerWeight.RATE.Lo.DEADBAND))[XIC(AugerWeight.RATE.Lo.DELAY.DN) OTE(AugerWeight.RATE.Lo.ACTIVE) ,TON(AugerWeight.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: [XIC(ph_RefillStarchDispensingHopper.CM.AutoRun[20]) ,XIC(ph_PowderHopperRefill.CM.AutoRun[20]) ][LES(AugerWeight_RateInstantaneous.CHANGE,AugerWeight.RATE.LoLo.LIM) ,XIC(AugerWeight.RATE.LoLo.ACTIVE) ]CMP(AugerWeight_RateInstantaneous.CHANGE<=(AugerWeight.RATE.LoLo.LIM+AugerWeight.RATE.LoLo.DEADBAND))[XIC(AugerWeight.RATE.LoLo.DELAY.DN) OTE(AugerWeight.RATE.LoLo.ACTIVE) ,TON(AugerWeight.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(AugerWeight.AOI.Mode,AugerWeight.CMD,AugerWeight.STAT,AugerWeight.MAN_SP,AugerWeight.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(AugerWeight.LoLo.ACTIVE) XIO(AugerWeight.LoLo.DISABLED) OTE(AugerWeight.ALARM[0].ACTIVE) ,AlarmControl(AugerWeight.AOI.AlarmControl[0],AugerWeight.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(AugerWeight.Lo.ACTIVE) XIO(AugerWeight.Lo.DISABLED) OTE(AugerWeight.ALARM[1].ACTIVE) ,AlarmControl(AugerWeight.AOI.AlarmControl[1],AugerWeight.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(AugerWeight.Hi.ACTIVE) XIO(AugerWeight.Hi.DISABLED) OTE(AugerWeight.ALARM[2].ACTIVE) ,AlarmControl(AugerWeight.AOI.AlarmControl[2],AugerWeight.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(AugerWeight.HiHi.ACTIVE) XIO(AugerWeight.HiHi.DISABLED) OTE(AugerWeight.ALARM[3].ACTIVE) ,AlarmControl(AugerWeight.AOI.AlarmControl[3],AugerWeight.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LO$'$N"
+				    "";
+				N: [XIC(AugerWeight.RATE.Lo.ACTIVE) XIO(AugerWeight.RATE.Lo.DISABLED) OTE(AugerWeight.ALARM[4].ACTIVE) ,AlarmControl(AugerWeight.AOI.AlarmControl[4],AugerWeight.ALARM[4],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LOLO$'$N"
+				    "";
+				N: [XIC(AugerWeight.RATE.LoLo.ACTIVE) XIO(AugerWeight.RATE.LoLo.DISABLED) OTE(AugerWeight.ALARM[5].ACTIVE) ,AlarmControl(AugerWeight.AOI.AlarmControl[5],AugerWeight.ALARM[5],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(AugerWeight.Fault.ACTIVE) XIO(AugerWeight.Fault.DISABLED) OTE(AugerWeight.ALARM[6].ACTIVE) ,AlarmControl(AugerWeight.AOI.AlarmControl[6],AugerWeight.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: Arbitration(AugerWeight.AOI.Arbitration,AugerWeight.ARB,AugerWeight.INDEX,1);
+		END_ROUTINE
+
+		ROUTINE BurstIndicator 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'USEBIN.04.01.Alarm.SugarMill_StarchHopper$'$N"
+				    "ControlModule=$'Alarm.BurstIndicator$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIO(BurstIndicator_IO_Input) OTE(BurstIndicator.STAT.ENERGIZED) ,XIC(BurstIndicator.STAT.ENERGIZED) [XIC(BurstIndicator.DELAY.ON.DN) OTL(BurstIndicator.STAT.ON) OTU(BurstIndicator.STAT.OFF) ,TON(BurstIndicator.DELAY.ON,?,?) ] ,XIO(BurstIndicator.STAT.ENERGIZED) [XIC(BurstIndicator.DELAY.OFF.DN) OTU(BurstIndicator.STAT.ON) OTL(BurstIndicator.STAT.OFF) ,TON(BurstIndicator.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.ON$'$N"
+				    "";
+				N: [XIC(BurstIndicator.STAT.ON) XIC(PowerInput.STAT.ON) OTE(BurstIndicator.ALARM[0].ACTIVE) ,AlarmControl(BurstIndicator.AOI.AlarmControl[0],BurstIndicator.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE DustCollector 
+				N: MOV(350,DustCollector.DELAY.ON.PRE)MOV(20000,DustCollector.DELAY.OFF.PRE)DIV(60000,DustCollector.TYPE,DustCollector.TMR[1].PRE)MOV(2000,DustCollector.TMR[2].PRE);
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'SCALEHOPPER.02.01.DustCollector.Mixer01_MinorsHopper$'$N"
+				    "ControlModule=$'DustCollector.DustCollector$'$N"
+				    "";
+				N: MOV(3,DustCollector.TYPE);
+				RC: "Run the DO when either pulse timer is less than ON.PRE$N"
+				    "";
+				N: [XIC(DustCollector.STAT.STATE_1) LES(DustCollector.TMR[1].ACC,DustCollector.DELAY.ON.PRE) ,XIC(DustCollector.STAT.STATE_2) LES(DustCollector.TMR[2].ACC,DustCollector.DELAY.ON.PRE) ]OTE(DustCollector.STAT.AUTO_RUN);
+				RC: "When blower is in auto, and not closed (delay) then we auto run the dust collector CM.$N"
+				    "When the TOF is timing we cycle at a faster rate$N"
+				    "";
+				N: XIC(Blower.STAT.AUTO)XIC(Blower.STAT.ENERGIZE)TOF(DustCollector.DELAY.OFF,?,?);
+				RC: "Run slow pulse timer.$N"
+				    "Fire valve during first ON.PRE";
+				N: [XIC(DustCollector.DELAY.OFF.DN) XIO(DustCollector.DELAY.OFF.TT) OTE(DustCollector.STAT.STATE_1) ,XIC(DustCollector.STAT.STATE_1) XIO(DustCollector.TMR[1].DN) TON(DustCollector.TMR[1],?,?) ];
+				RC: "Run fast pulse timer.$N"
+				    "Fire valve during first ON.PRE";
+				N: [XIC(DustCollector.DELAY.OFF.DN) XIC(DustCollector.DELAY.OFF.TT) OTE(DustCollector.STAT.STATE_2) ,XIC(DustCollector.STAT.STATE_2) XIO(DustCollector.TMR[2].DN) TON(DustCollector.TMR[2],?,?) ];
+				RC: "Set the index of valve to fire next$N"
+				    "";
+				N: [XIO(DustCollector.STAT.ENERGIZE) ONS(DustCollector.OS[21]) ADD(1,DustCollector.INDEX,DustCollector.INDEX) ,GRT(DustCollector.INDEX,DustCollector.TYPE) MOV(1,DustCollector.INDEX) ];
+				N: [MOV(0,DustCollector.MSG.PERM) ,XIC(Airlock.STAT.ON_OPEN) MOV(1,DustCollector.MSG.PERM) ,EQU(DustCollector.MSG.PERM,0) OTE(DustCollector.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,DustCollector.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,DustCollector.MSG.INTRLK) ,NEQ(DustCollector.MSG.INTRLK,0) OTE(DustCollector.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.CLEAR$'$N"
+				    "Function=$'STATUS.MESSAGE.CLEAR$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(0,DustCollector.MSG.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(DustCollector.STAT.AUTO_RUN) NEQ(DustCollector.MSG.PERM,0) MOV(DustCollector.MSG.PERM,DustCollector.MSG.MSG) ,NEQ(DustCollector.MSG.INTRLK,0) MOV(DustCollector.MSG.INTRLK,DustCollector.MSG.MSG) ,NEQ(DustCollector.MSG.FAULT,0) MOV(DustCollector.MSG.FAULT,DustCollector.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(DustCollector.AOI.Message,DustCollector.ID,DustCollector.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(DustCollector.AOI.Control,DustCollector.CMD,DustCollector.STAT);
+				RC: "When in manual, every time a valve is fired, hit stop.$N"
+				    "User can hit start to fire the next valve$N"
+				    "";
+				N: XIC(DustCollector.STAT.MAN)XIC(DustCollector.DELAY.ON.DN)ONS(DustCollector.OS[1])OTL(DustCollector.CMD.MAN_STOP);
+				RC: "Set the output for the current selected INDEX$N"
+				    "";
+				N: [XIC(DustCollector.STAT.ENERGIZE) [EQU(DustCollector.INDEX,1) OTE(DustCollectorValve1_IO_Output) ,EQU(DustCollector.INDEX,2) OTE(DustCollectorValve2_IO_Output) ,EQU(DustCollector.INDEX,3) OTE(DustCollectorValve3_IO_Output) ] ,XIC(DustCollector.STAT.ENERGIZE) [OTE(DustCollector.STAT.ON_OPEN) ,TON(DustCollector.DELAY.ON,?,?) ] ,XIO(DustCollector.STAT.ENERGIZE) [OTE(DustCollector.STAT.OFF_CLOSED) ,XIC(DustCollector.TMR[0].DN) OTE(DustCollector.STAT.OFF_CLOSED_DELAY) ,TON(DustCollector.TMR[0],?,?) ] ];
+				N: [DustCollectorFilterGuardian(DustCollectorFilterGuardian,DustCollector.STAT.ENERGIZE,DustCollector.INDEX,DustCollector.TYPE,DustCollector.CMD.RESET,DustCollectorPressure.Lo.ACTIVE,3,35) ,XIC(DustCollectorFilterGuardian.ValvesFailedToFireAlarm) OTE(DustCollector.STAT.FAULT) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(DustCollector.STAT.FAULT) OTE(DustCollector.ALARM[0].ACTIVE) ,AlarmControl(DustCollector.AOI.AlarmControl[0],DustCollector.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIO(DustCollector.STAT.FAULT) GRT(DustCollectorFilterGuardian.ValvesFailedToFireCount,0) OTE(DustCollector.ALARM[1].ACTIVE) ,AlarmControl(DustCollector.AOI.AlarmControl[1],DustCollector.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE DustCollectorDiffPressure 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MILL.01.01.Differential Pressure.SugarMill$'$N"
+				    "ControlModule=$'Differential Pressure.DustCollectorDiffPressure$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(DustCollectorDiffPressure_IO_Value,DustCollectorDiffPressure.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(DustCollectorDiffPressure.AOI.Scaling,DustCollectorDiffPressure.RAW,DustCollectorDiffPressure.RAW_LO,DustCollectorDiffPressure.RAW_HI,DustCollectorDiffPressure.SCALE_LO,DustCollectorDiffPressure.SCALE_HI,DustCollectorDiffPressure.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressure_IO_Fault) ,XIC(DustCollectorDiffPressure.STAT.FAULT) ]XIO(DustCollectorDiffPressure.CMD.RESET)OTE(DustCollectorDiffPressure.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIO(DustCollector.DELAY.OFF.DN)[LES(DustCollectorDiffPressure.SCALED,DustCollectorDiffPressure.LoLo.LIM) ,XIC(DustCollectorDiffPressure.LoLo.ACTIVE) ]CMP(DustCollectorDiffPressure.SCALED<=(DustCollectorDiffPressure.LoLo.LIM+DustCollectorDiffPressure.LoLo.DEADBAND))[XIC(DustCollectorDiffPressure.LoLo.DELAY.DN) OTE(DustCollectorDiffPressure.LoLo.ACTIVE) ,TON(DustCollectorDiffPressure.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIO(DustCollector.DELAY.OFF.DN)[LES(DustCollectorDiffPressure.SCALED,DustCollectorDiffPressure.Lo.LIM) ,XIC(DustCollectorDiffPressure.Lo.ACTIVE) ]CMP(DustCollectorDiffPressure.SCALED<=(DustCollectorDiffPressure.Lo.LIM+DustCollectorDiffPressure.Lo.DEADBAND))[XIC(DustCollectorDiffPressure.Lo.DELAY.DN) OTE(DustCollectorDiffPressure.Lo.ACTIVE) ,TON(DustCollectorDiffPressure.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIO(DustCollector.DELAY.OFF.DN)[GRT(DustCollectorDiffPressure.SCALED,DustCollectorDiffPressure.Hi.LIM) ,XIC(DustCollectorDiffPressure.Hi.ACTIVE) ]CMP(DustCollectorDiffPressure.SCALED>=(DustCollectorDiffPressure.Hi.LIM-DustCollectorDiffPressure.Hi.DEADBAND))[XIC(DustCollectorDiffPressure.Hi.DELAY.DN) OTE(DustCollectorDiffPressure.Hi.ACTIVE) ,TON(DustCollectorDiffPressure.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIO(DustCollector.DELAY.OFF.DN)[GRT(DustCollectorDiffPressure.SCALED,DustCollectorDiffPressure.HiHi.LIM) ,XIC(DustCollectorDiffPressure.HiHi.ACTIVE) ]CMP(DustCollectorDiffPressure.SCALED>=(DustCollectorDiffPressure.HiHi.LIM-DustCollectorDiffPressure.HiHi.DEADBAND))[XIC(DustCollectorDiffPressure.HiHi.DELAY.DN) OTE(DustCollectorDiffPressure.HiHi.ACTIVE) ,TON(DustCollectorDiffPressure.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(DustCollectorDiffPressure.STAT.FAULT)[XIC(DustCollectorDiffPressure.Fault.DELAY.DN) OTE(DustCollectorDiffPressure.Fault.ACTIVE) ,MOV(10000,DustCollectorDiffPressure.Fault.DELAY.PRE) TON(DustCollectorDiffPressure.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(DustCollectorDiffPressure.AOI.Mode,DustCollectorDiffPressure.CMD,DustCollectorDiffPressure.STAT,DustCollectorDiffPressure.MAN_SP,DustCollectorDiffPressure.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressure.LoLo.ACTIVE) XIO(DustCollectorDiffPressure.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(DustCollectorDiffPressure.ALARM[0].ACTIVE) ,AlarmControl(DustCollectorDiffPressure.AOI.AlarmControl[0],DustCollectorDiffPressure.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressure.Lo.ACTIVE) XIO(DustCollectorDiffPressure.Lo.DISABLED) XIC(PowerInput.STAT.ON) OTE(DustCollectorDiffPressure.ALARM[1].ACTIVE) ,AlarmControl(DustCollectorDiffPressure.AOI.AlarmControl[1],DustCollectorDiffPressure.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressure.Hi.ACTIVE) XIO(DustCollectorDiffPressure.Hi.DISABLED) XIC(PowerInput.STAT.ON) OTE(DustCollectorDiffPressure.ALARM[2].ACTIVE) ,AlarmControl(DustCollectorDiffPressure.AOI.AlarmControl[2],DustCollectorDiffPressure.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressure.HiHi.ACTIVE) XIO(DustCollectorDiffPressure.HiHi.DISABLED) XIC(PowerInput.STAT.ON) OTE(DustCollectorDiffPressure.ALARM[3].ACTIVE) ,AlarmControl(DustCollectorDiffPressure.AOI.AlarmControl[3],DustCollectorDiffPressure.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressure.Fault.ACTIVE) XIO(DustCollectorDiffPressure.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(DustCollectorDiffPressure.ALARM[6].ACTIVE) ,AlarmControl(DustCollectorDiffPressure.AOI.AlarmControl[6],DustCollectorDiffPressure.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE DustCollectorDiffPressureAverage 
+				N: NOP();
+				RC: "This timer is used to wait for the averaging array to fill up with 20 samples of current data$N"
+				    "";
+				N: XIO(DustCollector.DELAY.OFF.DN)[MUL(20,DustCollectorDiffPressureAverage.TMR[1].PRE,DustCollectorDiffPressureAverage.TMR[0].PRE) TON(DustCollectorDiffPressureAverage.TMR[0],?,?) ,XIC(DustCollectorDiffPressureAverage.TMR[0].DN) OTE(DustCollectorDiffPressureAverage.STAT.DATA_OK) ];
+				RC: "Load a value in averaging array based on this timer DN$N"
+				    "";
+				N: XIO(DustCollectorDiffPressureAverage.TMR[1].DN)TON(DustCollectorDiffPressureAverage.TMR[1],?,?);
+				RC: "Calculate Average$N"
+				    "";
+				N: XIO(DustCollector.DELAY.OFF.DN)XIC(DustCollectorDiffPressureAverage.TMR[1].DN)[MOV(DustCollectorDiffPressure.SCALED,DustCollectorDiffPressureData[DustCollectorDiffPressureAverageIndex]) ,ADD(1,DustCollectorDiffPressureAverageIndex,DustCollectorDiffPressureAverageIndex) ,EQU(DustCollectorDiffPressureAverageIndex,20) MOV(0,DustCollectorDiffPressureAverageIndex) ,MOV(DustCollectorDiffPressureData[0],DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[1],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[2],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ,ADD(DustCollectorDiffPressureData[3],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[4],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[5],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ,ADD(DustCollectorDiffPressureData[6],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[7],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[8],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ,ADD(DustCollectorDiffPressureData[9],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[10],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[11],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ,ADD(DustCollectorDiffPressureData[12],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[13],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[14],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ,ADD(DustCollectorDiffPressureData[15],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[16],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[17],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ,ADD(DustCollectorDiffPressureData[18],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ADD(DustCollectorDiffPressureData[19],DustCollectorDiffPressureAverage.RAW,DustCollectorDiffPressureAverage.RAW) ,DIV(DustCollectorDiffPressureAverage.RAW,20,DustCollectorDiffPressureAverage.SCALED) ];
+				RC: "Alarms Enabled when Valves closed for a time$N"
+				    "";
+				N: XIC(DustCollectorDiffPressureAverage.STAT.DATA_OK)[LES(DustCollectorDiffPressureAverage.SCALED,DustCollectorDiffPressureAverage.LoLo.LIM) ,XIC(DustCollectorDiffPressureAverage.LoLo.ACTIVE) ]CMP(DustCollectorDiffPressureAverage.SCALED<=(DustCollectorDiffPressureAverage.LoLo.LIM+DustCollectorDiffPressureAverage.LoLo.DEADBAND))[XIC(DustCollectorDiffPressureAverage.LoLo.DELAY.DN) OTE(DustCollectorDiffPressureAverage.LoLo.ACTIVE) ,TON(DustCollectorDiffPressureAverage.LoLo.DELAY,?,?) ];
+				RC: "Alarms Enabled when Valves closed for a time$N"
+				    "";
+				N: XIC(DustCollectorDiffPressureAverage.STAT.DATA_OK)[LES(DustCollectorDiffPressureAverage.SCALED,DustCollectorDiffPressureAverage.Lo.LIM) ,XIC(DustCollectorDiffPressureAverage.Lo.ACTIVE) ]CMP(DustCollectorDiffPressureAverage.SCALED<=(DustCollectorDiffPressureAverage.Lo.LIM+DustCollectorDiffPressureAverage.Lo.DEADBAND))[XIC(DustCollectorDiffPressureAverage.Lo.DELAY.DN) OTE(DustCollectorDiffPressureAverage.Lo.ACTIVE) ,TON(DustCollectorDiffPressureAverage.Lo.DELAY,?,?) ];
+				RC: "Alarms Enabled when Valves closed for a time$N"
+				    "";
+				N: XIC(DustCollectorDiffPressureAverage.STAT.DATA_OK)[GRT(DustCollectorDiffPressureAverage.SCALED,DustCollectorDiffPressureAverage.Hi.LIM) ,XIC(DustCollectorDiffPressureAverage.Hi.ACTIVE) ]CMP(DustCollectorDiffPressureAverage.SCALED>=(DustCollectorDiffPressureAverage.Hi.LIM-DustCollectorDiffPressureAverage.Hi.DEADBAND))[XIC(DustCollectorDiffPressureAverage.Hi.DELAY.DN) OTE(DustCollectorDiffPressureAverage.Hi.ACTIVE) ,TON(DustCollectorDiffPressureAverage.Hi.DELAY,?,?) ];
+				RC: "Alarms Enabled when Valves closed for a time$N"
+				    " ";
+				N: XIC(DustCollectorDiffPressureAverage.STAT.DATA_OK)[GRT(DustCollectorDiffPressureAverage.SCALED,DustCollectorDiffPressureAverage.HiHi.LIM) ,XIC(DustCollectorDiffPressureAverage.HiHi.ACTIVE) ]CMP(DustCollectorDiffPressureAverage.SCALED>=(DustCollectorDiffPressureAverage.HiHi.LIM-DustCollectorDiffPressureAverage.HiHi.DEADBAND))[XIC(DustCollectorDiffPressureAverage.HiHi.DELAY.DN) OTE(DustCollectorDiffPressureAverage.HiHi.ACTIVE) ,TON(DustCollectorDiffPressureAverage.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(DustCollectorDiffPressureAverage.STAT.FAULT)[XIC(DustCollectorDiffPressureAverage.Fault.DELAY.DN) OTE(DustCollectorDiffPressureAverage.Fault.ACTIVE) ,MOV(10000,DustCollectorDiffPressureAverage.Fault.DELAY.PRE) TON(DustCollectorDiffPressureAverage.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(DustCollectorDiffPressureAverage.AOI.Mode,DustCollectorDiffPressureAverage.CMD,DustCollectorDiffPressureAverage.STAT,DustCollectorDiffPressureAverage.MAN_SP,DustCollectorDiffPressureAverage.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressureAverage.LoLo.ACTIVE) XIO(DustCollectorDiffPressureAverage.LoLo.DISABLED) OTE(DustCollectorDiffPressureAverage.ALARM[0].ACTIVE) ,AlarmControl(DustCollectorDiffPressureAverage.AOI.AlarmControl[0],DustCollectorDiffPressureAverage.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressureAverage.Lo.ACTIVE) XIO(DustCollectorDiffPressureAverage.Lo.DISABLED) OTE(DustCollectorDiffPressureAverage.ALARM[1].ACTIVE) ,AlarmControl(DustCollectorDiffPressureAverage.AOI.AlarmControl[1],DustCollectorDiffPressureAverage.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressureAverage.Hi.ACTIVE) XIO(DustCollectorDiffPressureAverage.Hi.DISABLED) OTE(DustCollectorDiffPressureAverage.ALARM[2].ACTIVE) ,AlarmControl(DustCollectorDiffPressureAverage.AOI.AlarmControl[2],DustCollectorDiffPressureAverage.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressureAverage.HiHi.ACTIVE) XIO(DustCollectorDiffPressureAverage.HiHi.DISABLED) OTE(DustCollectorDiffPressureAverage.ALARM[3].ACTIVE) ,AlarmControl(DustCollectorDiffPressureAverage.AOI.AlarmControl[3],DustCollectorDiffPressureAverage.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Fault Alarm$N"
+				    "";
+				N: [XIC(DustCollectorDiffPressureAverage.Fault.ACTIVE) XIO(DustCollectorDiffPressureAverage.Fault.DISABLED) OTE(DustCollectorDiffPressureAverage.ALARM[6].ACTIVE) ,AlarmControl(DustCollectorDiffPressureAverage.AOI.AlarmControl[6],DustCollectorDiffPressureAverage.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE DustCollectorPressure 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'MILL.01.01.Pressure.SugarMill$'$N"
+				    "ControlModule=$'Pressure.DustCollectorPressure$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.RAW$'$N"
+				    "Function=$'ANALOG.IO.RAW.TRANSFER$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(DustCollectorPressure_IO_Value,DustCollectorPressure.RAW);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(DustCollectorPressure.AOI.Scaling,DustCollectorPressure.RAW,DustCollectorPressure.RAW_LO,DustCollectorPressure.RAW_HI,DustCollectorPressure.SCALE_LO,DustCollectorPressure.SCALE_HI,DustCollectorPressure.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.IO.FAULT$'$N"
+				    "Function=$'ANALOG.IO.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(DustCollectorPressure_IO_Fault) ,XIC(DustCollectorPressure.STAT.FAULT) ]XIO(DustCollectorPressure.CMD.RESET)OTE(DustCollectorPressure.STAT.FAULT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(DustCollectorPressure.SCALED,DustCollectorPressure.LoLo.LIM) ,XIC(DustCollectorPressure.LoLo.ACTIVE) ]CMP(DustCollectorPressure.SCALED<=(DustCollectorPressure.LoLo.LIM+DustCollectorPressure.LoLo.DEADBAND))[XIC(DustCollectorPressure.LoLo.DELAY.DN) OTE(DustCollectorPressure.LoLo.ACTIVE) ,TON(DustCollectorPressure.LoLo.DELAY,?,?) ];
+				RC: "When we see Lo Pressur that means the valve fired properly.$N"
+				    "Latch in the low pressure bit until the valves have been closed for a delay$N"
+				    "";
+				N: [LES(DustCollectorPressure.SCALED,DustCollectorPressure.Lo.LIM) ,XIC(DustCollectorPressure.Lo.ACTIVE) ]XIO(DustCollector.STAT.OFF_CLOSED_DELAY)[XIC(DustCollectorPressure.Lo.DELAY.DN) OTE(DustCollectorPressure.Lo.ACTIVE) ,TON(DustCollectorPressure.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(DustCollectorPressure.SCALED,DustCollectorPressure.Hi.LIM) ,XIC(DustCollectorPressure.Hi.ACTIVE) ]CMP(DustCollectorPressure.SCALED>=(DustCollectorPressure.Hi.LIM-DustCollectorPressure.Hi.DEADBAND))[XIC(DustCollectorPressure.Hi.DELAY.DN) OTE(DustCollectorPressure.Hi.ACTIVE) ,TON(DustCollectorPressure.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(DustCollectorPressure.SCALED,DustCollectorPressure.HiHi.LIM) ,XIC(DustCollectorPressure.HiHi.ACTIVE) ]CMP(DustCollectorPressure.SCALED>=(DustCollectorPressure.HiHi.LIM-DustCollectorPressure.HiHi.DEADBAND))[XIC(DustCollectorPressure.HiHi.DELAY.DN) OTE(DustCollectorPressure.HiHi.ACTIVE) ,TON(DustCollectorPressure.HiHi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.FAULT$'$N"
+				    "Function=$'ANALOG.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: XIC(DustCollectorPressure.STAT.FAULT)[XIC(DustCollectorPressure.Fault.DELAY.DN) OTE(DustCollectorPressure.Fault.ACTIVE) ,MOV(10000,DustCollectorPressure.Fault.DELAY.PRE) TON(DustCollectorPressure.Fault.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(DustCollectorPressure.AOI.Mode,DustCollectorPressure.CMD,DustCollectorPressure.STAT,DustCollectorPressure.MAN_SP,DustCollectorPressure.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(DustCollectorPressure.LoLo.ACTIVE) XIO(DustCollectorPressure.LoLo.DISABLED) XIC(PowerInput.STAT.ON) OTE(DustCollectorPressure.ALARM[0].ACTIVE) ,AlarmControl(DustCollectorPressure.AOI.AlarmControl[0],DustCollectorPressure.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(DustCollectorPressure.Lo.ACTIVE) XIO(DustCollectorPressure.Lo.DISABLED) XIC(PowerInput.STAT.ON) OTE(DustCollectorPressure.ALARM[1].ACTIVE) ,AlarmControl(DustCollectorPressure.AOI.AlarmControl[1],DustCollectorPressure.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(DustCollectorPressure.Hi.ACTIVE) XIO(DustCollectorPressure.Hi.DISABLED) XIC(PowerInput.STAT.ON) OTE(DustCollectorPressure.ALARM[2].ACTIVE) ,AlarmControl(DustCollectorPressure.AOI.AlarmControl[2],DustCollectorPressure.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(DustCollectorPressure.HiHi.ACTIVE) XIO(DustCollectorPressure.HiHi.DISABLED) XIC(PowerInput.STAT.ON) OTE(DustCollectorPressure.ALARM[3].ACTIVE) ,AlarmControl(DustCollectorPressure.AOI.AlarmControl[3],DustCollectorPressure.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(DustCollectorPressure.Fault.ACTIVE) XIO(DustCollectorPressure.Fault.DISABLED) XIC(PowerInput.STAT.ON) OTE(DustCollectorPressure.ALARM[6].ACTIVE) ,AlarmControl(DustCollectorPressure.AOI.AlarmControl[6],DustCollectorPressure.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Evasor 
+				RC: "EVASSOR$N"
+				    "";
+				N: NOP();
+				RC: "Toggle on and off when attempting to convey material.$N"
+				    "This blows air into the material to soften it up$N"
+				    "";
+				N: XIC(ph_RefillStarchDispensingHopper.CM.AutoRun[10])[XIC(Evasor.TMR[0].TT) OTE(Evasor.STAT.AUTO_RUN) ,XIO(Evasor.TMR[0].DN) XIO(Evasor.TMR[1].EN) TON(Evasor.TMR[0],?,?) ,XIO(Evasor.TMR[1].DN) XIO(Evasor.TMR[0].EN) TON(Evasor.TMR[1],?,?) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,Evasor.MSG.PERM) ,XIO(Airlock.STAT.ON_OPEN) MOV(1,Evasor.MSG.PERM) ,EQU(Evasor.MSG.PERM,0) OTE(Evasor.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,Evasor.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,Evasor.MSG.INTRLK) ,NEQ(Evasor.MSG.INTRLK,0) OTE(Evasor.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.CLEAR$'$N"
+				    "Function=$'STATUS.MESSAGE.CLEAR$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(0,Evasor.MSG.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Evasor.STAT.AUTO_RUN) NEQ(Evasor.MSG.PERM,0) MOV(Evasor.MSG.PERM,Evasor.MSG.MSG) ,NEQ(Evasor.MSG.INTRLK,0) MOV(Evasor.MSG.INTRLK,Evasor.MSG.MSG) ,NEQ(Evasor.MSG.FAULT,0) MOV(Evasor.MSG.FAULT,Evasor.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(Evasor.AOI.Message,Evasor.ID,Evasor.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(Evasor.AOI.Control,Evasor.CMD,Evasor.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.BASIC.CONTROL$'$N"
+				    "";
+				N: [XIC(Evasor.STAT.ENERGIZE) OTE(Evasor_IO_Output) ,XIC(Evasor.STAT.ENERGIZE) OTE(Evasor.STAT.ON_OPEN) ,XIO(Evasor.STAT.ENERGIZE) OTE(Evasor.STAT.OFF_CLOSED) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(Evasor.STAT.FAULT) OTE(Evasor.ALARM[0].ACTIVE) ,AlarmControl(Evasor.AOI.AlarmControl[0],Evasor.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Feeder 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'USEBIN.04.01.Motor.SugarMill_StarchHopper$'$N"
+				    "ControlModule=$'Motor.Feeder$'$N"
+				    "";
+				N: NOP();
+				RC: "$N"
+				    "";
+				N: [XIC(Auger.STAT.AUTO_RUN) ,XIC(Auger.STAT.MAN_RUN) ]OTE(Feeder.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,Feeder.MSG.PERM) ,EQU(Feeder.MSG.PERM,0) OTE(Feeder.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,Feeder.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,Feeder.MSG.INTRLK) ,NEQ(Feeder.MSG.INTRLK,0) OTE(Feeder.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.MOTOR.FAULT$'$N"
+				    "Function=$'MOTOR.FAULT$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Feeder.STAT.ENERGIZE) [XIO(Feeder.STAT.ON_OPEN) ,XIC(Feeder.STAT.OFF_CLOSED) ] ,XIC(Feeder.STAT.FAULT) ]XIO(Feeder.CMD.RESET)[XIC(Feeder.DELAY.FAULT.DN) OTE(Feeder.STAT.FAULT) ,TON(Feeder.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.MOTOR$'$N"
+				    "Function=$'STATUS.MESSAGE.MOTOR$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(0,Feeder.MSG.MSG) ,XIC(Feeder.STAT.ENERGIZE) XIO(Feeder.STAT.ON_OPEN) MOV(61,Feeder.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Feeder.STAT.AUTO_RUN) NEQ(Feeder.MSG.PERM,0) MOV(Feeder.MSG.PERM,Feeder.MSG.MSG) ,NEQ(Feeder.MSG.INTRLK,0) MOV(Feeder.MSG.INTRLK,Feeder.MSG.MSG) ,NEQ(Feeder.MSG.FAULT,0) MOV(Feeder.MSG.FAULT,Feeder.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(Feeder.AOI.Message,Feeder.ID,Feeder.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(Feeder.AOI.Control,Feeder.CMD,Feeder.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.MOTOR.IO.OUTPUT$'$N"
+				    "Function=$'MOTOR.IO.CONTROL$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Feeder.STAT.ENERGIZE) OTE(Feeder_IO_Output) ,XIC(Feeder_IO_Running) [OTE(Feeder.STAT.ON_OPEN) ,XIC(Feeder.DELAY.ON.DN) OTE(Feeder.STAT.ON_OPEN_DELAY) ,TON(Feeder.DELAY.ON,?,?) ] ,XIO(Feeder.STAT.ON_OPEN) [OTE(Feeder.STAT.OFF_CLOSED) ,XIC(Feeder.DELAY.OFF.DN) OTE(Feeder.STAT.OFF_CLOSED_DELAY) ,TON(Feeder.DELAY.OFF,?,?) ] ,XIC(PowerInput.STAT.ON) XIC(PowerOutput.STAT.ON) XIC(PowerSafety.STAT.ON) OTE(Feeder.STAT.ControlPowerOn) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(Feeder.STAT.ControlPowerOn) XIC(Feeder.STAT.FAULT) OTE(Feeder.ALARM[0].ACTIVE) ,AlarmControl(Feeder.AOI.AlarmControl[0],Feeder.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.DISCONNECT$'$N"
+				    "";
+				N: [XIC(Feeder.STAT.ControlPowerOn) XIO(Feeder.STAT.DISCONNECT) OTE(Feeder.ALARM[1].ACTIVE) ,AlarmControl(Feeder.AOI.AlarmControl[1],Feeder.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE HighLevel 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'USEBIN.04.01.Level Switch.SugarMill_StarchHopper$'$N"
+				    "ControlModule=$'Level Switch.LowLevel$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.CONTROL$'$N"
+				    "";
+				N: [XIO(HighLevel_IO_Input) OTE(HighLevel.STAT.ENERGIZED) ,XIC(HighLevel.STAT.ENERGIZED) [XIC(HighLevel.DELAY.ON.DN) OTL(HighLevel.STAT.ON) OTU(HighLevel.STAT.OFF) ,TON(HighLevel.DELAY.ON,?,?) ] ,XIO(HighLevel.STAT.ENERGIZED) [XIC(HighLevel.DELAY.OFF.DN) OTU(HighLevel.STAT.ON) OTL(HighLevel.STAT.OFF) ,TON(HighLevel.DELAY.OFF,?,?) ] ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.INPUT.FAULT$'$N"
+				    "Function=$'DISCRETE.INPUT.IO.FAULT$'$N"
+				    "";
+				N: XIO(HighLevel_IO_Fault)[XIC(HighLevel.DELAY.FAULT.DN) OTE(HighLevel.STAT.FAULT) ,TON(HighLevel.DELAY.FAULT,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(HighLevel.STAT.FAULT) XIC(PowerInput.STAT.ON) OTE(HighLevel.ALARM[1].ACTIVE) ,AlarmControl(HighLevel.AOI.AlarmControl[1],HighLevel.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Vibrator 
+				N: NOP();
+				N: XIC(ph_RefillStarchDispensingHopper.CM.AutoRun[10])LIM(2250,Evasor.TMR[1].ACC,2750)OTE(Vibrator.STAT.AUTO_RUN);
+				RC: "$N"
+				    "";
+				N: [MOV(0,Vibrator.MSG.PERM) ,XIO(Airlock.STAT.ON_OPEN) MOV(1,Vibrator.MSG.PERM) ,EQU(Vibrator.MSG.PERM,0) OTE(Vibrator.STAT.PERMISSIVE) ];
+				RC: "$N"
+				    "";
+				N: [MOV(0,Vibrator.MSG.INTRLK) ,XIC(EStop.STAT.FAULT) MOV(21,Vibrator.MSG.INTRLK) ,NEQ(Vibrator.MSG.INTRLK,0) OTE(Vibrator.STAT.INTERLOCK) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.FAULT.NONE$'$N"
+				    "Function=$'FAULT.NONE$'$N"
+				    "[Description]$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.CLEAR$'$N"
+				    "Function=$'STATUS.MESSAGE.CLEAR$'$N"
+				    "[Description]$N"
+				    "";
+				N: MOV(0,Vibrator.MSG.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.SELECT$'$N"
+				    "Function=$'STATUS.MESSAGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [XIC(Vibrator.STAT.AUTO_RUN) NEQ(Vibrator.MSG.PERM,0) MOV(Vibrator.MSG.PERM,Vibrator.MSG.MSG) ,NEQ(Vibrator.MSG.INTRLK,0) MOV(Vibrator.MSG.INTRLK,Vibrator.MSG.MSG) ,NEQ(Vibrator.MSG.FAULT,0) MOV(Vibrator.MSG.FAULT,Vibrator.MSG.MSG) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.STATUS.MESSAGE.NUMBER.UNIQUE$'$N"
+				    "Function=$'MAKE.CM.MESSAGENUMBER.UNIQUE$'$N"
+				    "";
+				N: MakeMessageNumberGloballyUnique(Vibrator.AOI.Message,Vibrator.ID,Vibrator.MSG);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.OUTPUT.CONTROL$'$N"
+				    "Function=$'DISCRETE.OUTPUT.CONTROL$'$N"
+				    "";
+				N: DiscreteOutputControl(Vibrator.AOI.Control,Vibrator.CMD,Vibrator.STAT);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.IO.OUTPUT.BASIC$'$N"
+				    "Function=$'DISCRETE.OUTPUT.IO.BASIC.CONTROL$'$N"
+				    "";
+				N: [XIC(Vibrator.STAT.ENERGIZE) OTE(Vibrator_IO_Output) ,XIC(Vibrator.STAT.ENERGIZE) OTE(Vibrator.STAT.ON_OPEN) ,XIO(Vibrator.STAT.ENERGIZE) OTE(Vibrator.STAT.OFF_CLOSED) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.DISCRETE.ALARM$'$N"
+				    "Function=$'ALARM.STAT.FAULT$'$N"
+				    "";
+				N: [XIC(Vibrator.STAT.FAULT) OTE(Vibrator.ALARM[0].ACTIVE) ,AlarmControl(Vibrator.AOI.AlarmControl[0],Vibrator.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+		END_ROUTINE
+
+		ROUTINE Weight 
+				RC: "Type=$'CONTROL.MODULE$'$N"
+				    "EquipmentModule=$'USEBIN.04.01.Scale.SugarMill_StarchHopper$'$N"
+				    "ControlModule=$'Scale.Weight$'$N"
+				    "";
+				N: NOP();
+				RC: "Template=$'USEBIN.04.01.SCALE.WEIGHT$'$N"
+				    "Function=$'WEIGHT.VALUE$'$N"
+				    "[Description]$N"
+				    "";
+				N: [MOV(Weight_IO_Value,Weight.RAW) ,XIC(Weight_IO_DataOkay) OTE(Weight.STAT.DATA_OK) ,XIC(cCOMMON.ONE_SECOND_PULSE) OTU(Weight_IO_DataOkay) ];
+				N: XIO(Weight.STAT.DATA_OK)[XIC(Weight.Fault.DELAY.DN) OTE(Weight.STAT.FAULT) OTE(Weight.Fault.ACTIVE) ,MOV(10000,Weight.Fault.DELAY.PRE) TON(Weight.Fault.DELAY,?,?) ];
+				N: XIC(Weight_SIM_Enable)MOV(Weight_SIM_Value,Weight.RAW);
+				RC: "Template=$'USEBIN.04.01.SCALE.WEIGHT$'$N"
+				    "Function=$'WEIGHT.VALUE.ZERO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [[XIC(Weight.CMD.BITS.5) ,XIC(Weight.TMR[1].TT) ] LES(Weight.SCALED,205) [TON(Weight.TMR[1],?,?) ,MOV(404,Weight_IO_Cmd) ] ,XIO(Weight.TMR[1].TT) EQU(Weight_IO_Cmd,404) MOV(0,Weight_IO_Cmd) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.SCALE$'$N"
+				    "Function=$'ANALOG.SCALE.RAW$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputScaling(Weight.AOI.Scaling,Weight.RAW,Weight.RAW_LO,Weight.RAW_HI,Weight.SCALE_LO,Weight.SCALE_HI,Weight.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LOLO$'$N"
+				    "Function=$'ANALOG.COMPARE.LOLO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(Weight.SCALED,Weight.LoLo.LIM) ,XIC(Weight.LoLo.ACTIVE) ]CMP(Weight.SCALED<=(Weight.LoLo.LIM+Weight.LoLo.DEADBAND))[XIC(Weight.LoLo.DELAY.DN) OTE(Weight.LoLo.ACTIVE) ,TON(Weight.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.LO$'$N"
+				    "Function=$'ANALOG.COMPARE.LO$'$N"
+				    "[Description]$N"
+				    "";
+				N: [LES(Weight.SCALED,Weight.Lo.LIM) ,XIC(Weight.Lo.ACTIVE) ]CMP(Weight.SCALED<=(Weight.Lo.LIM+Weight.Lo.DEADBAND))[XIC(Weight.Lo.DELAY.DN) OTE(Weight.Lo.ACTIVE) ,TON(Weight.Lo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HI$'$N"
+				    "Function=$'ANALOG.COMPARE.HI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(Weight.SCALED,Weight.Hi.LIM) ,XIC(Weight.Hi.ACTIVE) ]CMP(Weight.SCALED>=(Weight.Hi.LIM-Weight.Hi.DEADBAND))[XIC(Weight.Hi.DELAY.DN) OTE(Weight.Hi.ACTIVE) ,TON(Weight.Hi.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.COMPARE.HIHI$'$N"
+				    "Function=$'ANALOG.COMPARE.HIHI$'$N"
+				    "[Description]$N"
+				    "";
+				N: [GRT(Weight.SCALED,Weight.HiHi.LIM) ,XIC(Weight.HiHi.ACTIVE) ]CMP(Weight.SCALED>=(Weight.HiHi.LIM-Weight.HiHi.DEADBAND))[XIC(Weight.HiHi.DELAY.DN) OTE(Weight.HiHi.ACTIVE) ,TON(Weight.HiHi.DELAY,?,?) ];
+				N: AnalogInputRate(Weight.AOI.Rate,Weight.SCALED,Weight.RATE);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.RATE.CHANGE$'$N"
+				    "Function=$'ANALOG.RATE.CHANGE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputRate(Weight.AOI.Rate,Weight.SCALED,Weight.RATE);
+				RC: "$N"
+				    "";
+				N: XIC(ph_SugarMillAddStarch.CM.AutoRun[11])[LES(Weight.RATE.CHANGE,Weight.RATE.Lo.LIM) ,XIC(Weight.RATE.Lo.ACTIVE) ]CMP(Weight.RATE.CHANGE<=(Weight.RATE.Lo.LIM+Weight.RATE.Lo.DEADBAND))[XIC(Weight.RATE.Lo.DELAY.DN) OTE(Weight.RATE.Lo.ACTIVE) ,TON(Weight.RATE.Lo.DELAY,?,?) ];
+				RC: "$N"
+				    "";
+				N: XIC(ph_SugarMillAddStarch.CM.AutoRun[11])[LES(Weight.RATE.CHANGE,Weight.RATE.LoLo.LIM) ,XIC(Weight.RATE.LoLo.ACTIVE) ]CMP(Weight.RATE.CHANGE<=(Weight.RATE.LoLo.LIM+Weight.RATE.LoLo.DEADBAND))[XIC(Weight.RATE.LoLo.DELAY.DN) OTE(Weight.RATE.LoLo.ACTIVE) ,TON(Weight.RATE.LoLo.DELAY,?,?) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.MODE$'$N"
+				    "Function=$'ANALOG.MODE$'$N"
+				    "[Description]$N"
+				    "";
+				N: AnalogInputMode(Weight.AOI.Mode,Weight.CMD,Weight.STAT,Weight.MAN_SP,Weight.SCALED);
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LOLO$'$N"
+				    "";
+				N: [XIC(Weight.LoLo.ACTIVE) XIO(Weight.LoLo.DISABLED) OTE(Weight.ALARM[0].ACTIVE) ,AlarmControl(Weight.AOI.AlarmControl[0],Weight.ALARM[0],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.LO$'$N"
+				    "";
+				N: [XIC(Weight.Lo.ACTIVE) XIO(Weight.Lo.DISABLED) OTE(Weight.ALARM[1].ACTIVE) ,AlarmControl(Weight.AOI.AlarmControl[1],Weight.ALARM[1],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HI$'$N"
+				    "";
+				N: [XIC(Weight.Hi.ACTIVE) XIO(Weight.Hi.DISABLED) OTE(Weight.ALARM[2].ACTIVE) ,AlarmControl(Weight.AOI.AlarmControl[2],Weight.ALARM[2],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.HIHI$'$N"
+				    "";
+				N: [XIC(Weight.HiHi.ACTIVE) XIO(Weight.HiHi.DISABLED) OTE(Weight.ALARM[3].ACTIVE) ,AlarmControl(Weight.AOI.AlarmControl[3],Weight.ALARM[3],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LO$'$N"
+				    "";
+				N: [XIC(Weight.RATE.Lo.ACTIVE) XIO(Weight.RATE.Lo.DISABLED) OTE(Weight.ALARM[4].ACTIVE) ,AlarmControl(Weight.AOI.AlarmControl[4],Weight.ALARM[4],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.RATE.LOLO$'$N"
+				    "";
+				N: [XIC(Weight.RATE.LoLo.ACTIVE) XIO(Weight.RATE.LoLo.DISABLED) OTE(Weight.ALARM[5].ACTIVE) ,AlarmControl(Weight.AOI.AlarmControl[5],Weight.ALARM[5],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				RC: "Template=$'RUNG.TEMPLATE.STANDARD.CM.ANALOG.ALARM$'$N"
+				    "Function=$'ALARM.FAULT$'$N"
+				    "";
+				N: [XIC(Weight.Fault.ACTIVE) XIO(Weight.Fault.DISABLED) OTE(Weight.ALARM[6].ACTIVE) ,AlarmControl(Weight.AOI.AlarmControl[6],Weight.ALARM[6],OIT.UNACK_ALARMS_TEMP,cCOMMON.SILENCE) ];
+				N: Arbitration(Weight.AOI.Arbitration,Weight.ARB,Weight.INDEX,1);
+		END_ROUTINE
+
+		ROUTINE _FirstScan 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'USEBIN.04.01$'$N"
+				    "";
+				N: NOP();
+		END_ROUTINE
+
+		ROUTINE _Main 
+				RC: "$N"
+				    "Program=$'EM$'$N"
+				    "Class=$'USEBIN.04.01$'$N"
+				    "";
+				N: NOP();
+				N: JSR(DustCollector,0)JSR(DustCollectorDiffPressure,0)JSR(DustCollectorDiffPressureAverage,0)JSR(DustCollectorPressure,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'ALARM$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'BI1$'$N"
+				    "[Description]:Burst Indicator$N"
+				    "";
+				N: JSR(BurstIndicator,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VFD$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'M26$'$N"
+				    "[Description]:Airlock$N"
+				    "";
+				N: JSR(Airlock,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'MOTOR$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'M25$'$N"
+				    "[Description]:Feeder$N"
+				    "";
+				N: JSR(Feeder,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VFD$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'M24$'$N"
+				    "[Description]:Auger$N"
+				    "";
+				N: JSR(AugerWeight,0)JSR(Auger,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'WEIGHT$'$N"
+				    "Type=$'AI$'$N"
+				    "Device=$'WI5$'$N"
+				    "[Description]:Weight$N"
+				    "";
+				N: JSR(Weight,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'LEVELSWITCH$'$N"
+				    "Type=$'DI$'$N"
+				    "Device=$'LI12$'$N"
+				    "[Description]:Low Level$N"
+				    "";
+				N: JSR(HighLevel,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'VIBRATOR$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'V5$'$N"
+				    "[Description]:Vibrator$N"
+				    "";
+				N: JSR(Vibrator,0);
+				RC: "$N"
+				    "Program=$'CM$'$N"
+				    "Class=$'EVASOR$'$N"
+				    "Type=$'DO$'$N"
+				    "Device=$'EV7$'$N"
+				    "[Description]:Evasor$N"
+				    "";
+				N: JSR(Evasor,0);
+				RC: "$N"
+				    "First Scan Routine Call$N"
+				    "This routine will set all defaut configurations for the equipment module and control module settings and parameters.$N"
+				    "";
+				N: XIC(S:FS)JSR(_FirstScan,0);
+		END_ROUTINE
+
+		CHILD_PROGRAMS
+		END_CHILD_PROGRAMS
+
+	END_PROGRAM
